@@ -8,13 +8,35 @@ class BoxIdTest {
 
     @Test
     fun firstExampleWithoutDuplicates() {
-        val boxId = BoxId("abcdef")
+        assertFalse(BoxId("abcdef").hasAnyLetterTwice)
+        assertFalse(BoxId("abcdef").hasAnyLetterTripple)
+    }
 
-        assertFalse(boxId.hasAnyLetterTwice())
+    @Test
+    fun secondExampleCountForBothDoublesAndTriples() {
+        val boxId = BoxId("bababc")
+        assertTrue(boxId.hasAnyLetterTwice)
+        assertTrue(boxId.hasAnyLetterTripple)
+
+    }
+
+    @Test
+    fun fithExampleWithTwoLettersOccuringTwice() {
+        assertTrue(BoxId("aabcdd").hasAnyLetterTwice)
     }
 
     @Test
     fun sixthExampleWithSingleLetterDuplicatesTwice() {
-        assertTrue(BoxId("abcdee").hasAnyLetterTwice())
+        val boxId = BoxId("abcdee")
+        assertTrue(boxId.hasAnyLetterTwice)
+        assertFalse(boxId.hasAnyLetterTripple)
+    }
+
+
+    @Test
+    fun `seventh example with triple letters should not count for doubles`() {
+        val boxId = BoxId("ababab")
+        assertFalse(boxId.hasAnyLetterTwice)
+        assertTrue(boxId.hasAnyLetterTripple)
     }
 }
