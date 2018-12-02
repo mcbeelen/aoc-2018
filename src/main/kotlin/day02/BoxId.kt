@@ -1,6 +1,6 @@
 package day02
 
-class BoxId(private val label: String) {
+class BoxId( val label: String) {
 
     val hasAnyLetterTwice : Boolean by lazy { hasAnyLetterTwice() }
     val hasAnyLetterTripple : Boolean by lazy { hasAnyLetterTripple() }
@@ -23,6 +23,18 @@ class BoxId(private val label: String) {
         return letterOccurrenceMap
                 .filter { it.value == occurrence }
                 .any()
+    }
+
+    fun countNumberOfDifferentLetters(anotherBox: BoxId) = label.withIndex()
+                .filter { it.value != anotherBox.label.get(it.index)}
+                .count()
+
+    fun findCommonLettersWith(other: BoxId) : String {
+        return label.withIndex()
+                .filter { other.label[it.index] == it.value }
+                .map { it.value }
+                .joinToString("", "")
+
     }
 
 }

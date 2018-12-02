@@ -1,8 +1,18 @@
 package day02
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+
+const val boxIdsFromSecondChallenge = """abcde
+fghij
+klmno
+pqrst
+fguij
+axcye
+wvxyz"""
 
 class BoxIdTest {
 
@@ -39,4 +49,20 @@ class BoxIdTest {
         assertFalse(boxId.hasAnyLetterTwice)
         assertTrue(boxId.hasAnyLetterTripple)
     }
+
+
+    @Test
+    fun itShouldCountDifferentLetterBetweenBoxIds() {
+        val boxIds = boxIdsFromSecondChallenge.trimIndent().lines().map { BoxId(it) }
+
+        assertThat(countNumberOfDifferentLetters(boxIds[0], boxIds[5]), equalTo(2))
+
+
+
+
+
+
+    }
+
+    private fun countNumberOfDifferentLetters(aBox: BoxId, anotherBox: BoxId) = aBox.countNumberOfDifferentLetters(anotherBox)
 }
