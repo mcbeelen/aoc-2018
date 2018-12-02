@@ -5,6 +5,9 @@ class BoxId(private val label: String) {
     val hasAnyLetterTwice : Boolean by lazy { hasAnyLetterTwice() }
     val hasAnyLetterTripple : Boolean by lazy { hasAnyLetterTripple() }
 
+    private val letterOccurrenceMap = label
+            .groupingBy { it }
+            .eachCount()
 
     private fun hasAnyLetterTwice(): Boolean {
         return hasLetterWithOccurance(2)
@@ -14,11 +17,11 @@ class BoxId(private val label: String) {
         return hasLetterWithOccurance(3)
     }
 
-    private fun hasLetterWithOccurance(i: Int): Boolean {
-        return label
-                .groupingBy { it }
-                .eachCount()
-                .filter { it.value == i }
+
+
+    private fun hasLetterWithOccurance(occurrence: Int): Boolean {
+        return letterOccurrenceMap
+                .filter { it.value == occurrence }
                 .any()
     }
 
