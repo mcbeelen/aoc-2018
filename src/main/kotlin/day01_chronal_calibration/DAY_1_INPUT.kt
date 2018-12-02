@@ -1,4 +1,4 @@
-package day01
+package day01_chronal_calibration
 
 const val DAY_1_INPUT = """
 -17

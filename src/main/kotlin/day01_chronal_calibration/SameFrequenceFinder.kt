@@ -1,5 +1,6 @@
-package day01
+package day01_chronal_calibration
 
+import util.circularSequence
 import kotlin.system.measureTimeMillis
 
 class SameFrequenceFinder {
@@ -38,20 +39,6 @@ fun findFirstRecurringFrequency(input: List<Int>): Int {
 
 }
 
-private fun circularSequence(input: List<Int>): Sequence<Int> {
-    return sequence {
-        var index = 0
-
-        while (true) {
-            yield(input[index])
-            index++
-            if (index == input.size) {
-                index = 0
-            }
-        }
-
-    }
-}
 
 
 

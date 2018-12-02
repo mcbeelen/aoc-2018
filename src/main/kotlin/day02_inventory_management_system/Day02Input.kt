@@ -1,4 +1,4 @@
-package day02
+package day02_inventory_management_system
 
 const val DAY_2_INPUT = """
     ohvflkatysoimjxbunazgwcdpr

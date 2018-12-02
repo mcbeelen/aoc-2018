@@ -1,13 +1,15 @@
-package day02
+package day02_inventory_management_system
+
+import util.countLetters
 
 class BoxId( val label: String) {
 
     val hasAnyLetterTwice : Boolean by lazy { hasAnyLetterTwice() }
     val hasAnyLetterTripple : Boolean by lazy { hasAnyLetterTripple() }
 
-    private val letterOccurrenceMap = label
-            .groupingBy { it }
-            .eachCount()
+    private val letterOccurrenceMap = countLetters(label)
+
+
 
     private fun hasAnyLetterTwice(): Boolean {
         return hasLetterWithOccurance(2)

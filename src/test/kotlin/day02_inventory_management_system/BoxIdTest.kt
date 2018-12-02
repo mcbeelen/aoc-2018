@@ -1,4 +1,4 @@
-package day02
+package day02_inventory_management_system
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

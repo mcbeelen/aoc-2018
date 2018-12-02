@@ -1,4 +1,4 @@
-package day01
+package day01_chronal_calibration
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
