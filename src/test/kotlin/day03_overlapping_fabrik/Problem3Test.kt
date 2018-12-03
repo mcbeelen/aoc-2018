@@ -16,25 +16,25 @@ class Problem3Test {
 
         val claimInput = "#123 @ 3,2: 5x4"
 
-        val claim: Pair<String, Square> = parseClaim(claimInput)
+        val claim = parseClaim(claimInput)
 
-        assertThat(claim.first, equalTo("123"))
+        assertThat(claim.id, equalTo("123"))
 
-        assertThat(claim.second.origin.left, equalTo(3))
-        assertThat(claim.second.origin.top, equalTo(2))
+        assertThat(claim.area.origin.left, equalTo(3))
+        assertThat(claim.area.origin.top, equalTo(2))
 
-        assertThat(claim.second.width, equalTo(5))
-        assertThat(claim.second.height, equalTo(4))
+        assertThat(claim.area.width, equalTo(5))
+        assertThat(claim.area.height, equalTo(4))
 
-        assertThat(claim.second.right, equalTo(7))
-        assertThat(claim.second.bottom, equalTo(5))
+        assertThat(claim.area.right, equalTo(7))
+        assertThat(claim.area.bottom, equalTo(5))
 
 
     }
 
 
 
-    private fun parseClaim(claimInput: String): Pair<String, Square> {
+    private fun parseClaim(claimInput: String): Claim {
 
         val id = claimInput.substringBefore(OFFSET_SEPARATOR).substringAfter("#")
         val offsetInput = claimInput.substringAfter(OFFSET_SEPARATOR).substringBefore(":")
@@ -46,7 +46,7 @@ class Problem3Test {
 
 
 
-        return Pair(id, Square(origin, dimensionComponents[0].toInt(), dimensionComponents[1].toInt()))
+        return Claim(id, Square(origin, dimensionComponents[0].toInt(), dimensionComponents[1].toInt()))
 
 
 
