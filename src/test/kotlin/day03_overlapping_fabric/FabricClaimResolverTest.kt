@@ -24,6 +24,6 @@ class FabricClaimResolverTest {
 
         val fabric = Fabric(claims)
 
-        assert.that(fabric.findIdOfNonOverlappingClaim(), ! equalTo("3"))
+        assert.that(fabric.findIdOfNonOverlappingClaim(), ! equalTo("1276"))
     }
 }
