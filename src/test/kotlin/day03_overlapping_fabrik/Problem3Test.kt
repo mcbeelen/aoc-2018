@@ -26,6 +26,10 @@ class Problem3Test {
         assertThat(claim.second.width, equalTo(5))
         assertThat(claim.second.height, equalTo(4))
 
+        assertThat(claim.second.right, equalTo(7))
+        assertThat(claim.second.bottom, equalTo(5))
+
+
     }
 
 
