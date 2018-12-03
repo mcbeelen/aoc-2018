@@ -34,5 +34,10 @@ class Fabric(val claims: List<Claim>) {
         return numberOfInchesWithOverlappingClaims
     }
 
+    fun findIdOfNonOverlappingClaim(): String {
+        return ""
+
+    }
+
 
 }

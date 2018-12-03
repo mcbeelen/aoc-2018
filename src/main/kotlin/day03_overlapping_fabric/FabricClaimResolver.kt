@@ -5,8 +5,6 @@ import kotlin.system.measureTimeMillis
 class FabricClaimResolver {
 
 
-
-
     companion object {
 
         @JvmStatic
