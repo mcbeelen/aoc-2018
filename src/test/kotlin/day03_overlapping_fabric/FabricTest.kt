@@ -1,8 +1,7 @@
 package day03_overlapping_fabric
 
-import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.assertion.assert
 import com.natpryce.hamkrest.equalTo
-import org.junit.Before
 import org.junit.Test
 
 const val exampleClaimsInput = """
@@ -19,7 +18,7 @@ class FabricTest {
         val exampleClaims = exampleClaimsInput.trimIndent().lineSequence().map { parseClaim(it) }.toList()
         val fabric = Fabric(exampleClaims)
 
-        assertThat(fabric.countInchesOfOverlappingClaims(), equalTo(4))
+        assert.that(fabric.countInchesOfOverlappingClaims(), equalTo(4))
 
     }
 
@@ -28,6 +27,24 @@ class FabricTest {
         val exampleClaims = exampleClaimsInput.trimIndent().lineSequence().map { parseClaim(it) }.toList()
         val fabric = Fabric(exampleClaims)
 
-        assertThat(fabric.findIdOfNonOverlappingClaim(), equalTo("3"))
+        assert.that(fabric.findIdOfNonOverlappingClaim(), equalTo("3"))
+    }
+
+
+
+
+    @Test
+    fun itShouldDetemineMinimumFabricSize() {
+
+        val claimOne = parseClaim("#1 @ 662,777: 18x27")
+        val claimTwo = parseClaim("#2 @ 893,985: 13x10")
+
+        val claims : List<Claim> = arrayListOf(claimOne, claimTwo)
+
+        val fabric = Fabric(claims)
+
+        assert.that(fabric.maxX, equalTo(905))
+        assert.that(fabric.maxY, equalTo(994))
+
     }
 }
