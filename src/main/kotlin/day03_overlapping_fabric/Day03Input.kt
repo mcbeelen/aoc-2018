@@ -1,4 +1,4 @@
-package day03_overlapping_fabrik
+package day03_overlapping_fabric
 
 const val DAY_03_INPUT = """
 #1 @ 662,777: 18x27
@@ -1383,4 +1383,5 @@ const val DAY_03_INPUT = """
 #1380 @ 236,676: 12x20
 #1381 @ 81,109: 20x13
 #1382 @ 413,123: 19x28
-#1383 @ 173,276: 21x22""""
+#1383 @ 173,276: 21x22
+"""
