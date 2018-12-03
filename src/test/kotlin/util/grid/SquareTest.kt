@@ -1,6 +1,5 @@
 package util.grid
 
-import day03_overlapping_fabric.parseClaim
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -48,6 +47,45 @@ class SquareTest {
         assertTrue(squareThree.overLapsWith(squareThree))
 
 
+    }
+
+    @Test
+    fun missingTest() {
+        val squareOne = Square(ScreenCoordinate(6, 2), 2, 16)
+        val squareTwo = Square(ScreenCoordinate(2, 4), 16, 1)
+
+        assertTrue(squareOne.overLapsWith(squareTwo))
+    }
+
+    @Test
+    fun `just touching at a single point`() {
+        val topLeft = Square(ScreenCoordinate(2, 2), 2, 2)
+        val topRight = Square(ScreenCoordinate(5, 2), 2, 2)
+
+        val center = Square(ScreenCoordinate(3, 3), 3, 3)
+
+        val bottomRight = Square(ScreenCoordinate(5, 5), 1, 1)
+        val bottomLeft = Square(ScreenCoordinate(0, 5), 4, 1)
+
+        val beyond = Square(ScreenCoordinate(6, 6), 1, 1)
+
+        assertTrue(topLeft.overLapsWith(center))
+        assertTrue(topRight.overLapsWith(center))
+        assertTrue(center.overLapsWith(bottomRight))
+        assertTrue(center.overLapsWith(bottomLeft))
+
+        assertFalse(center.overLapsWith(beyond))
 
     }
+
+
+    @Test
+    fun `just overlapping on an entire border`() {
+        val squareOne = Square(ScreenCoordinate(2, 2), 2, 2)
+        val squareTwo = Square(ScreenCoordinate(3, 1), 1, 8)
+
+        assertTrue(squareOne.overLapsWith(squareTwo))
+
+    }
+
 }

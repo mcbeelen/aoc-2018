@@ -5,11 +5,23 @@ import util.grid.Square
 import java.lang.NumberFormatException
 
 data class Claim(val id: String, val area: Square) {
+
+
+
     fun overlapsWith(other: Claim): Boolean {
+        // println("Comparing ${id} to ${other.id}")
+
         if (id.equals(other.id)) {
             return false
         }
-        return this.area.overLapsWith(other.area)
+        val overLapsWith = this.area.overLapsWith(other.area)
+        if (overLapsWith) {
+            area.getAllCoordinates()
+
+
+            println("${other.id} overlaps with ${id}")
+        }
+        return overLapsWith
     }
 }
 

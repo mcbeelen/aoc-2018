@@ -35,9 +35,13 @@ class Fabric(val claims: List<Claim>) {
     }
 
     fun findIdOfNonOverlappingClaim(): String {
-        return ""
+        return claims.first {
+            hasNoOverlaps(it)
+        }.id
 
     }
+
+    private fun hasNoOverlaps(candidate: Claim) = claims.none { it.overlapsWith(candidate) }
 
 
 }

@@ -10,20 +10,29 @@ class FabricClaimResolver {
         @JvmStatic
         fun main(args: Array<String>) {
 
+            val claims = DAY_03_INPUT.trimIndent().lines().map { parseClaim(it) }
 
+            val fabric = Fabric(claims)
+            // partOne(fabric)
+
+            partTwo(fabric)
+
+        }
+
+
+        private fun partOne(fabric: Fabric) {
             val measureTimeMillis = measureTimeMillis {
-
-                val claims = DAY_03_INPUT.trimIndent().lines()
-                        .map { parseClaim(it) }
-
-                val fabric = Fabric(claims)
-
                 println("Their are multipleClaims for ${fabric.countInchesOfOverlappingClaims()} inches")
-
             }
+            println("Solved part one in ${measureTimeMillis}ms")
+        }
 
-            println("Solved in ${measureTimeMillis}ms")
 
+        private fun partTwo(fabric: Fabric) {
+            val measureTimeMillis = measureTimeMillis {
+                println("The non overlapping claim has id ${fabric.findIdOfNonOverlappingClaim()}")
+            }
+            println("Solved part two in ${measureTimeMillis}ms")
         }
 
     }
