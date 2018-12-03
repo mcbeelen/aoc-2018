@@ -4,7 +4,14 @@ import util.grid.ScreenCoordinate
 import util.grid.Square
 import java.lang.NumberFormatException
 
-data class Claim(val id: String, val area: Square)
+data class Claim(val id: String, val area: Square) {
+    fun overlapsWith(other: Claim): Boolean {
+        if (id.equals(other.id)) {
+            return false
+        }
+        return this.area.overLapsWith(other.area)
+    }
+}
 
 
 fun parseClaim(claimInput: String): Claim {
