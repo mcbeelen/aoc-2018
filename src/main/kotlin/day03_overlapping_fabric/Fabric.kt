@@ -13,10 +13,19 @@ class Fabric(private val claims: List<Claim>) {
     }
 
 
-    fun hasMultipleClaimsFor(inchOfFabric: ScreenCoordinate) =
-            claims.map { it.area.contains(inchOfFabric) }
-                    .filter { it }
-                    .count() > 1
+    fun hasMultipleClaimsFor(inchOfFabric: ScreenCoordinate) : Boolean {
+
+        var firstFound = false
+        claims.forEach {
+            if (it.area.contains(inchOfFabric)) {
+                if (firstFound) return true
+                firstFound = true
+            }
+        }
+        return false
+
+    }
+
 
 
     fun countInchesOfOverlappingClaims(): Int {

@@ -13,7 +13,7 @@ class FabricClaimResolver {
             val claims = DAY_03_INPUT.trimIndent().lines().map { parseClaim(it) }
 
             val fabric = Fabric(claims)
-            // partOne(fabric)
+            partOne(fabric)
 
             partTwo(fabric)
 
