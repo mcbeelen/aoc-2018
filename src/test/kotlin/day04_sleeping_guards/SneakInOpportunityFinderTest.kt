@@ -16,6 +16,14 @@ class SneakInOpportunityFinderTest {
         assert.that(shifts, hasSize(equalTo(5)))
 
         assert.that(shifts[0].guard, equalTo(10))
+        val naps = shifts[0].naps
+        assert.that(naps, hasSize(equalTo(2)))
+        assert.that(naps[0].first, equalTo(5))
+        assert.that(naps[0].last, equalTo(25))
+
+        assert.that(naps[1].first, equalTo(30))
+        assert.that(naps[1].last, equalTo(55))
+
         assert.that(shifts[1].guard, equalTo(99))
         assert.that(shifts[2].guard, equalTo(10))
         assert.that(shifts[3].guard, equalTo(99))
