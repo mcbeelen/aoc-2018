@@ -46,8 +46,20 @@ class SneakInOpportunityFinder {
         }
     }
 
-    fun findBestMoment(records: String): Pair<Guard, Minute> {
-        records.trimIndent().lines().sorted()
+    fun findBestMoment(recordInput: String): Pair<Guard, Minute> {
+        recordInput.trimIndent().lines().sorted()
+                .map { fromInput(it) }
+
+        // Parse input into records
+
+        // Extract shifts from records
+
+        // Map shifts to Guard
+        // Sum number of minutes a sleep per shift
+        // Find Guard that sleeps the most
+
+        // Find minute that guard is likely to be asleep
+
 
         return Pair(0, 0)
 
