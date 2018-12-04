@@ -15,7 +15,7 @@ class SneakInOpportunityFinderTest {
 
         assert.that(shifts, hasSize(equalTo(5)))
 
-        assert.that(shifts[0].guard, equalTo(10))
+        assert.that(shifts[0].guard.value, equalTo(10))
         val naps = shifts[0].naps
         assert.that(naps, hasSize(equalTo(2)))
         assert.that(naps[0].first, equalTo(5))
@@ -24,10 +24,10 @@ class SneakInOpportunityFinderTest {
         assert.that(naps[1].first, equalTo(30))
         assert.that(naps[1].last, equalTo(54))
 
-        assert.that(shifts[1].guard, equalTo(99))
-        assert.that(shifts[2].guard, equalTo(10))
-        assert.that(shifts[3].guard, equalTo(99))
-        assert.that(shifts[4].guard, equalTo(99))
+        assert.that(shifts[1].guard.value, equalTo(99))
+        assert.that(shifts[2].guard.value, equalTo(10))
+        assert.that(shifts[3].guard.value, equalTo(99))
+        assert.that(shifts[4].guard.value, equalTo(99))
 
 
     }
@@ -37,8 +37,8 @@ class SneakInOpportunityFinderTest {
 
         val (guard, minute) = SneakInOpportunityFinder().findBestMoment(EXAMPLE_INPUT_DAY04)
 
-        assert.that(guard, equalTo(10))
-        assert.that(minute, equalTo(24))
+        assert.that(guard, equalTo(Guard(10)))
+        assert.that(minute, equalTo(Minute(24)))
 
     }
 
@@ -49,14 +49,14 @@ class SneakInOpportunityFinderTest {
         val (guard, minute) = SneakInOpportunityFinder().findGuardByMostFrequentlyAsleepMinute(EXAMPLE_INPUT_DAY04)
 
 
-        assert.that(guard, equalTo(99))
-        assert.that(minute, equalTo(45))
+        assert.that(guard, equalTo(Guard(99)))
+        assert.that(minute, equalTo(Minute(45)))
 
 
         val (actualGuard, actualMinute) = SneakInOpportunityFinder().findGuardByMostFrequentlyAsleepMinute(DAY04_INPUT)
 
 
-        assert.that(actualGuard * actualMinute, ! equalTo(123649))
+        assert.that(actualGuard.value * actualMinute.value, ! equalTo(123649))
 
 
     }

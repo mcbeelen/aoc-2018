@@ -12,6 +12,7 @@ class Shift(val guard: Guard) {
             .map { it.last - it.first }
             .sum()
 
-    fun wasSleepAt(minute: Minute) = naps.any { it.contains(minute) }
+    fun wasSleepAt(minute: Minute) = naps.any { it.contains(minute.value) }
 
 }
+

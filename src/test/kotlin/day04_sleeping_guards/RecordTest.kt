@@ -13,7 +13,7 @@ class RecordTest {
 
         assert.that(record.month, equalTo(11))
         assert.that(record.day, equalTo(2))
-        assert.that(record.minute, equalTo(50))
+        assert.that(record.minute, equalTo(Minute(50)))
         assert.that(record.action, equalTo("wakes up"))
     }
 }

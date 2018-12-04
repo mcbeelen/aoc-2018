@@ -21,7 +21,7 @@ data class Record(val month : Int, val day : Int, val minute: Minute, val action
 fun fromInput(input: String) : Record {
     val month = input.substring(6..7).toInt()
     val day = input.substring(9..10).toInt()
-    val minute = input.substring(15..16).toInt()
+    val minute = Minute(input.substring(15..16).toInt())
 
     return Record(month, day, minute, input.substringAfter("] "))
 }
