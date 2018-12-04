@@ -47,10 +47,8 @@ class SneakInOpportunityFinder {
     }
 
     fun findBestMoment(recordInput: String): Pair<Guard, Minute> {
-        recordInput.trimIndent().lines().sorted()
-                .map { fromInput(it) }
-
-        // Parse input into records
+        val records = parseInputIntoRecords(recordInput)
+        val shifts : List<Shift> = extractShifts(records)
 
         // Extract shifts from records
 
@@ -64,5 +62,31 @@ class SneakInOpportunityFinder {
         return Pair(0, 0)
 
     }
+
+    fun extractShifts(records: List<Record>): List<Shift> {
+
+        val shifts : MutableList<Shift> = ArrayList()
+
+        records.forEach {
+            if (it.action.startsWith("Guard")) {
+                val shift = Shift(extractGuard(it))
+                shifts.add(shift)
+
+            }
+        }
+
+
+
+        return shifts
+
+    }
+
+    /**
+     * //Action: `Guard #99 begins shift`
+     */
+    private fun extractGuard(record: Record): Guard = record.action.substringAfter("#").substringBefore(" ").toInt()
+
+    fun parseInputIntoRecords(recordInput: String) = recordInput.trimIndent().lines().sorted()
+            .map { fromInput(it) }
 
 }
