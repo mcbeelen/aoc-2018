@@ -66,20 +66,24 @@ class SneakInOpportunityFinder {
     fun extractShifts(records: List<Record>): List<Shift> {
 
         val shifts : MutableList<Shift> = ArrayList()
+        var napStartMinute : Minute = Int.MIN_VALUE
 
         records.forEach {
-            if (it.action.startsWith("Guard")) {
-                val shift = Shift(extractGuard(it))
-                shifts.add(shift)
-
+            when {
+                indicatesNewShift(it) -> shifts.add(Shift(extractGuard(it)))
+                indicatesStartNap(it) -> napStartMinute = it.minute
+                indicatesEndNap(it) -> shifts.last().addNap(Nap(napStartMinute, it.minute - 1))
             }
+
         }
-
-
 
         return shifts
 
     }
+
+    private fun indicatesNewShift(it: Record) = it.action.startsWith("Guard")
+    private fun indicatesStartNap(it: Record) = it.action.equals("falls asleep")
+    private fun indicatesEndNap(it: Record) = it.action.equals("wakes up")
 
     /**
      * //Action: `Guard #99 begins shift`
