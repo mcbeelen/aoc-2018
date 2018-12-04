@@ -35,7 +35,7 @@ class SneakInOpportunityFinder {
 
 
             measureTimeMillis {
-                val (guard, minute) = SneakInOpportunityFinder().findBestMoment(EXAMPLE_INPUT_DAY04)
+                val (guard, minute) = SneakInOpportunityFinder().findBestMoment(DAY04_INPUT)
 
                 println("The best opportunity is ${guard} @ ${minute} == ${guard * minute}")
 
@@ -48,24 +48,32 @@ class SneakInOpportunityFinder {
     }
 
     fun findBestMoment(recordInput: String): Pair<Guard, Minute> {
+
         val records = parseInputIntoRecords(recordInput)
         val shifts : List<Shift> = extractShifts(records)
 
+        // Map shifts to Guard
+        // Sum number of minutes a sleep per shift
+        // Find Guard that sleeps the most
         val guardWhichSleepsTheMost = shifts.groupBy { it.guard }
                 .mapValues { sumMinutesAsleep(it.value) }
                 .maxBy { it.value }?.key ?: MIN_VALUE
 
 
-        // Map shifts to Guard
-        // Sum number of minutes a sleep per shift
-        // Find Guard that sleeps the most
-
         // Find minute that guard is likely to be asleep
+        val shiftOfSleepyGuard = shifts.filter { it.guard == guardWhichSleepsTheMost }
+        val minute = (0..59)
+                .groupBy { it }
+                .mapValues { countNaps(shiftOfSleepyGuard, it.key) }
+                .maxBy { it.value }?.key ?: MIN_VALUE
 
-
-        return Pair(guardWhichSleepsTheMost, 0)
+        return Pair(guardWhichSleepsTheMost, minute)
 
     }
+
+    private fun countNaps(shifs: List<Shift>, minute: Minute) =
+        shifs.filter { it.wasSleepAt(minute) }.count()
+
 
     private fun sumMinutesAsleep(shifts: List<Shift>) = shifts.map { it.numberOfMinutesAsleep() }.sum()
 
