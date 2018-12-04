@@ -1,5 +1,6 @@
 package day04_sleeping_guards
 
+import kotlin.Int.Companion.MIN_VALUE
 import kotlin.system.measureTimeMillis
 
 
@@ -50,7 +51,10 @@ class SneakInOpportunityFinder {
         val records = parseInputIntoRecords(recordInput)
         val shifts : List<Shift> = extractShifts(records)
 
-        // Extract shifts from records
+        val guardWhichSleepsTheMost = shifts.groupBy { it.guard }
+                .mapValues { sumMinutesAsleep(it.value) }
+                .maxBy { it.value }?.key ?: MIN_VALUE
+
 
         // Map shifts to Guard
         // Sum number of minutes a sleep per shift
@@ -59,14 +63,16 @@ class SneakInOpportunityFinder {
         // Find minute that guard is likely to be asleep
 
 
-        return Pair(0, 0)
+        return Pair(guardWhichSleepsTheMost, 0)
 
     }
+
+    private fun sumMinutesAsleep(shifts: List<Shift>) = shifts.map { it.numberOfMinutesAsleep() }.sum()
 
     fun extractShifts(records: List<Record>): List<Shift> {
 
         val shifts : MutableList<Shift> = ArrayList()
-        var napStartMinute : Minute = Int.MIN_VALUE
+        var napStartMinute : Minute = MIN_VALUE
 
         records.forEach {
             when {

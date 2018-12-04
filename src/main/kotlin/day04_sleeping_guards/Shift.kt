@@ -4,8 +4,13 @@ typealias Nap = IntRange
 
 class Shift(val guard: Guard) {
 
-    val naps : MutableList<Nap> = ArrayList()
+    val naps: MutableList<Nap> = ArrayList()
 
     fun addNap(nap: Nap) = naps.add(nap)
+
+    fun numberOfMinutesAsleep() = naps
+            .map { it.last - it.first }
+            .sum()
+
 
 }
