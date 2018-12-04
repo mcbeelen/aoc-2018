@@ -61,17 +61,17 @@ class SneakInOpportunityFinder {
 
 
         // Find minute that guard is likely to be asleep
-        val shiftOfSleepyGuard = shifts.filter { it.guard == guardWhichSleepsTheMost }
+        val shiftsOfSleepyGuard = shifts.filter { it.guard == guardWhichSleepsTheMost }
         val minute = (0..59)
                 .groupBy { it }
-                .mapValues { countNaps(shiftOfSleepyGuard, it.key) }
+                .mapValues { countShiftsWhileAsleepAtMinute(shiftsOfSleepyGuard, it.key) }
                 .maxBy { it.value }?.key ?: MIN_VALUE
 
         return Pair(guardWhichSleepsTheMost, minute)
 
     }
 
-    private fun countNaps(shifs: List<Shift>, minute: Minute) =
+    private fun countShiftsWhileAsleepAtMinute(shifs: List<Shift>, minute: Minute) =
         shifs.filter { it.wasSleepAt(minute) }.count()
 
 
