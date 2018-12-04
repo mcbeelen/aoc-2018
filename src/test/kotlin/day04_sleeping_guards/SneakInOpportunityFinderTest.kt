@@ -33,12 +33,31 @@ class SneakInOpportunityFinderTest {
     }
 
     @Test
-    fun itShouldFindGuard10atMinute24AsTheBestOpportunity() {
+    fun itShouldFindGuard10atMinute24AsTheBestOpportunityByStrategyOne() {
 
         val (guard, minute) = SneakInOpportunityFinder().findBestMoment(EXAMPLE_INPUT_DAY04)
 
         assert.that(guard, equalTo(10))
         assert.that(minute, equalTo(24))
+
+    }
+
+
+    @Test
+    fun itShouldFindGuard99atMinute45AsTheBestOpportunityByStrategyTwo() {
+
+        val (guard, minute) = SneakInOpportunityFinder().findGuardByMostFrequentlyAsleepMinute(EXAMPLE_INPUT_DAY04)
+
+
+        assert.that(guard, equalTo(99))
+        assert.that(minute, equalTo(45))
+
+
+        val (actualGuard, actualMinute) = SneakInOpportunityFinder().findGuardByMostFrequentlyAsleepMinute(DAY04_INPUT)
+
+
+        assert.that(actualGuard * actualMinute, ! equalTo(123649))
+
 
     }
 }

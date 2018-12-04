@@ -1,5 +1,6 @@
 package day04_sleeping_guards
 
+import java.lang.IllegalStateException
 import kotlin.Int.Companion.MIN_VALUE
 import kotlin.system.measureTimeMillis
 
@@ -34,7 +35,7 @@ class SneakInOpportunityFinder {
         fun main(args: Array<String>) {
 
 
-            val measureTimeMillis = measureTimeMillis {
+            var measureTimeMillis = measureTimeMillis {
                 val (guard, minute) = SneakInOpportunityFinder().findBestMoment(DAY04_INPUT)
 
                 println("The best opportunity is ${guard} @ ${minute} == ${guard * minute}")
@@ -44,31 +45,80 @@ class SneakInOpportunityFinder {
             println("Solved the problem in ${measureTimeMillis}ms.")
 
 
+
+            measureTimeMillis = measureTimeMillis {
+                val (guard, minute) = SneakInOpportunityFinder().findGuardByMostFrequentlyAsleepMinute(DAY04_INPUT)
+
+                println("The best opportunity by strategy two is ${guard} @ ${minute} == ${guard * minute}")
+
+            }
+
+            println("Solved the problem in ${measureTimeMillis}ms.")
+
+
         }
     }
 
-    fun findBestMoment(recordInput: String): Pair<Guard, Minute> {
+    fun findGuardByMostFrequentlyAsleepMinute(recordInput: String): Pair<Guard, Minute> {
+        val shiftsPerGuard = parseAndMapShiftsToGuards(recordInput)
 
+        val minuteWithFrequencePerGuard = shiftsPerGuard
+                .mapValues { findMinuteWithMostNaps(it.value) }
+                .maxBy { it.component2().second }
+
+
+
+
+
+        val guard = minuteWithFrequencePerGuard?.component1() ?: MIN_VALUE
+        val minute = minuteWithFrequencePerGuard?.component2()?.first ?: MIN_VALUE
+        return Pair(guard, minute)
+
+
+    }
+
+    private fun parseAndMapShiftsToGuards(recordInput: String) : Map<Guard, List<Shift>> {
         val records = parseInputIntoRecords(recordInput)
-        val shifts : List<Shift> = extractShifts(records)
+        val shifts: List<Shift> = extractShifts(records)
 
         // Map shifts to Guard
         // Sum number of minutes a sleep per shift
         // Find Guard that sleeps the most
-        val guardWhichSleepsTheMost = shifts.groupBy { it.guard }
+        return shifts.groupBy { it.guard }
+    }
+
+
+    fun findBestMoment(recordInput: String): Pair<Guard, Minute> {
+
+        val shiftsPerGuard = parseAndMapShiftsToGuards(recordInput)
+
+        // Map shifts to Guard
+        // Sum number of minutes a sleep per shift
+        // Find Guard that sleeps the most
+        val guardWhichSleepsTheMost = shiftsPerGuard
                 .mapValues { sumMinutesAsleep(it.value) }
                 .maxBy { it.value }?.key ?: MIN_VALUE
 
 
         // Find minute that guard is likely to be asleep
-        val shiftsOfSleepyGuard = shifts.filter { it.guard == guardWhichSleepsTheMost }
-        val minute = (0..59)
+        val shiftsOfSleepyGuard = shiftsPerGuard[guardWhichSleepsTheMost] ?: throw IllegalArgumentException()
+        val minute = findMinuteWithMostNaps(shiftsOfSleepyGuard)
+
+        return Pair(guardWhichSleepsTheMost, minute.first)
+
+    }
+
+    private fun findMinuteWithMostNaps(shiftsOfSleepyGuard: List<Shift>, guard: Guard = MIN_VALUE): Pair<Minute, Int> {
+        val maxBy = (0..59)
                 .groupBy { it }
                 .mapValues { countShiftsWhileAsleepAtMinute(shiftsOfSleepyGuard, it.key) }
-                .maxBy { it.value }?.key ?: MIN_VALUE
+                .maxBy { it.value }
 
-        return Pair(guardWhichSleepsTheMost, minute)
-
+        if (maxBy != null) {
+            return Pair(maxBy.key, countShiftsWhileAsleepAtMinute(shiftsOfSleepyGuard, maxBy.key))
+        } else {
+            throw IllegalStateException("No minute with max number of naps")
+        }
     }
 
     private fun countShiftsWhileAsleepAtMinute(shifs: List<Shift>, minute: Minute) =
@@ -106,5 +156,6 @@ class SneakInOpportunityFinder {
 
     fun parseInputIntoRecords(recordInput: String) = recordInput.trimIndent().lines().sorted()
             .map { fromInput(it) }
+
 
 }
