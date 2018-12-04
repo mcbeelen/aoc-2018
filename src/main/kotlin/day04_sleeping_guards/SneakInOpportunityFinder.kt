@@ -34,14 +34,14 @@ class SneakInOpportunityFinder {
         fun main(args: Array<String>) {
 
 
-            measureTimeMillis {
+            val measureTimeMillis = measureTimeMillis {
                 val (guard, minute) = SneakInOpportunityFinder().findBestMoment(DAY04_INPUT)
 
                 println("The best opportunity is ${guard} @ ${minute} == ${guard * minute}")
 
             }
 
-
+            println("Solved the problem in ${measureTimeMillis}ms.")
 
 
         }
