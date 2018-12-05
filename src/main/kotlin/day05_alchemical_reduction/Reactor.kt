@@ -18,12 +18,12 @@ inline class Unit(val char: Char) {
 fun react(polymer: String): String {
 
     val units = polymer.map { Unit(it) }
-
     return applyReaction(units)
 
 }
 
-private fun applyReaction(units: List<Unit>): String {
+
+private tailrec fun applyReaction(units: List<Unit>): String {
 
     val remainingUnits = doReact(units)
 
@@ -81,7 +81,7 @@ class Reactor {
             println("Solved part ONE iteration in ${stopwatch.elapsed(TimeUnit.MILLISECONDS)}ms.")
 
 
-            val reducedPolymer = reduce(remainingPolymer)
+            val reducedPolymer = reduce(DAY05_INPUT)
             println("Reduced polymer has length: ${reducedPolymer.second.length}")
             println("Solved part Two  in ${stopwatch.elapsed(TimeUnit.MILLISECONDS)}ms.")
 
