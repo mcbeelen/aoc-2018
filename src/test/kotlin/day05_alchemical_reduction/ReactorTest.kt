@@ -23,18 +23,18 @@ class ReactorTest {
 
     @Test
     fun itShouldSolveTheExample() {
-        assertThat(Reactor().react(EXAMPLE_INPUT), equalTo("dabCBAcaDA"))
-        assertThat(Reactor().react("lDdhGghHHLAXxaKkFfDdsSKkeyYEwWDdlBbLIisGcCvOVQqvo"), equalTo("sGv"))
+        assertThat(react(EXAMPLE_INPUT), equalTo("dabCBAcaDA"))
+        assertThat(react("lDdhGghHHLAXxaKkFfDdsSKkeyYEwWDdlBbLIisGcCvOVQqvo"), equalTo("sGv"))
     }
 
     @Test
     fun itShouldProperlyRemoveChars() {
-        assertThat(Reactor().removeUnitsOfSameType(EXAMPLE_INPUT, 'a'), equalTo("dbcCCBcCcD"))
+        assertThat(removeUnitsOfSameType(EXAMPLE_INPUT, 'a'), equalTo("dbcCCBcCcD"))
     }
 
     @Test
     fun itShouldReduceToFourWithoutOneType() {
-        val actual = Reactor().reduce(EXAMPLE_INPUT)
+        val actual = reduce(EXAMPLE_INPUT)
         println(actual.first)
         assertThat(actual.second, equalTo("daDA"))
     }
