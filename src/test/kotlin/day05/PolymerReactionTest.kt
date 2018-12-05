@@ -12,9 +12,11 @@ class PolymerReactionTest {
 
     @Test
     fun itShouldSolveTheExample() {
-
-        val reactor = Reactor()
-        val remainingPolymer = reactor.react(EXAMPLE_INPUT)
-        assertThat(remainingPolymer, equalTo("dabCBAcaDA"))
+        assertThat(Reactor().react(EXAMPLE_INPUT), equalTo("dabCBAcaDA"))
+        assertThat(Reactor().react("lDdhGghHHLAXxaKkFfDdsSKkeyYEwWDdlBbLIisGcCvOVQqvo"), equalTo("sGv"))
     }
+
+
+
+
 }
