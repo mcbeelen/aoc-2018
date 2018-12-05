@@ -1,6 +1,5 @@
 package day05
 
-import kotlin.coroutines.experimental.suspendCoroutine
 import kotlin.system.measureTimeMillis
 
 
@@ -21,19 +20,19 @@ class Reactor {
 
         val units = polymer.map { Unit(it) }
 
-        return this.react(units)
+        return this.applyReaction(units)
 
 
     }
 
-    private fun react(units: List<Unit>): String {
+    private fun applyReaction(units: List<Unit>): String {
 
         val remainingUnits = doReact(units)
 
         if (remainingUnits == units) {
             return remainingUnits.map { it.char }.joinToString("")
         }
-        return react(remainingUnits)
+        return applyReaction(remainingUnits)
 
     }
 
@@ -58,6 +57,17 @@ class Reactor {
 
     }
 
+    fun reduce(polymer: String): Pair<Char, String> {
+
+        val minBy = ('a'..'z')
+                .map { it to removeUnitsOfSameType(polymer, it) }.toMap()
+                .mapValues { react(it.value) }
+                .minBy { it.value.length }
+        return minBy?.toPair() ?: Pair('_', "")
+
+    }
+
+    fun removeUnitsOfSameType(polymer: String, candidate: Char) : String = polymer.filterNot { it.equals(candidate, true) }
 
     companion object {
         @JvmStatic
