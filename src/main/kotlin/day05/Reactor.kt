@@ -1,5 +1,7 @@
 package day05
 
+import com.google.common.base.Stopwatch
+import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
 
@@ -67,23 +69,27 @@ class Reactor {
 
     }
 
-    fun removeUnitsOfSameType(polymer: String, candidate: Char) : String = polymer.filterNot { it.equals(candidate, true) }
+    fun removeUnitsOfSameType(polymer: String, candidate: Char): String = polymer.filterNot { it.equals(candidate, true) }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
 
-            val millis = measureTimeMillis {
-                val reactor = Reactor()
-                val remainingPolymer = reactor.react(DAY05_INPUT)
+            val stopwatch = Stopwatch.createStarted()
+            val reactor = Reactor()
+            val remainingPolymer = reactor.react(DAY05_INPUT)
 
-                println("Remaining polymer '${remainingPolymer}' has lenght: ${remainingPolymer.length}")
+            println("Remaining polymer has length: ${remainingPolymer.length}")
+            println("Solved part ONE  in ${stopwatch.elapsed(TimeUnit.MILLISECONDS)}ms.")
+
+            stopwatch.reset().start()
+            val reducedPolymer = reactor.reduce(remainingPolymer)
+
+            println("Reduced polymer has length: ${reducedPolymer.second.length}")
 
 
-            }
 
-            println("Solved it in ${millis}ms.")
-
+            println("Solved part Two  in ${stopwatch.elapsed(TimeUnit.MILLISECONDS)}ms.")
 
 
         }
