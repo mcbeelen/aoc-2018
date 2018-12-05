@@ -1,8 +1,7 @@
-package day05
+package day05_alchemical_reduction
 
 import com.google.common.base.Stopwatch
 import java.util.concurrent.TimeUnit
-import kotlin.system.measureTimeMillis
 
 
 inline class Unit(val char: Char) {

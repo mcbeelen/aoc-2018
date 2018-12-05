@@ -1,4 +1,4 @@
-package day05
+package day05_alchemical_reduction
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
