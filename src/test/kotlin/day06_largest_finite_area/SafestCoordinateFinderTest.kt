@@ -2,14 +2,21 @@ package day06_largest_finite_area
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.lessThan
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import util.grid.ScreenCoordinate
 import util.grid.Square
 import util.grid.buildSquareContainingAll
-import util.grid.parseXcommaY
 
 
 class SafestCoordinateFinderTest {
+
+
+    @Test
+    fun actualProblem() {
+        assertThat(findSafestAreaBetween(DAY06_INPUT), lessThan(4439))
+    }
 
 
     @Test
@@ -43,43 +50,45 @@ class SafestCoordinateFinderTest {
     @Test
     fun itShouldCountAreas() {
 
+        val B = ScreenCoordinate(1, 6)
+        val D = ScreenCoordinate(3, 4)
+        val E = ScreenCoordinate(5, 5)
 
         val targetCoordinates = parseInputIntoTargetCoordinates(DAY06_EXAMPLE_INPUT)
         val square = buildSquareContainingAll(targetCoordinates)
-        val targetCoordinatesWithClosestPoints = square.allPoints().groupBy { findClosestTarget(it, targetCoordinates) }
 
-        assertThat(targetCoordinatesWithClosestPoints[ScreenCoordinate(3, 4)]!!.size, equalTo(9))
-        assertThat(targetCoordinatesWithClosestPoints[ScreenCoordinate(5, 5)]!!.size, equalTo(17))
+        val targetAreas = assignPointsToClosestTarget(square, targetCoordinates)
+        assertThat(targetAreas.size, equalTo(targetCoordinates.size))
+
+        targetAreas
+                .single { area -> area.targetCoordinate == B }
+                .let { assertThat(it.pointClosestToThisTarget.size, equalTo(9)) }
 
 
+        targetAreas
+                .single { area -> area.targetCoordinate == D }
+                .let { assertThat(it.pointClosestToThisTarget.size, equalTo(9)) }
+
+
+        targetAreas
+                .single { area -> area.targetCoordinate == E }
+                .let { assertThat(it.pointClosestToThisTarget.size, equalTo(17)) }
+
+        assertTrue("3x6 equals to B and E", targetAreas.none { it.pointClosestToThisTarget.contains(ScreenCoordinate(3, 6)) })
+        assertTrue("5,1 equal distance to A and C", targetAreas.none { it.pointClosestToThisTarget.contains(ScreenCoordinate(5, 1)) })
+
+
+        val finiteAreas = targetAreas
+                .filter { isFiniteArea(it.pointClosestToThisTarget, square) }
+
+        assertThat(finiteAreas.count(), equalTo(2))
+
+        assertThat(finiteAreas.maxBy { it.pointClosestToThisTarget.size }!!.targetCoordinate, equalTo(E))
 
     }
 
-    private fun findSafestAreaBetween(coordinatesInput: String): Int {
 
-        val targetCoordinates = parseInputIntoTargetCoordinates(coordinatesInput)
-        val square = buildSquareContainingAll(targetCoordinates)
-        val targetCoordinatesWithClosestPoints = square.allPoints().groupBy { findClosestTarget(it, targetCoordinates) }
-
-
-
-
-        // - Determine complete area, which needs to be inspects
-        // - For each point in the area: find closest TargetCoordinate
-        // - Map area into TargetCoordinate, countSize
-        // - MaxBy areaSize
-
-        return 0
-    }
-
-    private fun findClosestTarget(point: ScreenCoordinate, targetCoordinates: List<ScreenCoordinate>) = targetCoordinates
-                .minBy { point.distanceTo(it)  }
-
-
-    private fun parseInputIntoTargetCoordinates(coordinatesInput: String) = coordinatesInput.trimIndent().lines()
-            .map { parseXcommaY(it) }
 }
-
 
 
 const val DAY06_EXAMPLE_INPUT = """
