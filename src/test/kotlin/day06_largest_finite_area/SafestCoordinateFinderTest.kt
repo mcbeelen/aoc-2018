@@ -4,6 +4,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 import util.grid.ScreenCoordinate
+import util.grid.Square
 import util.grid.parseXcommaY
 
 
@@ -23,9 +24,26 @@ class SafestCoordinateFinderTest {
         assertThat(targetCoordinates.last(), equalTo(ScreenCoordinate(8, 9)))
     }
 
+
+    @Test
+    fun itShouldCreateSquareFromOneCommaOneWithDimensions8x9() {
+
+
+        val exampleCoordinates = listOf(ScreenCoordinate(1, 1), ScreenCoordinate(8, 9), ScreenCoordinate(3, 3))
+
+        buildSquareContainingAll(exampleCoordinates).let {
+            assertThat("Left", it.left, equalTo(1))
+            assertThat("Top", it.top, equalTo(1))
+            assertThat("Bottom", it.bottom, equalTo(1))
+            assertThat("Right", it.right, equalTo(9))
+        }
+    }
+
     private fun findSafestAreaBetween(coordinatesInput: String): Int {
 
         val targetCoordinates = parseInputIntoTargetCoordinates(coordinatesInput)
+        val square = buildSquareContainingAll(targetCoordinates)
+
 
         // TODO:
         // - Determine complete area, which needs to be inspects
@@ -34,6 +52,10 @@ class SafestCoordinateFinderTest {
         // - MaxBy areaSize
 
         return 0
+    }
+
+    private fun buildSquareContainingAll(coordinates: List<ScreenCoordinate>): Square {
+        return Square(coordinates.first(), 1, 1)
     }
 
     private fun parseInputIntoTargetCoordinates(coordinatesInput: String) = coordinatesInput.trimIndent().lines()

@@ -2,8 +2,8 @@ package util.grid
 
 data class Square(val origin: ScreenCoordinate, val width: Int, val height: Int) {
 
-    private val left = origin.left
-    private val top = origin.top
+    val left = origin.left
+    val top = origin.top
     val right: Int = left + width - 1
     val bottom: Int = top + height - 1
 
