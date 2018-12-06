@@ -130,4 +130,20 @@ class SquareTest {
             assertTrue(it.contains(ScreenCoordinate(3, 3)))
         }
     }
+
+    @Test
+    fun testIsOnBorder() {
+        val square = Square(ScreenCoordinate(4, 4), 3, 3)
+        square.let {
+            assertTrue(it.isOnBorder(ScreenCoordinate(4, 4)))
+            assertTrue(it.isOnBorder(ScreenCoordinate(4, 5)))
+            assertTrue(it.isOnBorder(ScreenCoordinate(5, 4)))
+            assertTrue(it.isOnBorder(ScreenCoordinate(5, 6)))
+            assertTrue(it.isOnBorder(ScreenCoordinate(6, 6)))
+            assertTrue(it.isOnBorder(ScreenCoordinate(6, 5)))
+
+            assertFalse(it.isOnBorder(ScreenCoordinate(5, 5)))
+
+        }
+    }
 }

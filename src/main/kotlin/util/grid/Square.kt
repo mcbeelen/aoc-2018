@@ -37,6 +37,8 @@ data class Square(val origin: ScreenCoordinate, val width: Int, val height: Int)
             }
         }
 
+    fun isOnBorder(point: ScreenCoordinate): Boolean = point.left == left || point.left == right || point.top == top || point.top == bottom
+
 }
 
 fun buildSquareContainingAll(coordinates: List<ScreenCoordinate>): Square {
