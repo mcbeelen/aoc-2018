@@ -16,4 +16,9 @@ class ScreenCoordinateTest {
         assertThat(first.compareTo(second), equalTo(0))
 
     }
+
+    @Test
+    fun `parseXcommaYInput()`() {
+        assertThat(parseXcommaY("8, 3"), equalTo(ScreenCoordinate(8, 3)))
+    }
 }

@@ -11,3 +11,11 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
 
 
 }
+
+
+fun parseXcommaY(input: String) : ScreenCoordinate {
+    val split = input.split(",")
+    val left = split[0].trim().toInt()
+    val top = split[1].trim().toInt()
+    return ScreenCoordinate(left, top)
+}
