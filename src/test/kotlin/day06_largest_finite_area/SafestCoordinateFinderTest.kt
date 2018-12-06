@@ -3,6 +3,7 @@ package day06_largest_finite_area
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
+import util.grid.parseXcommaY
 
 
 class SafestCoordinateFinderTest {
@@ -14,6 +15,14 @@ class SafestCoordinateFinderTest {
     }
 
     private fun findSafestAreaBetween(coordinatesInput: String): Int {
+
+        // TODO:
+        // - Parse input into coordinates
+        // - Determine complete area, which needs to be inspects
+        // - For each point in the area: find closest TargetCoordinate
+        // - Map area into TargetCoordinate, countSize
+        // - MaxBy areaSize
+
         return 0
     }
 }
