@@ -36,6 +36,25 @@ fun findSafestAreaBetween(coordinatesInput: String): Int {
     return largestTargetArea!!.pointClosestToThisTarget.size
 }
 
+
+fun findSizeOfSafeRegion(coordinatesInput: String, maxSumDistance: Int): Int {
+    val targetCoordinates = parseInputIntoTargetCoordinates(coordinatesInput)
+    val square = buildSquareContainingAll(targetCoordinates)
+
+    return square.allPoints()
+            .map { calculateSumDistance(it, targetCoordinates) }
+            .filter { it < maxSumDistance }
+            .count()
+
+}
+
+fun calculateSumDistance(point: ScreenCoordinate, targetCoordinates: List<ScreenCoordinate>) =
+        targetCoordinates
+                .map {
+                    it.distanceTo(point)
+                }.sum()
+
+
 internal fun assignPointsToClosestTarget(square: Square, targetCoordinates: List<ScreenCoordinate>): List<TargetArea> {
 
     val pointToTargetWithDistance: Table<ScreenCoordinate, ScreenCoordinate, Int> = HashBasedTable.create()
@@ -98,12 +117,21 @@ class SafestCoordinateFinder {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val time = measureTimeMillis {
-                val sizeOfLargestArea = findSafestAreaBetween(DAY06_INPUT)
-                println("The size of the largest finite area is: ${sizeOfLargestArea}")
-            }
 
-            println("Solved it in ${time}ms.")
+//            val time = measureTimeMillis {
+//                val sizeOfLargestArea = findSafestAreaBetween(DAY06_INPUT)
+//                println("The size of the largest finite area is: ${sizeOfLargestArea}")
+//            }
+//
+//            println("Solved part ONE it in ${time}ms.")
+//
+
+
+            val partTwoTime = measureTimeMillis {
+                val sizeOfSafeRegion = findSizeOfSafeRegion(DAY06_INPUT, 10_000)
+                println("The size of the area with 10_000 of all targets is: ${sizeOfSafeRegion}")
+            }
+            println("Solved part TWO it in ${partTwoTime}ms.")
         }
     }
 }

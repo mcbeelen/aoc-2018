@@ -24,6 +24,13 @@ class SafestCoordinateFinderTest {
         assertThat(findSafestAreaBetween(DAY06_EXAMPLE_INPUT), equalTo(17))
     }
 
+
+    @Test
+    fun itShouldFindSafeAreaOf16PointsWithin32OfAllTargets() {
+        assertThat(findSizeOfSafeRegion(DAY06_EXAMPLE_INPUT, 32), equalTo(16))
+    }
+
+
     @Test
     fun itShouldParseTheExampleInput() {
         val targetCoordinates = parseInputIntoTargetCoordinates(DAY06_EXAMPLE_INPUT)
