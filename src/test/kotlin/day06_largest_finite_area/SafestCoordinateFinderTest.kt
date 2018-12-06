@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 import util.grid.ScreenCoordinate
 import util.grid.Square
+import util.grid.buildSquareContainingAll
 import util.grid.parseXcommaY
 
 
@@ -34,8 +35,8 @@ class SafestCoordinateFinderTest {
         buildSquareContainingAll(exampleCoordinates).let {
             assertThat("Left", it.left, equalTo(1))
             assertThat("Top", it.top, equalTo(1))
-            assertThat("Bottom", it.bottom, equalTo(1))
-            assertThat("Right", it.right, equalTo(9))
+            assertThat("Right", it.right, equalTo(8))
+            assertThat("Bottom", it.bottom, equalTo(9))
         }
     }
 
@@ -45,7 +46,7 @@ class SafestCoordinateFinderTest {
         val square = buildSquareContainingAll(targetCoordinates)
 
 
-        // TODO:
+
         // - Determine complete area, which needs to be inspects
         // - For each point in the area: find closest TargetCoordinate
         // - Map area into TargetCoordinate, countSize
@@ -54,9 +55,7 @@ class SafestCoordinateFinderTest {
         return 0
     }
 
-    private fun buildSquareContainingAll(coordinates: List<ScreenCoordinate>): Square {
-        return Square(coordinates.first(), 1, 1)
-    }
+
 
     private fun parseInputIntoTargetCoordinates(coordinatesInput: String) = coordinatesInput.trimIndent().lines()
             .map { parseXcommaY(it) }

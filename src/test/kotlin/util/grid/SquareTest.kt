@@ -1,5 +1,7 @@
 package util.grid
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -88,4 +90,44 @@ class SquareTest {
 
     }
 
+
+    @Test
+    fun itShouldExpandToTopLeft() {
+        val coordinates = listOf(ScreenCoordinate(5, 6), ScreenCoordinate(1, 1))
+
+        buildSquareContainingAll(coordinates).let {
+            assertThat("Left", it.left, equalTo(1))
+            assertThat("Top", it.top, equalTo(1))
+            assertThat("Bottom", it.bottom, equalTo(6))
+            assertThat("Right", it.right, equalTo(5))
+        }
+
+    }
+
+
+    @Test
+    fun buildSmallestPossibleSquareContainingAllCoordinates() {
+        val coordinates = listOf(ScreenCoordinate(5, 6), ScreenCoordinate(1, 1), ScreenCoordinate(8, 8))
+
+        buildSquareContainingAll(coordinates).let {
+            assertThat("Left", it.left, equalTo(1))
+            assertThat("Top", it.top, equalTo(1))
+            assertThat("Bottom", it.bottom, equalTo(8))
+            assertThat("Right", it.right, equalTo(8))
+        }
+
+    }
+
+
+    @Test
+    fun allPoints() {
+        val square = Square(ScreenCoordinate(2, 2), 2, 2)
+        square.allPoints().let {
+            assertThat(it.count(), equalTo(4))
+            assertTrue(it.contains(ScreenCoordinate(2, 2)))
+            assertTrue(it.contains(ScreenCoordinate(2, 3)))
+            assertTrue(it.contains(ScreenCoordinate(3, 2)))
+            assertTrue(it.contains(ScreenCoordinate(3, 3)))
+        }
+    }
 }

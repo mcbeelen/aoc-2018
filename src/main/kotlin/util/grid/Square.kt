@@ -1,5 +1,7 @@
 package util.grid
 
+import kotlin.math.min
+
 data class Square(val origin: ScreenCoordinate, val width: Int, val height: Int) {
 
     val left = origin.left
@@ -17,7 +19,29 @@ data class Square(val origin: ScreenCoordinate, val width: Int, val height: Int)
 
     }
 
+    fun expandToInclude(coordinate: ScreenCoordinate): Square {
+        val newLeft = min(coordinate.left, left)
+        val newTop = min(coordinate.top, top)
+        return copy(origin = ScreenCoordinate(newLeft, newTop),
+                width = maxOf(width, coordinate.left - newLeft + 1, right - newLeft + 1),
+                height = maxOf(height, coordinate.top - newTop + 1, bottom - newTop + 1))
 
 
+    }
 
+    fun allPoints() : Sequence<ScreenCoordinate> = sequence {
+            for (x in left .. right) {
+                for (y in top..bottom) {
+                    yield(ScreenCoordinate(x, y))
+                }
+            }
+        }
+
+}
+
+fun buildSquareContainingAll(coordinates: List<ScreenCoordinate>): Square {
+    var square = Square(coordinates.first(), 1, 1)
+    coordinates.drop(1)
+            .forEach { square = square.expandToInclude(it) }
+    return square
 }
