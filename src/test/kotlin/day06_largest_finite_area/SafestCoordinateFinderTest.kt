@@ -40,10 +40,27 @@ class SafestCoordinateFinderTest {
         }
     }
 
+    @Test
+    fun itShouldCountAreas() {
+
+
+        val targetCoordinates = parseInputIntoTargetCoordinates(DAY06_EXAMPLE_INPUT)
+        val square = buildSquareContainingAll(targetCoordinates)
+        val targetCoordinatesWithClosestPoints = square.allPoints().groupBy { findClosestTarget(it, targetCoordinates) }
+
+        assertThat(targetCoordinatesWithClosestPoints[ScreenCoordinate(3, 4)]!!.size, equalTo(9))
+        assertThat(targetCoordinatesWithClosestPoints[ScreenCoordinate(5, 5)]!!.size, equalTo(17))
+
+
+
+    }
+
     private fun findSafestAreaBetween(coordinatesInput: String): Int {
 
         val targetCoordinates = parseInputIntoTargetCoordinates(coordinatesInput)
         val square = buildSquareContainingAll(targetCoordinates)
+        val targetCoordinatesWithClosestPoints = square.allPoints().groupBy { findClosestTarget(it, targetCoordinates) }
+
 
 
 
@@ -55,6 +72,8 @@ class SafestCoordinateFinderTest {
         return 0
     }
 
+    private fun findClosestTarget(point: ScreenCoordinate, targetCoordinates: List<ScreenCoordinate>) = targetCoordinates
+                .minBy { point.distanceTo(it)  }
 
 
     private fun parseInputIntoTargetCoordinates(coordinatesInput: String) = coordinatesInput.trimIndent().lines()
