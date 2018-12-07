@@ -44,6 +44,11 @@ fun minimumTimeNeededToAssemble(assemblyInstructions: String, numberOfWorkers: I
                     }
                 }
 
+        currentAssignmentMap.filter { it.value is Idle }
+                .forEach{
+                    schedule.registerAssignment(it.key, second, it.value)
+                }
+
         printStatus(second, schedule, done)
 
         second = second.next()
@@ -68,6 +73,12 @@ fun minimumTimeNeededToAssemble(assemblyInstructions: String, numberOfWorkers: I
             }
         }
     }
+
+    printStatus(second, schedule, done)
+
+    println()
+
+    schedule.printIt(second)
 
     return second.timestamp
 
@@ -128,6 +139,8 @@ private fun extractStepToTaskMap(assembleInstructions: List<AssemblyInstruction>
         }
     }
 
+
+
     return stepToTaskMap
 }
 
@@ -143,6 +156,9 @@ class Schedule(private val numberOfWorkers: Int) {
         }
 
     }
+
+    fun registerAssignment(worker: Worker, second: Second, activity: Activity) = schedule.put(worker, second, activity)
+
 
     fun finishedWork(worker: Worker, second: Second): Boolean = !schedule.contains(worker, second)
 
@@ -160,6 +176,28 @@ class Schedule(private val numberOfWorkers: Int) {
         }
         return report.toString()
 
+    }
+
+    fun printIt(second: Second) {
+        print("time: ")
+        for (s in 0 .. second.timestamp) {
+            if (s.rem(50) == 0) print('|')
+            print(s.rem(10))
+
+        }
+        println()
+
+        for (w in 1 .. numberOfWorkers) {
+            print("${w} :   ")
+            val worker = Worker(w)
+            for (s in 0 .. second.timestamp) {
+                val timestamp = Second(s)
+                if (s.rem(50) == 0) print('|')
+                print(schedule.get(worker, timestamp)?.describe() ?: '.')
+
+            }
+            println()
+        }
     }
 
 
@@ -183,6 +221,7 @@ class Work(val step: Step) : Activity {
 }
 
 inline class Worker(val name: Int)
+
 inline class Second(val timestamp: Int) {
     fun next(): Second = Second(timestamp + 1)
 }
