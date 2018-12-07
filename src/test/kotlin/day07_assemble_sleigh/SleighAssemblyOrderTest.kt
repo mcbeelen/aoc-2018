@@ -1,8 +1,7 @@
-package da007
+package day07_assemble_sleigh
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import day07_assemble_sleigh.*
 import org.junit.Test
 
 
