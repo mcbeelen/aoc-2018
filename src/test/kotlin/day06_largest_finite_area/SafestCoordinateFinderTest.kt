@@ -6,7 +6,6 @@ import com.natpryce.hamkrest.lessThan
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import util.grid.ScreenCoordinate
-import util.grid.Square
 import util.grid.buildSquareContainingAll
 
 
@@ -15,13 +14,13 @@ class SafestCoordinateFinderTest {
 
     @Test
     fun actualProblem() {
-        assertThat(findSafestAreaBetween(DAY06_INPUT), lessThan(4439))
+        assertThat(findSizeOfLargestArea(DAY06_INPUT), lessThan(4439))
     }
 
 
     @Test
     fun itShouldFindTheSafestAreaInTheExampleIs17() {
-        assertThat(findSafestAreaBetween(DAY06_EXAMPLE_INPUT), equalTo(17))
+        assertThat(findSizeOfLargestArea(DAY06_EXAMPLE_INPUT), equalTo(17))
     }
 
 

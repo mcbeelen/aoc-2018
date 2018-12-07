@@ -11,29 +11,17 @@ import util.grid.parseXcommaY
 import kotlin.system.measureTimeMillis
 
 
-fun findSafestAreaBetween(coordinatesInput: String): Int {
+fun findSizeOfLargestArea(coordinatesInput: String): Int {
 
     val targetCoordinates = parseInputIntoTargetCoordinates(coordinatesInput)
     val square = buildSquareContainingAll(targetCoordinates)
-
-
     val targetCoordinatesWithClosestPoints = assignPointsToClosestTarget(square, targetCoordinates)
 
+    val finiteAreas = targetCoordinatesWithClosestPoints.filter { isFiniteArea(it.pointClosestToThisTarget, square) }
 
-    val finiteAreas = targetCoordinatesWithClosestPoints
-            .filter { isFiniteArea(it.pointClosestToThisTarget, square) }
+    val largestFiniteTargetArea = finiteAreas.maxBy { it!!.pointClosestToThisTarget.size }
 
-
-    val largestTargetArea = finiteAreas.maxBy { it!!.pointClosestToThisTarget.size }
-
-    // - Determine complete area, which needs to be inspects
-    // - For each point in the area: find closest TargetCoordinate
-    // - Map area into TargetCoordinate, countSize
-    // - MaxBy areaSize
-
-    println(largestTargetArea!!.targetCoordinate)
-
-    return largestTargetArea!!.pointClosestToThisTarget.size
+    return largestFiniteTargetArea!!.pointClosestToThisTarget.size
 }
 
 
@@ -85,8 +73,6 @@ internal fun assignPointsToClosestTarget(square: Square, targetCoordinates: List
 
                 if (targetsAtMinimalDistance.size == 1) {
                     targetAreas.put(targetsAtMinimalDistance.first().first, point)
-                } else {
-                    println("Skipping ${point}, due to equal distance")
                 }
             }
 
@@ -118,13 +104,13 @@ class SafestCoordinateFinder {
         @JvmStatic
         fun main(args: Array<String>) {
 
-//            val time = measureTimeMillis {
-//                val sizeOfLargestArea = findSafestAreaBetween(DAY06_INPUT)
-//                println("The size of the largest finite area is: ${sizeOfLargestArea}")
-//            }
-//
-//            println("Solved part ONE it in ${time}ms.")
-//
+            val time = measureTimeMillis {
+                val sizeOfLargestArea = findSizeOfLargestArea(DAY06_INPUT)
+                println("The size of the largest finite area is: ${sizeOfLargestArea}")
+            }
+
+            println("Solved part ONE it in ${time}ms.")
+
 
 
             val partTwoTime = measureTimeMillis {
