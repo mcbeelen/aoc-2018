@@ -30,20 +30,27 @@ internal fun determineOrderOfAssembly(input: String): String {
     return executionOrder.toString()
 }
 
-private fun findAllSteps(assembleInstructions: List<AssemblyInstruction>): MutableSet<Step> =
+internal fun findAllSteps(assembleInstructions: List<AssemblyInstruction>): MutableSet<Step> =
         assembleInstructions.map { it.before }.union(assembleInstructions.map { it.after }).toMutableSet()
 
 
 private fun findNextStep(allSteps: Set<Step>, dependsUpon: Map<Step, List<AssemblyInstruction>>): Step {
+    return findStepsReadyToBeWorkedOn(allSteps, dependsUpon).first()
+}
+
+private fun findStepsReadyToBeWorkedOn(allSteps: Set<Step>, dependsUpon: Map<Step, List<AssemblyInstruction>>): List<Step> {
     return allSteps.filter { candidateStep ->
         dependsUpon.none {
-            it.value.any {
-                it.after == candidateStep
-            }
+            shouldBeDoneBefore(it.value, candidateStep)
         }
     }
-            .sortedBy { it.name }
-            .first()
+    .sortedBy { it.name }
+}
+
+private fun shouldBeDoneBefore(it: List<AssemblyInstruction>, candidateStep: Step): Boolean {
+    return it.any {
+        it.after == candidateStep
+    }
 }
 
 internal fun parseToAssembleOrder(input: String) = AssemblyInstruction(Step(input[5]), Step(input[36]))
@@ -51,4 +58,6 @@ internal fun parseToAssembleOrder(input: String) = AssemblyInstruction(Step(inpu
 
 data class AssemblyInstruction(val before: Step, val after: Step)
 
-inline class Step(val name: Char)
+inline class Step(val name: Char) {
+    fun duration() : Int = name - 'A' + 1
+}
