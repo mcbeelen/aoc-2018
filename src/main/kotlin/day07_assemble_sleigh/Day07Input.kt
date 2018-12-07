@@ -1,6 +1,6 @@
 package day07_assemble_sleigh
 
-const val SLEIGH_COMPONENT_ORDER = """
+const val SLEIGH_ASSEMBLY_INSTRUCTIONS = """
 Step B must be finished before step X can begin.
 Step V must be finished before step F can begin.
 Step K must be finished before step C can begin.

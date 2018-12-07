@@ -2,20 +2,23 @@ package da007
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import day07_assemble_sleigh.*
 import org.junit.Test
 
 
-class SomeTest {
+class SleighAssemblyOrderTest {
 
 
     @Test
-    fun itShouldFindTheSafestAreaInTheExampleIs17() {
+    fun actualPartOne() {
+        assertThat(determineOrderOfAssembly(SLEIGH_ASSEMBLY_INSTRUCTIONS.trimIndent()), equalTo("BKCJMSDVGHQRXFYZOAULPIEWTN"))
+    }
+
+    @Test
+    fun itShouldFigureOutToTheProperOrderForTheExample() {
         assertThat(determineOrderOfAssembly(DAY07_EXAMPLE_INPUT.trimIndent()), equalTo("CABDFE"))
     }
 
-    private fun determineOrderOfAssembly(input: String): String? {
-        return ""
-    }
 
     @Test
     fun itShouldParseToInput() {
@@ -24,15 +27,7 @@ class SomeTest {
         assertThat(instruction.after, equalTo(Step('A')))
     }
 
-    private fun parseToAssembleOrder(input: String) = AssemblyInstruction(Step(input[5]), Step(input[36]) )
-
 }
-
-
-data class AssemblyInstruction(val before: Step, val after: Step)
-
-inline class Step(val name: Char)
-
 
 const val DAY07_EXAMPLE_INPUT = """
 Step C must be finished before step A can begin.
