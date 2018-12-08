@@ -23,7 +23,9 @@ class LicenceFileMetadataCheckerTest {
         assertThat(nodeB.numberOfChildNodes, equalTo(0))
         assertThat(nodeB.numberOfMetadataEntries, equalTo(3))
         assertThat(nodeB.childNodes.size, equalTo(0))
-        assertThat(nodeB.metaddataEntries.size, equalTo(3))
+        assertThat(nodeB.metadataEntries.size, equalTo(3))
+
+        assertThat(nodeB.sumOfMetadataEntries(), equalTo(33))
     }
 
 
@@ -35,7 +37,7 @@ class LicenceFileMetadataCheckerTest {
         assertThat(nodeC.numberOfChildNodes, equalTo(1))
         assertThat(nodeC.numberOfMetadataEntries, equalTo(1))
         assertThat(nodeC.childNodes.size, equalTo(1))
-        assertThat(nodeC.metaddataEntries.size, equalTo(1))
+        assertThat(nodeC.metadataEntries.size, equalTo(1))
 
 
     }
@@ -54,7 +56,7 @@ class LicenceFileMetadataCheckerTest {
                 Node(1,
                         numberOfMetadataEntries = input[1],
                         childNodes = listOf(parseToLeafNode(input.subList(2, input.size - input[1]))),
-                        metaddataEntries = takeMetadataEntries(input))
+                        metadataEntries = takeMetadataEntries(input))
             }
 
         }
@@ -63,7 +65,7 @@ class LicenceFileMetadataCheckerTest {
     }
 
     private fun parseToLeafNode(input: List<Int>) =
-        Node(numberOfMetadataEntries = input[1], metaddataEntries = takeMetadataEntries(input))
+        Node(numberOfMetadataEntries = input[1], metadataEntries = takeMetadataEntries(input))
 
 
     private fun takeMetadataEntries(input: List<Int>) =
@@ -82,7 +84,10 @@ class Node(
         val numberOfChildNodes: Int = 0,
         val numberOfMetadataEntries: Int = 0,
         val childNodes: List<Node> = emptyList(),
-        val metaddataEntries: List<MetadataEntry> = emptyList()) {
+        val metadataEntries: List<MetadataEntry> = emptyList()) {
+
+    fun sumOfMetadataEntries() = metadataEntries.map { it.value }.sum()
+
 
 }
 
