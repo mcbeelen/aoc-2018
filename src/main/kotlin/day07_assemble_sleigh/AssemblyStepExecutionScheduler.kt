@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.system.measureTimeMillis
 
 
@@ -14,10 +15,15 @@ fun minimumTimeNeededToAssemble(assemblyInstructions: String, numberOfWorkers: I
 
     val stepToTaskMap = extractStepToTaskMap(assembleInstructions)
 
+    return buildEntireSchedule(numberOfWorkers, allSteps, stepToTaskMap)
+
+}
+
+private fun buildEntireSchedule(numberOfWorkers: Int, allSteps: MutableSet<Step>, stepToTaskMap: MutableMap<Step, Task>): Int {
     val schedule = Schedule(numberOfWorkers)
     var second = Second(0)
 
-    val done: MutableList<Step> = ArrayList();
+    val done: MutableList<Step> = ArrayList()
 
     val currentAssignmentMap = buildAssignmentMap(numberOfWorkers)
 
@@ -45,7 +51,7 @@ fun minimumTimeNeededToAssemble(assemblyInstructions: String, numberOfWorkers: I
                 }
 
         currentAssignmentMap.filter { it.value is Idle }
-                .forEach{
+                .forEach {
                     schedule.registerAssignment(it.key, second, it.value)
                 }
 
@@ -81,7 +87,6 @@ fun minimumTimeNeededToAssemble(assemblyInstructions: String, numberOfWorkers: I
     schedule.printIt(second)
 
     return second.timestamp
-
 }
 
 fun printStatus(second: Second, schedule: Schedule, done: MutableList<Step>) {
@@ -122,7 +127,7 @@ private fun buildAssignmentMap(numberOfWorkers: Int): MutableMap<Worker, Activit
 }
 
 
-private fun extractStepToTaskMap(assembleInstructions: List<AssemblyInstruction>): MutableMap<Step, Task> {
+internal fun extractStepToTaskMap(assembleInstructions: List<AssemblyInstruction>): MutableMap<Step, Task> {
     val stepToTaskMap: MutableMap<Step, Task> = HashMap()
 
     assembleInstructions.forEach {

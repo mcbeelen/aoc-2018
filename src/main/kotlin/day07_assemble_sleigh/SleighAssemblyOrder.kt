@@ -59,5 +59,5 @@ internal fun parseToAssembleOrder(input: String) = AssemblyInstruction(Step(inpu
 data class AssemblyInstruction(val before: Step, val after: Step)
 
 inline class Step(val name: Char) {
-    fun duration() : Int = name - 'A' + 1
+    fun duration() : Int = 60 + (name - 'A' + 1)
 }

@@ -10,7 +10,7 @@ class ParallelAssemblyTimeCalculationTest {
 
     @Test
     fun actualAnswerShouldBeMoreThen208() {
-        assertThat(minimumTimeNeededToAssemble(SLEIGH_ASSEMBLY_INSTRUCTIONS.trimIndent(), 2), greaterThan(208))
+        assertThat(minimumTimeNeededToAssemble(SLEIGH_ASSEMBLY_INSTRUCTIONS.trimIndent(), 5), greaterThan(208))
     }
 
     @Test
