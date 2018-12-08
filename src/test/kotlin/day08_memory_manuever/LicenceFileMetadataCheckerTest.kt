@@ -39,6 +39,8 @@ class LicenceFileMetadataCheckerTest {
         assertThat(nodeC.childNodes.size, equalTo(1))
         assertThat(nodeC.metadataEntries.size, equalTo(1))
 
+        assertThat(nodeC.sumOfMetadataEntries(), equalTo(101))
+
 
     }
 
@@ -86,7 +88,8 @@ class Node(
         val childNodes: List<Node> = emptyList(),
         val metadataEntries: List<MetadataEntry> = emptyList()) {
 
-    fun sumOfMetadataEntries() = metadataEntries.map { it.value }.sum()
+    fun sumOfMetadataEntries() : Int =
+            childNodes.sumBy { it.sumOfMetadataEntries() } + metadataEntries.sumBy { it.value }
 
 
 }
