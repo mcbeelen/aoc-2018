@@ -1,4 +1,4 @@
-package current
+package day09_marble_mania
 
 import java.util.function.BiFunction
 
