@@ -6,19 +6,30 @@ import org.junit.Test
 
 class ElvesMarbleGameTest {
 
+    @Test
+    fun itShouldSolvePartOneOfTheProblem() {
+        assertThat("Part One", ElvesMarbleGame(493, 71863).scoreOfWinningElf().score, equalTo(367802L))
+    }
 
     @Test
-    fun winnerOfTheExampleGames() {
+    fun itShouldSolvePartTwoOfTheProblem() {
+        assertThat("Part Two", ElvesMarbleGame(493, 7186300).scoreOfWinningElf().score, equalTo(2996043280L))
+    }
 
-        assertThat(ElvesMarbleGame(9, 25).scoreOfWinningElf(), equalTo(32))
+    @Test
+    fun firstOfTheExampleGames() {
 
-        assertThat(ElvesMarbleGame(10, 1618).scoreOfWinningElf(), equalTo(8317))
+        assertThat("FirstExample", ElvesMarbleGame(9, 23).scoreOfWinningElf().score, equalTo(32L))
+        assertThat("Two rounds with", ElvesMarbleGame(23, 46).scoreOfWinningElf().score, equalTo(95L))
 
-//        10 players; last marble is worth 1618 points: high score is 8317
-//        13 players; last marble is worth 7999 points: high score is 146373
-//        17 players; last marble is worth 1104 points: high score is 2764
-//        21 players; last marble is worth 6111 points: high score is 54718
-//        30 players; last marble is worth 5807 points: high score is 37305
+
+        assertThat("Second Example", ElvesMarbleGame(10, 1618).scoreOfWinningElf().score, equalTo(8317L))
+
+
+        assertThat("Third Example", ElvesMarbleGame(13, 7999).scoreOfWinningElf().score, equalTo(146373L))
+        assertThat("Fourth Example", ElvesMarbleGame(17, 1104).scoreOfWinningElf().score, equalTo(2764L))
+        assertThat("Fifth Example", ElvesMarbleGame(21, 6111).scoreOfWinningElf().score, equalTo(54718L))
+        assertThat("Sixth Example", ElvesMarbleGame(30, 5807).scoreOfWinningElf().score, equalTo(37305L))
 
 
     }
