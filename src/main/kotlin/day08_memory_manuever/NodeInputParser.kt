@@ -7,16 +7,14 @@ class NodeInputParser {
     private val nodeBuilderStack = Stack<NodeBuilder>()
 
     init {
-        startNewNode()
+        prepareNextNodeBuilder()
     }
 
     lateinit var completedNode : Node
 
     fun parse(next: Int) {
 
-        if (nodeBuilderStack.peek().processInput(next)) {
-            startNewNode()
-        }
+        nodeBuilderStack.peek().processInput(next)
 
         while(nodeBuilderStack.isNotEmpty() && nodeBuilderStack.peek().node.isComplete()) {
 
@@ -25,15 +23,22 @@ class NodeInputParser {
             if (nodeBuilderStack.isNotEmpty()) {
                 val nodeBuilder = nodeBuilderStack.peek()
                 nodeBuilder.processCompletedChildNode(completedNode)
-                if (!nodeBuilder.node.hasAllChildren()) {
-                    startNewNode()
-                }
+
             }
         }
     }
 
-    private fun startNewNode() {
-        nodeBuilderStack.push(NodeBuilder())
+
+    private fun prepareNextNodeBuilder() {
+        nodeBuilderStack.push(NodeBuilder(this))
+    }
+
+    fun startNewChildNode() {
+        prepareNextNodeBuilder()
+    }
+
+    fun startNextChildNode() {
+        prepareNextNodeBuilder()
     }
 
 

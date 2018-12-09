@@ -11,6 +11,7 @@ class LicenceFileMetadataCheckerTest {
     fun itShouldSolveTheActualProblem() {
         val problem = parseToNode(MEMORY_MANUEVER_INPUT)
         assertThat(problem.sumOfMetadataEntries(), equalTo(41521))
+        assertThat(problem.valueForSecondCheck, equalTo(19990))
     }
 
     @Test
@@ -18,6 +19,7 @@ class LicenceFileMetadataCheckerTest {
 
         val example = parseToNode(MEMORY_MENUEVER_EXAMPLE)
         assertThat(example.sumOfMetadataEntries(), equalTo(138))
+        assertThat(example.valueForSecondCheck, equalTo(66))
 
     }
 
@@ -34,6 +36,9 @@ class LicenceFileMetadataCheckerTest {
         assertThat(nodeB.metadataEntries.size, equalTo(3))
 
         assertThat(nodeB.sumOfMetadataEntries(), equalTo(33))
+
+        assertThat(nodeB.valueForSecondCheck, equalTo(33))
+
     }
 
 
@@ -48,6 +53,8 @@ class LicenceFileMetadataCheckerTest {
         assertThat(nodeC.metadataEntries.size, equalTo(1))
 
         assertThat(nodeC.sumOfMetadataEntries(), equalTo(101))
+
+        assertThat(nodeC.valueForSecondCheck, equalTo(0))
 
 
     }

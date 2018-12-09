@@ -1,17 +1,16 @@
 package day08_memory_manuever
 
 import day08_memory_manuever.ProcessingState.*
-import java.lang.IllegalStateException
 import kotlin.Int.Companion.MIN_VALUE
 
-class NodeBuilder {
+class NodeBuilder(private val parser: NodeInputParser) {
 
-    var state : ProcessingState = NUMBER_OF_CHILD_NODES
+    var state: ProcessingState = NUMBER_OF_CHILD_NODES
     var node = Node()
 
-    fun processInput(value: Int) : Boolean {
+    fun processInput(value: Int) {
 
-        when(state) {
+        when (state) {
             NUMBER_OF_CHILD_NODES -> {
                 node = node.copy(numberOfChildNodes = value)
                 state = NUMBER_OF_META_DATA
@@ -20,7 +19,7 @@ class NodeBuilder {
                 node = node.copy(numberOfMetadataEntries = value)
                 if (node.numberOfChildNodes > 0) {
                     state = CHILD_NODES
-                    return true
+                    parser.startNewChildNode()
                 } else {
                     state = META_DATA
                 }
@@ -34,14 +33,14 @@ class NodeBuilder {
             }
         }
 
-        return false
-
     }
 
     fun processCompletedChildNode(completedNode: Node) {
         node = node.copy(childNodes = node.childNodes + completedNode)
         if (node.hasAllChildren()) {
             state = META_DATA
+        } else {
+            parser.startNextChildNode()
         }
     }
 }
@@ -59,6 +58,28 @@ data class Node(
         val numberOfMetadataEntries: Int = MIN_VALUE,
         val childNodes: List<Node> = emptyList(),
         val metadataEntries: List<MetadataEntry> = emptyList()) {
+
+    val valueForSecondCheck: Int by lazy {
+        calculateSecondCheck()
+    }
+
+    private fun calculateSecondCheck(): Int {
+        return if (hasNoChildNodes()) {
+            metadataEntries.sumBy { it.value }
+        } else {
+            metadataEntries.map {
+                val index = it.value - 1
+                if (index in 0 until childNodes.size) {
+                    childNodes[index].valueForSecondCheck
+                } else {
+                    0
+                }
+            }.sumBy { it }
+        }
+
+    }
+
+    private fun hasNoChildNodes() = numberOfChildNodes == 0
 
     fun sumOfMetadataEntries(): Int =
             childNodes.sumBy { it.sumOfMetadataEntries() } + metadataEntries.sumBy { it.value }
