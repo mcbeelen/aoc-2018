@@ -29,23 +29,6 @@ class StarTest {
 
     }
 
-    /**
-     * position=<3, 9> velocity=<1, -2>
-     */
-    private fun parseInputToStar(input: String): Star {
-        val positionInput = input.substringAfter("<").substringBefore(">")
-        val velocityInput = input.substringAfterLast("<").substringBeforeLast(">")
-        return Star(parsePosition(positionInput), parseVelocity(velocityInput))
-    }
 
-    private fun parsePosition(input: String) : Position {
-        val split = input.split(",")
-        return Position(split[0].trim().toInt(), split[1].trim().toInt())
-    }
-
-    private fun parseVelocity(input: String) : Velocity {
-        val split = input.split(",")
-        return Velocity(split[0].trim().toInt(), split[1].trim().toInt())
-    }
 
 }
