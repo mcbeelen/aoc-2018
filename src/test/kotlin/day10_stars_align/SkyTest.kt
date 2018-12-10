@@ -1,5 +1,7 @@
 package day10_stars_align
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -52,6 +54,38 @@ class SkyTest {
         assertTrue(sky.hasStarAt(Position(5, 5)))
         assertTrue(sky.hasStarAt(Position(9, 5)))
 
+    }
+
+    @Test
+    fun itShouldBeAbleToDetermineItsDimensions() {
+
+        var sky = originalSky
+
+        assertThat(sky.heigth().value.first, equalTo(1))
+        assertThat(sky.heigth().value.last, equalTo(9))
+
+        sky = sky.moveStars()
+
+        assertThat(sky.heigth().value.first, equalTo(3))
+        assertThat(sky.heigth().value.last, equalTo(7))
 
     }
+
+    @Test
+    fun itShouldDetermineThatEightInTheMinimumHeightForTheExample() {
+
+        var sky = buildExampleSky()
+        val height = sky.heigth().value
+        assertThat(height.first, equalTo(-4))
+        assertThat(height.last, equalTo(11))
+        assertThat(sky.heigth().size(), equalTo(15))
+    }
+
 }
+
+
+
+fun buildExampleSky() : Sky {
+    return Sky(parseToStars(STAR_ALIGN_EXAMPLE))
+}
+
