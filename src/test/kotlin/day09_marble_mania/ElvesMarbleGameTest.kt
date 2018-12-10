@@ -9,11 +9,15 @@ class ElvesMarbleGameTest {
     @Test
     fun itShouldSolvePartOneOfTheProblem() {
         assertThat("Part One", ElvesMarbleGame(493, 71863).scoreOfWinningElf().score, equalTo(367802L))
+        // 44ms
     }
 
     @Test
     fun itShouldSolvePartTwoOfTheProblem() {
         assertThat("Part Two", ElvesMarbleGame(493, 7186300).scoreOfWinningElf().score, equalTo(2996043280L))
+        // 10x --> 77
+        // 100 --> 1_728ms
+        // 1_000 --> 39_587ms
     }
 
     @Test
