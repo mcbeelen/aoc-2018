@@ -14,12 +14,23 @@ class Sky(private val stars: List<Star>) {
     }
 
 
+
+
+}
+
+tailrec fun shirkToMinimumHeight(current: Sky): Sky {
+    val next = current.moveStars()
+    if (next.heigth().size() > current.heigth().size()) {
+        return current
+    }
+    return shirkToMinimumHeight(next)
+
 }
 
 
 data class Width(val value: IntRange)
 data class Height(val value: IntRange) {
-    fun size() = value.last - value.first
+    fun size() = 1 + value.last - value.first
 }
 
 

@@ -78,7 +78,12 @@ class SkyTest {
         val height = sky.heigth().value
         assertThat(height.first, equalTo(-4))
         assertThat(height.last, equalTo(11))
-        assertThat(sky.heigth().size(), equalTo(15))
+        assertThat(sky.heigth().size(), equalTo(16))
+
+        sky = shirkToMinimumHeight(sky)
+
+        assertThat(sky.heigth().size(), equalTo(8))
+
     }
 
 }
