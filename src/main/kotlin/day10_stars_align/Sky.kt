@@ -7,10 +7,15 @@ class Sky(private val stars: List<Star>) {
     fun moveStars(): Sky = Sky(stars.map { it.move() })
 
 
-    fun heigth() : Height {
+    fun height() : Height {
         val yCoordinates = stars.map { it.position.y }
         return Height(yCoordinates.min()!! .. yCoordinates.max()!!)
 
+    }
+
+    fun width() : Width {
+        val xCoordinates = stars.map { it.position.x }
+        return Width(xCoordinates.min()!! .. xCoordinates.max()!!)
     }
 
 
@@ -20,7 +25,7 @@ class Sky(private val stars: List<Star>) {
 
 tailrec fun shirkToMinimumHeight(current: Sky): Sky {
     val next = current.moveStars()
-    if (next.heigth().size() > current.heigth().size()) {
+    if (next.height().size() > current.height().size()) {
         return current
     }
     return shirkToMinimumHeight(next)

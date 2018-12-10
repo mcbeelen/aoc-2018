@@ -61,13 +61,13 @@ class SkyTest {
 
         var sky = originalSky
 
-        assertThat(sky.heigth().value.first, equalTo(1))
-        assertThat(sky.heigth().value.last, equalTo(9))
+        assertThat(sky.height().value.first, equalTo(1))
+        assertThat(sky.height().value.last, equalTo(9))
 
         sky = sky.moveStars()
 
-        assertThat(sky.heigth().value.first, equalTo(3))
-        assertThat(sky.heigth().value.last, equalTo(7))
+        assertThat(sky.height().value.first, equalTo(3))
+        assertThat(sky.height().value.last, equalTo(7))
 
     }
 
@@ -75,14 +75,17 @@ class SkyTest {
     fun itShouldDetermineThatEightInTheMinimumHeightForTheExample() {
 
         var sky = buildExampleSky()
-        val height = sky.heigth().value
+        val height = sky.height().value
         assertThat(height.first, equalTo(-4))
         assertThat(height.last, equalTo(11))
-        assertThat(sky.heigth().size(), equalTo(16))
+        assertThat(sky.height().size(), equalTo(16))
 
         sky = shirkToMinimumHeight(sky)
 
-        assertThat(sky.heigth().size(), equalTo(8))
+        assertThat(sky.height().size(), equalTo(8))
+
+
+        plotSky(sky)
 
     }
 

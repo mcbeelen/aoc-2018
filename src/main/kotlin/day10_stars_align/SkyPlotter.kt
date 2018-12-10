@@ -7,7 +7,8 @@ class SkyPlotter {
         fun main(args: Array<String>) {
 
             val originalSky = Sky(parseToStars(STAR_ALIGN_INPUT))
-
+            val skyWithMessage = shirkToMinimumHeight(originalSky)
+            plotSky(skyWithMessage)  // EJXNCCNX
 
         }
 
@@ -15,6 +16,21 @@ class SkyPlotter {
 
 
     }
+}
+
+fun plotSky(sky: Sky) {
+
+    for (y in sky.height().value) {
+        for (x in sky.width().value) {
+            if (sky.hasStarAt(Position(x, y))) {
+                print('*')
+            } else {
+                print(' ')
+            }
+        }
+        println()
+    }
+
 }
 
 
