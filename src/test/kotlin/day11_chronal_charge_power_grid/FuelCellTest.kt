@@ -13,6 +13,11 @@ class FuelCellTest {
         assertThat(FuelCell(3, 5).calculatePowerLevelInGrid(8), equalTo(4))
 
 
+        assertThat(FuelCell(122,79).calculatePowerLevelInGrid(57), equalTo(-5))
+        assertThat(FuelCell(217,196).calculatePowerLevelInGrid(39), equalTo(0))
+        assertThat(FuelCell(101,153).calculatePowerLevelInGrid(71), equalTo(4))
+
+
     }
 }
 
