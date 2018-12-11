@@ -14,19 +14,36 @@ class PowerGrid(private val gridSerialNumber: Int) {
     fun powerLevelAt(screenCoordinate: ScreenCoordinate): Int = fuelCellsInGrid[screenCoordinate]!!.powerLevel
 
 
-    fun findTopLevelCornerOfMostPowerfulSquare(squareSize: Int): ScreenCoordinate {
+
+    fun findTopLevelCornerOfMostPowerfulSquareOfAnySize(): Pair<ScreenCoordinate, Int> {
+
+        val sizeSquareMap : MutableMap<Pair<ScreenCoordinate, Int>, Int> = HashMap()
+
+        (0 until 300)
+                .forEach { size ->
+                    val (screenCoordinate, totalPowerLevel) = findTopLevelCornerOfMostPowerfulSquare(size)
+                    println("With size ${size} the most powerful Square would be at ${screenCoordinate} with total power of: ${totalPowerLevel}")
+                    sizeSquareMap[Pair(screenCoordinate, size)] = totalPowerLevel
+                }
+
+        return sizeSquareMap.maxBy { it.value }!!.key
+
+    }
+
+
+    fun findTopLevelCornerOfMostPowerfulSquare(squareSize: Int) : Pair<ScreenCoordinate, Int> {
         val squares: MutableMap<ScreenCoordinate, Int> = HashMap()
 
         val dimension = squareSize - 1
 
         val i = 300 - dimension
-        for (x in 0..i) {
-            for (y in 0..i) {
+        for (x in 1..i) {
+            for (y in 1..i) {
                 squares[ScreenCoordinate(x, y)] = sumPowerLevels(x, y, dimension)
             }
         }
 
-        return squares.maxBy { it.value }!!.component1()
+        return squares.maxBy { it.value }!!.toPair()
 
 
     }
@@ -59,6 +76,7 @@ class PowerGrid(private val gridSerialNumber: Int) {
         return grid
     }
 
+
 }
 
 
@@ -71,16 +89,26 @@ class ChronalChargeSolver {
             val time = measureTimeMillis {
                 val grid = PowerGrid(8561)
                 val findTopLevelCornerOfMostPowerfulSquare = grid.findTopLevelCornerOfMostPowerfulSquare(2)
-                println("Most powerfull square is located at $findTopLevelCornerOfMostPowerfulSquare")
+                println("Most powerful square is located at $findTopLevelCornerOfMostPowerfulSquare")
 
 
             }
             println("Solved part one in ${time}ms")
 
 
+            val timeForTwo = measureTimeMillis {
+                val grid = PowerGrid(8561)
+                val findTopLevelCornerOfMostPowerfulSquare = grid.findTopLevelCornerOfMostPowerfulSquareOfAnySize()
+                println("Most powerful square is located at ${findTopLevelCornerOfMostPowerfulSquare.first} with power: ${findTopLevelCornerOfMostPowerfulSquare.second}")
+
+
+            }
+            println("Solved part one in ${timeForTwo}ms")
+
+
         }
 
-    }
+    } //236,146,12: 160
 }
 
 

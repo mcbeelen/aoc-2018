@@ -15,13 +15,27 @@ class PowerGridTest {
 
         assertThat(grid.powerLevelAt(ScreenCoordinate(33, 45)), equalTo(4))
 
-        val topLevelCorner : ScreenCoordinate = grid.findTopLevelCornerOfMostPowerfulSquare(3)
+        val topLevelCorner : ScreenCoordinate = grid.findTopLevelCornerOfMostPowerfulSquare(3).first
 
         topLevelCorner.let {
             assertThat(it.left, equalTo(33) )
             assertThat(it.top, equalTo(45) )
 
         }
+
+
+        val anySizeSquare : Pair<ScreenCoordinate, Int> = grid.findTopLevelCornerOfMostPowerfulSquareOfAnySize()
+
+
+        anySizeSquare.first.let {
+            assertThat(it.left, equalTo(90) )
+            assertThat(it.top, equalTo(269) )
+        }
+        assertThat(anySizeSquare.second, equalTo(16))
+
+
+
+
 
     }
 }
