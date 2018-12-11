@@ -19,7 +19,7 @@ class PowerGrid(private val gridSerialNumber: Int) {
 
         for (x in 0 .. 298) {
             for (y in 0 .. 298) {
-                squares[ScreenCoordinate(x, y)] = sumPowerLevels(x, y)
+                squares[ScreenCoordinate(x, y)] = sumPowerLevels(x, y, 2)
             }
         }
 
@@ -28,12 +28,12 @@ class PowerGrid(private val gridSerialNumber: Int) {
 
     }
 
-    private fun sumPowerLevels(x: Int, y: Int): Int {
+    private fun sumPowerLevels(x: Int, y: Int, squareSize: Int): Int {
 
         var sum = 0
 
-        for (xOffset in 0 .. 2) {
-            for (yOffset in 0 .. 2) {
+        for (xOffset in 0 ..squareSize) {
+            for (yOffset in 0 ..squareSize) {
 
                 sum += fuelCellsInGrid[ScreenCoordinate(x + xOffset, y + yOffset)]!!.powerLevel
 
