@@ -14,14 +14,15 @@ class PowerGrid(private val gridSerialNumber: Int) {
     fun powerLevelAt(screenCoordinate: ScreenCoordinate): Int = fuelCellsInGrid[screenCoordinate]!!.powerLevel
 
 
-    fun findTopLevelCornerOfMostPowerfulSquare(): ScreenCoordinate {
+    fun findTopLevelCornerOfMostPowerfulSquare(squareSize: Int): ScreenCoordinate {
         val squares: MutableMap<ScreenCoordinate, Int> = HashMap()
 
-        val squareSize = 2
-        val i = 300 - squareSize
+        val dimension = squareSize - 1
+
+        val i = 300 - dimension
         for (x in 0..i) {
             for (y in 0..i) {
-                squares[ScreenCoordinate(x, y)] = sumPowerLevels(x, y, squareSize)
+                squares[ScreenCoordinate(x, y)] = sumPowerLevels(x, y, dimension)
             }
         }
 
@@ -69,7 +70,7 @@ class ChronalChargeSolver {
 
             val time = measureTimeMillis {
                 val grid = PowerGrid(8561)
-                val findTopLevelCornerOfMostPowerfulSquare = grid.findTopLevelCornerOfMostPowerfulSquare()
+                val findTopLevelCornerOfMostPowerfulSquare = grid.findTopLevelCornerOfMostPowerfulSquare(2)
                 println("Most powerfull square is located at $findTopLevelCornerOfMostPowerfulSquare")
 
 

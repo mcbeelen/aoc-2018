@@ -15,7 +15,7 @@ class PowerGridTest {
 
         assertThat(grid.powerLevelAt(ScreenCoordinate(33, 45)), equalTo(4))
 
-        val topLevelCorner : ScreenCoordinate = grid.findTopLevelCornerOfMostPowerfulSquare()
+        val topLevelCorner : ScreenCoordinate = grid.findTopLevelCornerOfMostPowerfulSquare(3)
 
         topLevelCorner.let {
             assertThat(it.left, equalTo(33) )
