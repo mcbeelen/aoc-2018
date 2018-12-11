@@ -6,7 +6,7 @@ import kotlin.system.measureTimeMillis
 class PowerGrid(private val gridSerialNumber: Int) {
 
 
-    private val fuelCellsInGrid : Map<ScreenCoordinate, FuelCell> by lazy {
+    private val fuelCellsInGrid: Map<ScreenCoordinate, FuelCell> by lazy {
         calculatePowerLevelsForGrid()
     }
 
@@ -15,11 +15,13 @@ class PowerGrid(private val gridSerialNumber: Int) {
 
 
     fun findTopLevelCornerOfMostPowerfulSquare(): ScreenCoordinate {
-        val squares : MutableMap<ScreenCoordinate, Int> = HashMap()
+        val squares: MutableMap<ScreenCoordinate, Int> = HashMap()
 
-        for (x in 0 .. 298) {
-            for (y in 0 .. 298) {
-                squares[ScreenCoordinate(x, y)] = sumPowerLevels(x, y, 2)
+        val squareSize = 2
+        val i = 300 - squareSize
+        for (x in 0..i) {
+            for (y in 0..i) {
+                squares[ScreenCoordinate(x, y)] = sumPowerLevels(x, y, squareSize)
             }
         }
 
@@ -32,8 +34,8 @@ class PowerGrid(private val gridSerialNumber: Int) {
 
         var sum = 0
 
-        for (xOffset in 0 ..squareSize) {
-            for (yOffset in 0 ..squareSize) {
+        for (xOffset in 0..squareSize) {
+            for (yOffset in 0..squareSize) {
 
                 sum += fuelCellsInGrid[ScreenCoordinate(x + xOffset, y + yOffset)]!!.powerLevel
 
@@ -44,11 +46,11 @@ class PowerGrid(private val gridSerialNumber: Int) {
 
     }
 
-    private fun calculatePowerLevelsForGrid() : Map<ScreenCoordinate, FuelCell> {
-        val grid : MutableMap<ScreenCoordinate, FuelCell> = HashMap()
+    private fun calculatePowerLevelsForGrid(): Map<ScreenCoordinate, FuelCell> {
+        val grid: MutableMap<ScreenCoordinate, FuelCell> = HashMap()
 
-        for (x in 0 .. 300) {
-            for (y in 0 .. 300) {
+        for (x in 0..300) {
+            for (y in 0..300) {
                 grid[ScreenCoordinate(x, y)] = FuelCell(gridSerialNumber, x, y)
             }
         }
