@@ -11,6 +11,7 @@ class FuelCellTest {
     fun itShouldCalculateThePowerLevel() {
 
         assertThat(FuelCell(8, 3, 5).powerLevel, equalTo(4))
+        assertThat(FuelCell(8, 3, 5).powerLevel, equalTo(4))
 
 
         assertThat(FuelCell(57, 122,79).powerLevel, equalTo(-5))
