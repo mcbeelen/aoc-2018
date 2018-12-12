@@ -6,35 +6,51 @@ data class PlantGrowthTracker(val potsWithPlants: Set<Int>, val transformation: 
 
     constructor(initialState: String, transformationsInput: String) : this(parseInitialState(initialState), parseTransformations(transformationsInput))
 
-    fun sumOfAllPotsContainingPlants(): Long {
-        return potsWithPlants.map { it.toLong() }.sum()
-    }
+    fun sumOfAllPotsContainingPlants() = potsWithPlants.map { it.toLong() }.sum()
 
-
-    fun nextGeneration(numberOfGenerations: Long): PlantGrowthTracker {
-        return generateNextGenerations(this, numberOfGenerations)
-
-    }
+    fun nextGeneration(numberOfGenerations: Long) = generateNextGenerations(this, numberOfGenerations)
 
     override fun toString(): String {
-        return (0 .. 30)
+        return (0 .. 300)
                 .map{ if (potsWithPlants.contains(it)) { '#' } else { '.' }}
                 .joinToString("")
     }
 }
 
 
-internal tailrec fun generateNextGenerations(currentGeneration: PlantGrowthTracker, numberOfGenerations: Long): PlantGrowthTracker {
-    if (numberOfGenerations == 0L) {
+val previousConfigurations : MutableMap<String, Long> = HashMap()
+
+internal tailrec fun generateNextGenerations(currentGeneration: PlantGrowthTracker, numberOfGenerationsToGenerate: Long): PlantGrowthTracker {
+
+    println("$numberOfGenerationsToGenerate  --> ${currentGeneration.sumOfAllPotsContainingPlants()}")
+
+    if (numberOfGenerationsToGenerate == 0L) {
         return currentGeneration
     }
-    if (numberOfGenerations.rem(1_000_000L) == 0L) {
-        println("Still todo: ${numberOfGenerations}" )
+
+    val nextGeneration = generateNextGeneration(currentGeneration)
+
+    var nextGenerationNumber = numberOfGenerationsToGenerate - 1
+    val nextConfiguration = nextGeneration.potsWithPlants
+
+    val representation = fromStart(nextConfiguration)
+    if (previousConfigurations.containsKey(representation)) {
+        //println("I already saw this! ${numberOfGenerationsToGenerate}")
+    } else {
+        previousConfigurations[representation] = numberOfGenerationsToGenerate
+        if (numberOfGenerationsToGenerate.rem(10_000L) == 0L) {
+            println("Currently knows about ${previousConfigurations.size} configurations")
+        }
     }
 
-    return generateNextGenerations(generateNextGeneration(currentGeneration), numberOfGenerations - 1)
+    return generateNextGenerations(nextGeneration, nextGenerationNumber)
 
 }
+
+fun fromStart(nextConfiguration: Set<Int>) =
+        (nextConfiguration.min()!! .. nextConfiguration.max()!!)
+            .map{ if (nextConfiguration.contains(it)) { '#' } else { '.' }}
+            .joinToString("")
 
 
 fun generateNextGeneration(currentGeneration: PlantGrowthTracker): PlantGrowthTracker {
@@ -43,6 +59,7 @@ fun generateNextGeneration(currentGeneration: PlantGrowthTracker): PlantGrowthTr
                 currentGeneration.transformation.any { transformation -> transformation.isApplicable(potIndex, currentGeneration.potsWithPlants) }
             }
             .toSet()
+
     return currentGeneration.copy(potsWithPlants = nextSetOfPotsWithPlants)
 }
 
@@ -95,7 +112,7 @@ class Day12Solver() {
 
         @JvmStatic
         fun main(args: Array<String>) {
-            val fiftyBillion = 50_000_000_000
+            val fiftyBillion = 5_000L
 
             val tracker = PlantGrowthTracker(ACTUAL_INITIAL_STATE, ACTUAL_TRANSFORMATIONS)
 
@@ -112,3 +129,9 @@ class Day12Solver() {
 
 
 
+/*
+At a certain point in time the configuration becomes stable, but 'moves' to the right.
+Each iteration adds another 22 point
+After 5000 iterations to total sum == 110475
+For the number after 50000000000 = 110475 +	49999995000	* 22 = 1100000000475
+ */

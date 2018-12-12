@@ -52,7 +52,6 @@ class PlantGrowthTrackerTest {
 
 
     @Test
-    @Ignore
     fun verifyExample() {
 
         var tracker = PlantGrowthTracker(exampleInitialState, exampleTransformations)
