@@ -2,32 +2,19 @@ package day12_subterranean_sustainability
 
 import kotlin.system.measureTimeMillis
 
-data class PlantGrowthTracker(private val potsWithPlants: Set<Int>, private val transformation: Set<Transformation>) {
+data class PlantGrowthTracker(val potsWithPlants: Set<Int>, val transformation: Set<Transformation>) {
 
     constructor(initialState: String, transformationsInput: String) : this(parseInitialState(initialState), parseTransformations(transformationsInput))
 
-    fun sumOfAllPotsContainingPlants(): Int {
-        return potsWithPlants.sum()
+    fun sumOfAllPotsContainingPlants(): Long {
+        return potsWithPlants.map { it.toLong() }.sum()
     }
 
 
-    fun nextGeneration(numberOfGenerations: Int): PlantGrowthTracker {
-        if (numberOfGenerations == 0) {
-            return this
-        }
-        return generateNextGeneration().nextGeneration(numberOfGenerations - 1)
-    }
+    fun nextGeneration(numberOfGenerations: Long): PlantGrowthTracker {
+        return generateNextGenerations(this, numberOfGenerations)
 
-    fun generateNextGeneration(): PlantGrowthTracker {
-        println(this.toString())
-        val nextSetOfPotsWithPlants = (potsWithPlants.min()!! - 2..potsWithPlants.max()!! + 2)
-                .filter { potIndex ->
-                    transformation.any { transformation -> transformation.isApplicable(potIndex, potsWithPlants) }
-                }
-                .toSet()
-        return this.copy(potsWithPlants = nextSetOfPotsWithPlants)
     }
-
 
     override fun toString(): String {
         return (0 .. 30)
@@ -35,6 +22,30 @@ data class PlantGrowthTracker(private val potsWithPlants: Set<Int>, private val 
                 .joinToString("")
     }
 }
+
+
+internal tailrec fun generateNextGenerations(currentGeneration: PlantGrowthTracker, numberOfGenerations: Long): PlantGrowthTracker {
+    if (numberOfGenerations == 0L) {
+        return currentGeneration
+    }
+    if (numberOfGenerations.rem(1_000_000L) == 0L) {
+        println("Still todo: ${numberOfGenerations}" )
+    }
+
+    return generateNextGenerations(generateNextGeneration(currentGeneration), numberOfGenerations - 1)
+
+}
+
+
+fun generateNextGeneration(currentGeneration: PlantGrowthTracker): PlantGrowthTracker {
+    val nextSetOfPotsWithPlants = (currentGeneration.potsWithPlants.min()!! - 2..currentGeneration.potsWithPlants.max()!! + 2)
+            .filter { potIndex ->
+                currentGeneration.transformation.any { transformation -> transformation.isApplicable(potIndex, currentGeneration.potsWithPlants) }
+            }
+            .toSet()
+    return currentGeneration.copy(potsWithPlants = nextSetOfPotsWithPlants)
+}
+
 
 internal fun parseInitialState(initialState: String) =
         initialState.withIndex()
@@ -84,11 +95,13 @@ class Day12Solver() {
 
         @JvmStatic
         fun main(args: Array<String>) {
+            val fiftyBillion = 50_000_000_000
+
             val tracker = PlantGrowthTracker(ACTUAL_INITIAL_STATE, ACTUAL_TRANSFORMATIONS)
 
             val timeForPartOne = measureTimeMillis {
 
-                val twentiethGeneration = tracker.nextGeneration(20)
+                val twentiethGeneration = tracker.nextGeneration(fiftyBillion)
                 println("Sum: ${twentiethGeneration.sumOfAllPotsContainingPlants()}")
             }
 

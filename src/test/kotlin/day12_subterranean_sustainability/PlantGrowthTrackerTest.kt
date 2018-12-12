@@ -59,7 +59,7 @@ class PlantGrowthTrackerTest {
 
         tracker = tracker.nextGeneration(20)
 
-        assertThat(tracker.sumOfAllPotsContainingPlants(), equalTo(325))
+        assertThat(tracker.sumOfAllPotsContainingPlants(), equalTo(325L))
 
 
     }
