@@ -1,11 +1,10 @@
 package day12_subterranean_sustainability
 
+import kotlin.system.measureTimeMillis
+
 data class PlantGrowthTracker(private val potsWithPlants: Set<Int>, private val transformation: Set<Transformation>) {
 
     constructor(initialState: String, transformationsInput: String) : this(parseInitialState(initialState), parseTransformations(transformationsInput))
-
-
-
 
     fun sumOfAllPotsContainingPlants(): Int {
         return potsWithPlants.sum()
@@ -79,4 +78,24 @@ private fun findOffsets(transformationInput: String, c: Char): Set<Int> {
             .map { it.index - 2}
             .toSet()
 }
+
+class Day12Solver() {
+    companion object {
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val tracker = PlantGrowthTracker(ACTUAL_INITIAL_STATE, ACTUAL_TRANSFORMATIONS)
+
+            val timeForPartOne = measureTimeMillis {
+
+                val twentiethGeneration = tracker.nextGeneration(20)
+                println("Sum: ${twentiethGeneration.sumOfAllPotsContainingPlants()}")
+            }
+
+            println("Solved part one in ${timeForPartOne}ms.")
+        }
+    }
+}
+
+
 
