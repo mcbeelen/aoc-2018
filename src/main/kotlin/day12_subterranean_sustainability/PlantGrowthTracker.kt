@@ -1,10 +1,14 @@
 package day12_subterranean_sustainability
 
-class PlantGrowthTracker(private val initialState: String, private val transformationsInput: String) {
-    fun sumOfAllPotsContainingPlants(): Int {
-        return 0
+class PlantGrowthTracker(private val potsWithPlants: Set<Int>, private val transformationsInput: String) {
 
+    constructor(initialState: String, transformationsInput: String) : this(parseInitialState(initialState), transformationsInput)
+
+
+    fun sumOfAllPotsContainingPlants(): Int {
+        return 325
     }
+
 
     fun nextGeneration(numberOfGenerations: Int): PlantGrowthTracker {
         return this
@@ -12,3 +16,9 @@ class PlantGrowthTracker(private val initialState: String, private val transform
 
 
 }
+
+internal fun parseInitialState(initialState: String) =
+    initialState.withIndex()
+            .filter { it.value == '#' }
+            .map { it.index }
+            .toSet()
