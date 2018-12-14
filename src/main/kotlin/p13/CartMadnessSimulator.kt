@@ -5,10 +5,11 @@ import util.grid.Direction
 import util.grid.Direction.*
 import util.grid.ScreenCoordinate
 import java.util.concurrent.atomic.AtomicInteger
+import javax.swing.text.Position
 
 class CartMadnessSimulator(input: String) {
 
-    private var carts : Set<Cart> = HashSet()
+    private var carts: Set<Cart> = HashSet()
     lateinit var track: Map<ScreenCoordinate, Section>
 
     val counter = AtomicInteger(0)
@@ -18,7 +19,7 @@ class CartMadnessSimulator(input: String) {
 
         val trackInProgress: MutableMap<ScreenCoordinate, Section> = HashMap();
 
-        val initialCarts : MutableSet<Cart> = HashSet()
+        val initialCarts: MutableSet<Cart> = HashSet()
 
         input.trimIndent().lines().withIndex()
                 .forEach { line ->
@@ -77,43 +78,68 @@ class CartMadnessSimulator(input: String) {
                             }
 
                     this.track = trackInProgress
-                    this.carts = initialCarts.toSortedSet(compareBy( { it.position.top }, {it.position.left}))
+                    this.carts = initialCarts.toSortedSet(compareBy({ it.position.top }, { it.position.left }))
                 }
     }
 
 
-    fun tick() : ScreenCoordinate? {
+    fun tick(): List<Cart> {
 
-
-        println("Cart are present at ${carts}")
         println("Tick() # ${counter.incrementAndGet()}")
 
-        val cartsAtNextPosition : MutableSet<Cart> = HashSet()
+        val cartsAtNextPosition: MutableSet<Cart> = HashSet()
+
+        val crashedCarts: MutableList<Cart> = ArrayList()
+
         carts
                 .sortedWith(compareBy({ it.position.top }, { it.position.left }))
                 .forEach {
-                    val newPositionForMovingCart = it.move(track)
-                    if (isCartPresentAt(newPositionForMovingCart.position)
-                            || cartsAtNextPosition.any { it.position == newPositionForMovingCart.position }) {
-                        return newPositionForMovingCart.position
-                    } else {
-                        cartsAtNextPosition.add(newPositionForMovingCart)
+
+                    // If this cart hasn't already crashed yet
+                    if (crashedCarts.none { cart -> cart.position == it.position }) {
+
+                        val newPositionForMovingCart = it.move(track)
+
+                        if (isCartPresentAt(newPositionForMovingCart.position)) {
+                            // If collision with cart in that carts current position
+                            // Mark location as crashed, to prevent that cart to move again
+                            crashedCarts.add(newPositionForMovingCart)
+                        } else if (cartsAtNextPosition.any { it.position == newPositionForMovingCart.position }) {
+                            crashedCarts.removeIf { it.position == newPositionForMovingCart.position }
+
+
+                        } else {
+                            cartsAtNextPosition.add(newPositionForMovingCart)
+                        }
                     }
                 }
-        this.carts = cartsAtNextPosition.toSortedSet(compareBy( { it.position.top }, {it.position.left}))
-        return null
-    }
 
+
+        this.carts = cartsAtNextPosition.toSortedSet(compareBy({ it.position.top }, { it.position.left }))
+
+
+        return crashedCarts
+    }
 
 
     fun findLocationOfFirstCrash(): ScreenCoordinate {
 
-        var coordinate = tick()
-        while (coordinate == null) {
-            coordinate = tick()
+        var listOfCrashes = tick()
+        while (listOfCrashes.isEmpty()) {
+            listOfCrashes = tick()
         }
-        return coordinate!!
+        return listOfCrashes.first().position
     }
+
+
+    fun findLocationOfLastRemainingCart(): ScreenCoordinate {
+
+        while (carts.size != 1) {
+            tick()
+        }
+        return carts.single().position
+    }
+
 
     fun isCartPresentAt(screenCoordinate: ScreenCoordinate) = carts.any { it.position == screenCoordinate }
 
@@ -126,19 +152,21 @@ data class Cart(val position: ScreenCoordinate, val direction: Direction, val tu
     }
 
 
-    fun move(track: Map<ScreenCoordinate, Section>) : Cart {
+    fun move(track: Map<ScreenCoordinate, Section>): Cart {
 
         val nextPosition = position.next(direction)
 
         val section = track[nextPosition]
-        return when(section) {
+        return when (section) {
 
             INTERSECTION -> copy(position = nextPosition, direction = direction.turn(turn), turn = turn.next())
             CURVE_UP_RIGHT -> copy(position = nextPosition, direction = followTheUpRightCurve(direction))
             CURVE_UP_LEFT -> copy(position = nextPosition, direction = followTheUpLeftCurve(direction))
             STRAIGHT_UP_DOWN -> copy(position = nextPosition)
             STRAIGHT_LEFT_RIGHT -> copy(position = nextPosition)
-            null -> {throw IllegalStateException("We should not go off the track")}
+            null -> {
+                throw IllegalStateException("We should not go off the track")
+            }
         }
 
     }
@@ -164,8 +192,6 @@ data class Cart(val position: ScreenCoordinate, val direction: Direction, val tu
 
     }
 }
-
-
 
 
 enum class Section {

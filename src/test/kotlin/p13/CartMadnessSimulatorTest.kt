@@ -54,5 +54,19 @@ class CartMadnessSimulatorTest {
         println(coordinateOfFirstCrash)
 
     }
+
+
+    @Test
+    fun partTwo() {
+        val actualSimulator = CartMadnessSimulator(CART_MADNESS_INPUT)
+
+
+        val coordinateOfFirstCrash : ScreenCoordinate = actualSimulator.findLocationOfLastRemainingCart()
+
+        assertThat(coordinateOfFirstCrash, ! equalTo(ScreenCoordinate(137,43)))
+        println(coordinateOfFirstCrash)
+
+    }
+
 }
 
