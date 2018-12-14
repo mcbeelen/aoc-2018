@@ -4,7 +4,6 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import util.grid.ScreenCoordinate
 
@@ -45,6 +44,10 @@ class CartMadnessSimulatorTest {
     fun partOne() {
 
         val actualSimulator = CartMadnessSimulator(CART_MADNESS_INPUT)
+
+        assertTrue(actualSimulator.isCartPresentAt(ScreenCoordinate(30, 67)))
+
+
         val coordinateOfFirstCrash : ScreenCoordinate = actualSimulator.findLocationOfFirstCrash()
 
         assertThat(coordinateOfFirstCrash, ! equalTo(ScreenCoordinate(137,43)))

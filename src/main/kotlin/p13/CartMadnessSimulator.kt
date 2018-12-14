@@ -44,7 +44,7 @@ class CartMadnessSimulator(input: String) {
                                         trackInProgress[ScreenCoordinate(x, y)] = STRAIGHT_UP_DOWN
                                     }
                                     '<' -> {
-                                        val cart = Cart(ScreenCoordinate(x, y), RIGHT)
+                                        val cart = Cart(ScreenCoordinate(x, y), LEFT)
                                         initialCarts.add(cart)
                                         trackInProgress[ScreenCoordinate(x, y)] = STRAIGHT_LEFT_RIGHT
                                     }
@@ -84,6 +84,8 @@ class CartMadnessSimulator(input: String) {
 
     fun tick() : ScreenCoordinate? {
 
+
+        println("Cart are present at ${carts}")
         println("Tick() # ${counter.incrementAndGet()}")
 
         val cartsAtNextPosition : MutableSet<Cart> = HashSet()
