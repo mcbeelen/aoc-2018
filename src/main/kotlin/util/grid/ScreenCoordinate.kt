@@ -1,5 +1,6 @@
 package util.grid
 
+import util.grid.Direction.*
 import kotlin.math.abs
 
 data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<ScreenCoordinate> {
@@ -12,7 +13,16 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
     }
 
     fun distanceTo(point: ScreenCoordinate) = abs(left - point.left) + abs(top - point.top)
+    fun next(direction: Direction): ScreenCoordinate {
+        return when (direction) {
 
+            UP -> copy(top = top - 1)
+            RIGHT -> copy(left = left + 1)
+            DOWN -> copy(top =  top + 1)
+            LEFT -> copy(left = left - 1)
+        }
+
+    }
 
 
 }
