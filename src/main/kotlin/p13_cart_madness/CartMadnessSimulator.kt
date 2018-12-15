@@ -1,11 +1,10 @@
-package p13
+package p13_cart_madness
 
-import p13.Section.*
+import p13_cart_madness.Section.*
 import util.grid.Direction
 import util.grid.Direction.*
 import util.grid.ScreenCoordinate
 import java.util.concurrent.atomic.AtomicInteger
-import javax.swing.text.Position
 
 class CartMadnessSimulator(input: String) {
 
