@@ -15,7 +15,7 @@ data class GoblinVsElvesSimulator(
         val numberOfCompletedRoundsOfBattle: Int = 0,
         val openSpaces: Set<ScreenCoordinate>,
         internal val combatants: Set<Combatant>,
-        val listCombatantsThisRound : List<Combatant>,
+        val listCombatantsThisRound: List<Combatant>,
         internal val activeCombatantIndex: Int = 0) {
 
 
@@ -91,6 +91,7 @@ data class GoblinVsElvesSimulator(
     fun theBattleIsntOver(): Boolean = combatants.map { it.type }.toSet().size > 1
 
     fun withNextCombatantActive(): GoblinVsElvesSimulator = copy(activeCombatantIndex = activeCombatantIndex + 1)
+    fun isActiveCombatantStillAlive() = combatants.contains(activeCombatant)
 }
 
 
@@ -117,7 +118,6 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
                 activeCombatantIndex = 0,
                 listCombatantsThisRound = updatedSituation.combatants.sortedWith(combatantInBattleOrder))
         plot(updatedSituation)
-
 
 
     }
@@ -220,15 +220,17 @@ fun findAdjacentEnemyWithFewestHitPoints(situation: GoblinVsElvesSimulator, acti
 
 }
 
-private fun moveActiveCombatant(activeCombatant: Combatant, path: Path<BattleCoordinate>, updatedSituation: GoblinVsElvesSimulator): Pair<Combatant, GoblinVsElvesSimulator> {
+private fun moveActiveCombatant(currentCombatant: Combatant, path: Path<BattleCoordinate>, currentSituation: GoblinVsElvesSimulator): Pair<Combatant, GoblinVsElvesSimulator> {
     // move
-    var activeCombatant1 = activeCombatant
-    var updatedSituation1 = updatedSituation
-    val movedCombatant = activeCombatant1.copy(position = path.vertices[1].coordinate)
+    var updatableCombatant = currentCombatant
+    val nextPosition = path.vertices[1].coordinate
+    println("${currentCombatant.type} at ${currentCombatant.position} moves to ${nextPosition}")
+    val movedCombatant = currentCombatant.copy(position = nextPosition)
 
-    updatedSituation1 = updatedSituation1.copy(combatants = updatedSituation1.combatants.minus(activeCombatant1).plus(movedCombatant))
-    activeCombatant1 = movedCombatant
-    return Pair(activeCombatant1, updatedSituation1)
+    val updatedCombatants = currentSituation.combatants.minus(updatableCombatant).plus(movedCombatant)
+    val updatedSituation = currentSituation.copy(combatants = updatedCombatants)
+
+    return Pair(movedCombatant, updatedSituation)
 }
 
 
