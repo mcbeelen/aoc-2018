@@ -1,6 +1,6 @@
-package p13_cart_madness
+package day13_cart_madness
 
-import p13_cart_madness.Section.*
+import day13_cart_madness.Section.*
 import util.grid.Direction
 import util.grid.Direction.*
 import util.grid.ScreenCoordinate

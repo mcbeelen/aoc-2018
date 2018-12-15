@@ -1,8 +1,7 @@
-package p14_hot_chocolate_recipes
+package day14_hot_chocolate_recipes
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.lessThan
 import org.junit.Test
 
 

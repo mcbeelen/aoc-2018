@@ -1,4 +1,4 @@
-package p14_hot_chocolate_recipes
+package day14_hot_chocolate_recipes
 
 import java.util.concurrent.atomic.AtomicInteger
 
