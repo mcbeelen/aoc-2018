@@ -1,5 +1,7 @@
 package util.grid
 
+import com.natpryce.hamkrest.MatchResult
+import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
@@ -16,6 +18,8 @@ class ScreenCoordinateTest {
         assertThat(first.compareTo(second), equalTo(0))
 
     }
+
+
 
     @Test
     fun `parseXcommaYInput()`() {
@@ -40,5 +44,24 @@ class ScreenCoordinateTest {
 
     }
 
+
+}
+
+
+fun isAt(left: Int, top: Int): Matcher<ScreenCoordinate> {
+    return object : Matcher<ScreenCoordinate> {
+        override fun invoke(actual: ScreenCoordinate): MatchResult {
+            return if (actual.isAt(left, top)) {
+                MatchResult.Match
+            } else {
+                MatchResult.Mismatch("was at <${actual.left}, ${actual.top}>")
+            }
+        }
+
+        override val description: String
+            get() {
+                return "isAt <$left, $top>"
+            }
+    }
 
 }

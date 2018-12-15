@@ -26,6 +26,8 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
 
     fun isAt(left: Int, top: Int) : Boolean = this.left == left && this.top == top
 
+    fun isAt(other: ScreenCoordinate) = isAt(other.left, other.top)
+
     override fun toString(): String {
         return "<$left, $top>"
     }

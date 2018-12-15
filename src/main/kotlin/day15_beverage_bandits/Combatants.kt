@@ -22,5 +22,6 @@ class CombatantInBattleOrder : Comparator<Combatant> {
 
 enum class CreatureType {
     ELF,
-    GOBLIN
+    GOBLIN;
+
 }

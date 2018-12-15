@@ -1,89 +1,32 @@
 package day15_beverage_bandits
 
-import com.natpryce.hamkrest.Matcher
-import com.natpryce.hamkrest.allElements
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.isIn
 import org.junit.Test
 import util.grid.ScreenCoordinate
-import day15_beverage_bandits.CreatureType.*
-import org.junit.Assert.assertTrue
 
 class BattlefieldTest {
 
-
     @Test
-    fun itShouldParseTheInputIntoTheBattlefield() {
+    fun findNeighbours() {
 
-        val FIRST_EXAMPLE_BATTLEFIELD = """
-    #######
-    #.G.E.#
-    #E.G.E#
-    #.G.E.#
-    #######"""
+        val sampleBattleSimulator = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
+
+        val battlefield = Battlefield(openSpaces = sampleBattleSimulator.openSpaces,
+                combatants = sampleBattleSimulator.combatants,
+                potentialEnemy = Combatant(CreatureType.ELF, position = ScreenCoordinate(4, 2)))
+
+        val foundNeighbours = battlefield.findNeighbours(BattleCoordinate(2, 1))
+        foundNeighbours.let {
+            assertThat(it.size, equalTo(3))
+            assertThat(it[0].destination, equalTo(BattleCoordinate(3,1)))
+            assertThat(it[1].destination, equalTo(BattleCoordinate(2,2)))
+            assertThat(it[2].destination, equalTo(BattleCoordinate(1,1)))
 
 
-        val sampleBattlefield = parseIntoBattleField(FIRST_EXAMPLE_BATTLEFIELD)
-
-        val playingField: MutableSet<ScreenCoordinate> = HashSet();
-        for (x in 1..5) {
-            for (y in 1..3) {
-                playingField.add(ScreenCoordinate(x, y))
-            }
         }
-        assertThat(sampleBattlefield.openSpaces, allElements(isIn(playingField)))
-        assertThat(playingField, allElements(isIn(sampleBattlefield.openSpaces)))
 
-        val positionOfElves = listOf(ScreenCoordinate(4, 1), ScreenCoordinate(1, 2), ScreenCoordinate(5, 2), ScreenCoordinate(4, 3))
-        assertThat(sampleBattlefield.findPositionOfAllElves(), allElements(isIn(positionOfElves)))
-
-        val positionOfGoblins = listOf(ScreenCoordinate(2, 1), ScreenCoordinate(3, 2), ScreenCoordinate(2, 3))
-        assertThat(sampleBattlefield.findPositionOfAllGoblins(), allElements(isIn(positionOfGoblins)))
 
 
     }
-
-
-    @Test
-    fun theCombatantsShouldFightInDisciplineOrder() {
-
-        val sampleBattlefield = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
-        val combatants: List<Combatant> = sampleBattlefield.getUnitsInOrderForTakingTurns()
-
-        combatants.first().let {
-            assertThat(it.type, equalTo(GOBLIN))
-            assertTrue(it.position.isAt(2, 1))
-        }
-
-        combatants.last().let {
-            assertThat(it.type, equalTo(ELF))
-            assertTrue(it.position.isAt(5, 4))
-        }
-    }
-
-
-    @Test
-    fun validateEntireSampleCombat() {
-
-
-        val sampleBattlefield = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
-
-        val battlefieldAtEndOfTheCombat = sampleBattlefield.battleItOut()
-
-        assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(47))
-        assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(590))
-
-    }
-
 }
-
-
-const val ENTIRE_SAMPLE_COMBAT = """
-#######
-#.G...#
-#...EG#
-#.#.#G#
-#..G#E#
-#.....#
-####### """
