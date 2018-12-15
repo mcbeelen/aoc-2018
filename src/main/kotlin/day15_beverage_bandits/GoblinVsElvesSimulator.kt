@@ -85,8 +85,7 @@ data class GoblinVsElvesSimulator(
     }
 
 
-    fun someCombatantMayTakeItsTurnThisRound(): Boolean = this.theBattleIsntOver()
-            && this.activeCombatantIndex < listCombatantsThisRound.size
+    fun someCombatantMayTakeItsTurnThisRound(): Boolean = this.activeCombatantIndex < listCombatantsThisRound.size
 
     fun theBattleIsntOver(): Boolean = combatants.map { it.type }.toSet().size > 1
 
@@ -101,7 +100,7 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
     var updatedSituation = originalSituation
 
     while (updatedSituation.theBattleIsntOver()) {
-        while (updatedSituation.someCombatantMayTakeItsTurnThisRound()) {
+        while (updatedSituation.someCombatantMayTakeItsTurnThisRound() && updatedSituation.theBattleIsntOver()) {
 
             if (updatedSituation.isActiveCombatantStillAlive()) {
                 updatedSituation = playOneTurn(updatedSituation).withNextCombatantActive()
@@ -112,12 +111,18 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
             }
         }
 
-
-        val numberOfCompletedRoundsOfBattle = updatedSituation.numberOfCompletedRoundsOfBattle + 1
-        updatedSituation = updatedSituation.copy(
-                numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle,
-                activeCombatantIndex = 0,
-                listCombatantsThisRound = updatedSituation.combatants.sortedWith(combatantInBattleOrder))
+        if (updatedSituation.theBattleIsntOver()) {
+            val numberOfCompletedRoundsOfBattle = updatedSituation.numberOfCompletedRoundsOfBattle + 1
+            updatedSituation = updatedSituation.copy(
+                    numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle,
+                    activeCombatantIndex = 0,
+                    listCombatantsThisRound = updatedSituation.combatants.sortedWith(combatantInBattleOrder))
+        } else {
+            if (!updatedSituation.someCombatantMayTakeItsTurnThisRound()) {
+                val numberOfCompletedRoundsOfBattle = updatedSituation.numberOfCompletedRoundsOfBattle + 1
+                updatedSituation = updatedSituation.copy(numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle)
+            }
+        }
 
         plot(updatedSituation)
 
