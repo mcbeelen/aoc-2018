@@ -103,6 +103,23 @@ class GoblinVsElvesSimulatorTest {
         assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(37))
         assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(982))
     }
+
+    @Test
+    fun itShouldFindEnemyWithFewestPointsAndInReadingOrder() {
+
+        val battlefield = parseIntoBattleField(FIRST_ADDITIONAL_EXAMPLE)
+        val elfAtOneDotTwo = Combatant(ELF, ScreenCoordinate(1, 2) )
+        findAdjacentEnemyWithFewestHitPoints(battlefield, elfAtOneDotTwo).let {
+            assertThat(it.type, equalTo(GOBLIN))
+            assertThat(it.hitPoints, equalTo(200))
+            assertThat(it.position, isAt(1, 1))
+
+        }
+
+
+    }
+
+
 }
 
 

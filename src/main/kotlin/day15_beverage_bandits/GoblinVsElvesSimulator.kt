@@ -101,6 +101,7 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
 
     while (updatedSituation.theBattleIsntOver()) {
         while (updatedSituation.someCombatantMayTakeItsTurnThisRound()) {
+
             val situationAfterTurn = playOneTurn(updatedSituation)
             if (situationAfterTurn.combatants.size == updatedSituation.combatants.size) {
                 updatedSituation = situationAfterTurn.withNextCombatantActive()
@@ -111,12 +112,11 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
 
 
         val numberOfCompletedRoundsOfBattle = updatedSituation.numberOfCompletedRoundsOfBattle + 1
-        logger.info("Starting next round (${numberOfCompletedRoundsOfBattle})")
-
         updatedSituation = updatedSituation.copy(
                 numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle,
                 activeCombatantIndex = 0,
                 listCombatantsThisRound = updatedSituation.combatants.sortedWith(combatantInBattleOrder))
+
         plot(updatedSituation)
 
 
@@ -213,10 +213,16 @@ private fun playOneTurn(originalSituation: GoblinVsElvesSimulator): GoblinVsElve
 
 fun findAdjacentEnemyWithFewestHitPoints(situation: GoblinVsElvesSimulator, activeCombatant: Combatant): Combatant {
 
-    return situation.combatants
+    val adjacentEnemies = situation.combatants
             .filter { it.type != activeCombatant.type }
             .filter { it.isAdjacentTo(activeCombatant) }
-            .minBy { it.hitPoints }!!
+
+    val fewestNumberOfHitPoints = adjacentEnemies.map { it.hitPoints }.min()!!
+
+    return adjacentEnemies
+            .filter { it.hitPoints == fewestNumberOfHitPoints }
+            .sortedWith(combatantInBattleOrder)
+            .first()
 
 }
 
