@@ -15,11 +15,12 @@ data class GoblinVsElvesSimulator(
         val numberOfCompletedRoundsOfBattle: Int = 0,
         val openSpaces: Set<ScreenCoordinate>,
         internal val combatants: Set<Combatant>,
+        val listCombatantsThisRound : List<Combatant>,
         internal val activeCombatantIndex: Int = 0) {
 
 
     val activeCombatant: Combatant by lazy {
-        findActiveCombatant()
+        listCombatantsThisRound[activeCombatantIndex]
     }
 
     fun sumOfHitPointsOfRemainingUnits() = combatants.map { it.hitPoints }.sum()
@@ -33,8 +34,6 @@ data class GoblinVsElvesSimulator(
 
     fun getUnitsInOrderForTakingTurns() = combatants.sortedWith(combatantInBattleOrder)
 
-
-    private fun findActiveCombatant(): Combatant = getUnitsInOrderForTakingTurns()[activeCombatantIndex]
 
     fun identifyPossibleTargetsForActiveCombatant(): List<Combatant> {
 
@@ -87,7 +86,7 @@ data class GoblinVsElvesSimulator(
 
 
     fun someCombatantMayTakeItsTurnThisRound(): Boolean = this.theBattleIsntOver()
-            && this.activeCombatantIndex < combatants.size
+            && this.activeCombatantIndex < listCombatantsThisRound.size
 
     fun theBattleIsntOver(): Boolean = combatants.map { it.type }.toSet().size > 1
 
@@ -101,17 +100,25 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
 
     while (updatedSituation.theBattleIsntOver()) {
         while (updatedSituation.someCombatantMayTakeItsTurnThisRound()) {
-            updatedSituation = playOneTurn(updatedSituation)
-            updatedSituation = updatedSituation.withNextCombatantActive()
+            val situationAfterTurn = playOneTurn(updatedSituation)
+            if (situationAfterTurn.combatants.size == updatedSituation.combatants.size) {
+                updatedSituation = situationAfterTurn.withNextCombatantActive()
+            } else {
+                updatedSituation = situationAfterTurn
+            }
         }
+
 
         val numberOfCompletedRoundsOfBattle = updatedSituation.numberOfCompletedRoundsOfBattle + 1
         logger.info("Starting next round (${numberOfCompletedRoundsOfBattle})")
+
         updatedSituation = updatedSituation.copy(
                 numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle,
-                activeCombatantIndex = 0)
-
+                activeCombatantIndex = 0,
+                listCombatantsThisRound = updatedSituation.combatants.sortedWith(combatantInBattleOrder))
         plot(updatedSituation)
+
+
 
     }
 
@@ -179,7 +186,7 @@ private fun playOneTurn(originalSituation: GoblinVsElvesSimulator): GoblinVsElve
 
         if (activeCombatant.isAdjacentTo(enemy)) {
 
-            enemy = findAdjacentEnemyWithFewestHitPoints(updatedSituation)
+            enemy = findAdjacentEnemyWithFewestHitPoints(updatedSituation, activeCombatant)
 
             val combatants = updatedSituation.combatants
             println("${activeCombatant.type} at ${activeCombatant.position} is going to hit ${enemy.type} at ${enemy.position} with ${enemy.hitPoints}")
@@ -204,11 +211,11 @@ private fun playOneTurn(originalSituation: GoblinVsElvesSimulator): GoblinVsElve
 
 }
 
-fun findAdjacentEnemyWithFewestHitPoints(situation: GoblinVsElvesSimulator): Combatant {
+fun findAdjacentEnemyWithFewestHitPoints(situation: GoblinVsElvesSimulator, activeCombatant: Combatant): Combatant {
 
     return situation.combatants
-            .filter { it.type != situation.activeCombatant.type }
-            .filter { it.isAdjacentTo(situation.activeCombatant) }
+            .filter { it.type != activeCombatant.type }
+            .filter { it.isAdjacentTo(activeCombatant) }
             .minBy { it.hitPoints }!!
 
 }
@@ -257,7 +264,10 @@ fun parseIntoBattleField(battlefieldInput: String): GoblinVsElvesSimulator {
                 }
             }
 
-    return GoblinVsElvesSimulator(openSpaces = openSpaces, combatants = combatants)
+    return GoblinVsElvesSimulator(
+            openSpaces = openSpaces,
+            combatants = combatants,
+            listCombatantsThisRound = combatants.sortedWith(combatantInBattleOrder))
 
 }
 
