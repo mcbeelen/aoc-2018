@@ -24,6 +24,10 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
 
     }
 
+    override fun toString(): String {
+        return "<$left, $top>"
+    }
+
 
 }
 
