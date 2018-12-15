@@ -32,6 +32,7 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
         return "<$left, $top>"
     }
 
+    fun isAdjacentTo(other: ScreenCoordinate) = distanceTo(other) == 1
 
 }
 

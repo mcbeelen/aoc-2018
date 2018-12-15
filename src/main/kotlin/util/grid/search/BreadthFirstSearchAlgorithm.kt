@@ -14,11 +14,15 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
 
     private var reachedDestination = false
 
-    fun findShortestPath(origin: V, destination: V): Path<V> {
-        initiateStartingVertex(origin)
+    fun findShortestPath(origin: V, destination: V): Path<V>? {
+        try {
+            initiateStartingVertex(origin)
 
-        performSearchForShortestPathTo(destination)
-        return buildPathFrom(origin, visitedVertices.getValue(destination.key))
+            performSearchForShortestPathTo(destination)
+            return buildPathFrom(origin, visitedVertices.getValue(destination.key))
+        } catch (e: IllegalStateException) {
+            return null
+        }
     }
 
     private fun initiateStartingVertex(origin: V) {
@@ -39,9 +43,7 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
     }
 
     open fun stillNeedToProcessNodes(destination: V): Boolean {
-        val key = destination.key
-        val containsKey = visitedVertices.containsKey(key)
-        return !containsKey
+        return !visitedVertices.containsKey(destination.key)
     }
 
     protected fun peekAtClosestVertex() : V = unvisitedVertices.peek()

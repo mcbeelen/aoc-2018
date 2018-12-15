@@ -1,10 +1,11 @@
 package day15_beverage_bandits
 
-import com.natpryce.hamkrest.*
+import com.natpryce.hamkrest.allElements
 import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.isIn
 import day15_beverage_bandits.CreatureType.ELF
 import day15_beverage_bandits.CreatureType.GOBLIN
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import util.grid.ScreenCoordinate
 import util.grid.isAt
@@ -71,10 +72,10 @@ class GoblinVsElvesSimulatorTest {
         }
 
         val target = sampleBattlefield.findTargetForActiveCombatant()
-        target.let {
+        target!!.let {
             assertThat(it.enemy.position, isAt(4, 2))
-            assertThat(it.path.calculateDistance(), equalTo(2))
-            val pathThroughBattleCoordinates = listOf(BattleCoordinate(ScreenCoordinate(3, 1)), BattleCoordinate(ScreenCoordinate(4, 1)))
+            assertThat(it.path.calculateDistance(), equalTo(3))
+            val pathThroughBattleCoordinates = listOf(BattleCoordinate(2, 1), BattleCoordinate(3, 1), BattleCoordinate(4, 1), BattleCoordinate(4, 2))
             assertThat(it.path.vertices, equalTo(pathThroughBattleCoordinates))
         }
 
@@ -88,7 +89,7 @@ class GoblinVsElvesSimulatorTest {
 
         val sampleBattlefield = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
 
-        val battlefieldAtEndOfTheCombat = sampleBattlefield.battleItOut()
+        val battlefieldAtEndOfTheCombat = battleItOut(sampleBattlefield)
 
         assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(47))
         assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(590))

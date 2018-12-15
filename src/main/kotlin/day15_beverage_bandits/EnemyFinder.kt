@@ -17,18 +17,15 @@ class EnemyFinder(private val battlefield: Battlefield) : BreadthFirstSearchAlgo
 }
 class Battlefield(
         private val openSpaces: Set<ScreenCoordinate>,
-        private val combatants: Set<Combatant>,
-        private val potentialEnemy: Combatant) : Graph<BattleCoordinate, Move>() {
+        private val combatants: Set<Combatant>) : Graph<BattleCoordinate, Move>() {
     override fun findNeighbours(vertex: BattleCoordinate): List<Move> {
 
         val map = Direction.values()
                 .map { vertex.coordinate.next(it) }
 
-        if (map.contains(potentialEnemy.position)) {
-            return listOf(Move(vertex, BattleCoordinate(potentialEnemy.position)))
-        }
         return map
                 .filter { openSpaces.contains(it) }
+                .filter { screenCoordinate -> combatants.none { combatant -> combatant.position.isAt(screenCoordinate) } }
                 .map { Move(vertex, BattleCoordinate(it)) }
                 .toList()
     }
