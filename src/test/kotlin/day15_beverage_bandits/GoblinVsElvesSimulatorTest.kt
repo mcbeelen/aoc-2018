@@ -96,6 +96,13 @@ class GoblinVsElvesSimulatorTest {
 
     }
 
+    @Test
+    fun firstAdditionalExample() {
+        val battlefield = parseIntoBattleField(FIRST_ADDITIONAL_EXAMPLE)
+        val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
+        assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(37))
+        assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(982))
+    }
 }
 
 
@@ -108,3 +115,13 @@ const val ENTIRE_SAMPLE_COMBAT = """
 #..G#E#
 #.....#
 ####### """
+
+
+const val FIRST_ADDITIONAL_EXAMPLE = """
+#######
+#G..#E#
+#E#E.E#
+#G.##.#
+#...#E#
+#...E.#
+#######"""
