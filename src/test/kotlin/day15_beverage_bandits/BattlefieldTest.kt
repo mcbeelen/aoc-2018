@@ -33,6 +33,11 @@ class BattlefieldTest {
 
         val positionOfElves = listOf(ScreenCoordinate(4, 1), ScreenCoordinate(1, 2), ScreenCoordinate(5, 2), ScreenCoordinate(4, 3))
         assertThat(sampleBattlefield.findPositionOfAllElves(), allElements(isIn(positionOfElves)))
+
+        val positionOfGoblins = listOf(ScreenCoordinate(2, 1), ScreenCoordinate(3, 2), ScreenCoordinate(2, 3))
+        assertThat(sampleBattlefield.findPositionOfAllGoblins(), allElements(isIn(positionOfGoblins)))
+
+
     }
 
 

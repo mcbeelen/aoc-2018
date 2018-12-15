@@ -16,10 +16,14 @@ class Battlefield(
     }
 
     fun sumOfHitPointsOfRemainingUnits() = combatants.map { it.hitPoints }.sum()
-    fun findPositionOfAllElves(): Iterable<ScreenCoordinate> = combatants.filter { it.type == ELF }.map{ it.position }.asIterable()
+    fun findPositionOfAllElves() = findPositionOfAll(ELF)
+    fun findPositionOfAllGoblins() = findPositionOfAll(GOBLIN)
 
+    private fun findPositionOfAll(wantedType: CreatureType) =
+            combatants.filter { it.type == wantedType }.map { it.position }.asIterable()
 
 }
+
 
 
 fun parseIntoBattleField(battlefieldInput: String): Battlefield {
