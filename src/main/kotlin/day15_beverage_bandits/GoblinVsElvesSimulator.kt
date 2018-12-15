@@ -91,7 +91,8 @@ data class GoblinVsElvesSimulator(
     fun theBattleIsntOver(): Boolean = combatants.map { it.type }.toSet().size > 1
 
     fun withNextCombatantActive(): GoblinVsElvesSimulator = copy(activeCombatantIndex = activeCombatantIndex + 1)
-    fun isActiveCombatantStillAlive() = combatants.contains(activeCombatant)
+    fun isActiveCombatantStillAlive() =
+            combatants.any { it.type == activeCombatant.type && it.position == activeCombatant.position }
 }
 
 
@@ -102,11 +103,12 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
     while (updatedSituation.theBattleIsntOver()) {
         while (updatedSituation.someCombatantMayTakeItsTurnThisRound()) {
 
-            val situationAfterTurn = playOneTurn(updatedSituation)
-            if (situationAfterTurn.combatants.size == updatedSituation.combatants.size) {
-                updatedSituation = situationAfterTurn.withNextCombatantActive()
+            if (updatedSituation.isActiveCombatantStillAlive()) {
+                updatedSituation = playOneTurn(updatedSituation).withNextCombatantActive()
             } else {
-                updatedSituation = situationAfterTurn
+                // skip the dead player
+                updatedSituation = updatedSituation.withNextCombatantActive()
+
             }
         }
 
