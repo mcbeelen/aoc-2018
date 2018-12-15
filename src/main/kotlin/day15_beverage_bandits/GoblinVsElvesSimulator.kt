@@ -125,49 +125,7 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
     return updatedSituation
 }
 
-fun plot(situation: GoblinVsElvesSimulator) {
 
-    println("Situation after ${situation.numberOfCompletedRoundsOfBattle}:")
-    println()
-
-    for (y in 0..6) {
-        for (x in 0..6) {
-            when {
-                isOccupied(x, y, situation.combatants) -> printOccupant(x, y, situation.combatants)
-                situation.openSpaces.contains(ScreenCoordinate(x, y)) -> print('.')
-                else -> print('#')
-            }
-        }
-
-        for (x in 0..6) {
-            if (isOccupied(x, y, situation.combatants)) {
-                printHealthInfo(x, y, situation.combatants)
-            }
-        }
-
-
-        println()
-    }
-    println()
-    println()
-    println()
-
-
-}
-
-fun printHealthInfo(x: Int, y: Int, combatants: Set<Combatant>) {
-    val combatant = findCombatantAt(combatants, x, y)
-    print(message = " ${combatant.type.name[0]}(${combatant.hitPoints})")
-}
-
-fun printOccupant(x: Int, y: Int, combatants: Set<Combatant>) {
-    print(findCombatantAt(combatants, x, y).type.name[0])
-}
-
-private fun findCombatantAt(combatants: Set<Combatant>, x: Int, y: Int) =
-        combatants.single { it.position.isAt(x, y) }
-
-fun isOccupied(x: Int, y: Int, combatants: Set<Combatant>) = combatants.any { it.position.isAt(x, y) }
 
 
 private fun playOneTurn(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
