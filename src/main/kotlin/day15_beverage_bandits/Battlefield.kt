@@ -1,22 +1,22 @@
 package day15_beverage_bandits
 
 import util.grid.ScreenCoordinate
-
+import day15_beverage_bandits.CreatureType.*
 
 class Battlefield(
         val numberOfCompletedRoundsOfBattle: Int = 0,
-        val openSpaces: Set<ScreenCoordinate>) {
+        val openSpaces: Set<ScreenCoordinate>,
+        private val combatants: Set<Combatant>) {
 
 
     fun battleItOut(): Battlefield {
         return Battlefield(numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle + 1,
-                openSpaces = emptySet())
+                openSpaces = emptySet(),
+                combatants = emptySet())
     }
 
-    fun sumOfHitPointsOfRemainingUnits() = combatantMap.keys.map { it.hitPoints }.sum()
-
-
-    val combatantMap: MutableMap<Combatant, ScreenCoordinate> = HashMap()
+    fun sumOfHitPointsOfRemainingUnits() = combatants.map { it.hitPoints }.sum()
+    fun findPositionOfAllElves(): Iterable<ScreenCoordinate> = combatants.filter { it.type == ELF }.map{ it.position }.asIterable()
 
 
 }
@@ -25,6 +25,7 @@ class Battlefield(
 fun parseIntoBattleField(battlefieldInput: String): Battlefield {
 
     val openSpaces: MutableSet<ScreenCoordinate> = HashSet()
+    val combatants: MutableSet<Combatant> = HashSet()
 
     battlefieldInput.trimIndent().lines().withIndex()
             .map { line ->
@@ -33,15 +34,24 @@ fun parseIntoBattleField(battlefieldInput: String): Battlefield {
                 line.value.withIndex().forEach {
 
                     val x = it.index
+                    val coordinate = ScreenCoordinate(x, y)
 
                     when (it.value) {
-                       in ".GE" -> openSpaces.add(ScreenCoordinate(x, y))
-
-
+                        '.' -> openSpaces.add(coordinate)
+                        'G' -> {
+                            combatants.add(Combatant(GOBLIN, coordinate))
+                            openSpaces.add(coordinate)
+                        }
+                        'E' -> {
+                            combatants.add(Combatant(ELF, coordinate))
+                            openSpaces.add(coordinate)
+                        }
                     }
-                }
 
+                }
             }
 
-    return Battlefield(openSpaces = openSpaces)
+    return Battlefield(openSpaces = openSpaces, combatants = combatants)
+
 }
+
