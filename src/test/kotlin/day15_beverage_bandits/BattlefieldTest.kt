@@ -1,15 +1,22 @@
 package day15_beverage_bandits
 
+import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.allElements
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isIn
 import org.junit.Test
 import util.grid.ScreenCoordinate
+import day15_beverage_bandits.CreatureType.*
+import org.junit.Assert.assertTrue
 
 class BattlefieldTest {
 
-    val FIRST_EXAMPLE_BATTLEFIELD = """
+
+    @Test
+    fun itShouldParseTheInputIntoTheBattlefield() {
+
+        val FIRST_EXAMPLE_BATTLEFIELD = """
     #######
     #.G.E.#
     #E.G.E#
@@ -17,14 +24,11 @@ class BattlefieldTest {
     #######"""
 
 
-    @Test
-    fun itShouldParseTheInputIntoTheBattlefield() {
-
         val sampleBattlefield = parseIntoBattleField(FIRST_EXAMPLE_BATTLEFIELD)
 
-        val playingField : MutableSet<ScreenCoordinate> = HashSet();
-        for (x in 1 .. 5) {
-            for ( y in 1 .. 3) {
+        val playingField: MutableSet<ScreenCoordinate> = HashSet();
+        for (x in 1..5) {
+            for (y in 1..3) {
                 playingField.add(ScreenCoordinate(x, y))
             }
         }
@@ -42,6 +46,24 @@ class BattlefieldTest {
 
 
     @Test
+    fun theCombatantsShouldFightInDisciplineOrder() {
+
+        val sampleBattlefield = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
+        val combatants: List<Combatant> = sampleBattlefield.getUnitsInOrderForTakingTurns()
+
+        combatants.first().let {
+            assertThat(it.type, equalTo(GOBLIN))
+            assertTrue(it.position.isAt(2, 1))
+        }
+
+        combatants.last().let {
+            assertThat(it.type, equalTo(ELF))
+            assertTrue(it.position.isAt(5, 4))
+        }
+    }
+
+
+    @Test
     fun validateEntireSampleCombat() {
 
 
@@ -55,8 +77,6 @@ class BattlefieldTest {
     }
 
 }
-
-
 
 
 const val ENTIRE_SAMPLE_COMBAT = """

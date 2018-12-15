@@ -24,12 +24,25 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
 
     }
 
+    fun isAt(left: Int, top: Int) : Boolean = this.left == left && this.top == top
+
     override fun toString(): String {
         return "<$left, $top>"
     }
 
 
 }
+
+class CoordinatesInReadingOrder : Comparator<ScreenCoordinate> {
+    override fun compare(any: ScreenCoordinate, other: ScreenCoordinate): Int {
+        if (any.top == other.top) {
+            return any.left - other.left
+        }
+        return any.top - other.top
+    }
+
+}
+
 
 
 fun parseXcommaY(input: String) : ScreenCoordinate {

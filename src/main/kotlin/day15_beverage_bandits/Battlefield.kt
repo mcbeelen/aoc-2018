@@ -2,6 +2,7 @@ package day15_beverage_bandits
 
 import util.grid.ScreenCoordinate
 import day15_beverage_bandits.CreatureType.*
+import util.grid.CoordinatesInReadingOrder
 
 class Battlefield(
         val numberOfCompletedRoundsOfBattle: Int = 0,
@@ -22,8 +23,10 @@ class Battlefield(
     private fun findPositionOfAll(wantedType: CreatureType) =
             combatants.filter { it.type == wantedType }.map { it.position }.asIterable()
 
-}
+    fun getUnitsInOrderForTakingTurns() = combatants.sortedWith(CombatantInBattleOrder())
 
+
+}
 
 
 fun parseIntoBattleField(battlefieldInput: String): Battlefield {
