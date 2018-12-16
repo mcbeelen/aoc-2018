@@ -28,7 +28,7 @@ class GoblinVsElvesSimulatorTest {
 
         val sampleBattlefield = parseIntoBattleField(FIRST_EXAMPLE_BATTLEFIELD)
 
-        val playingField: MutableSet<ScreenCoordinate> = HashSet();
+        val playingField: MutableSet<ScreenCoordinate> = HashSet()
         for (x in 1..5) {
             for (y in 1..3) {
                 playingField.add(ScreenCoordinate(x, y))
@@ -64,35 +64,14 @@ class GoblinVsElvesSimulatorTest {
 
 
         sampleBattlefield.findSquareToMoveToAlongShortestPathToClosestTarget().let {
-            assertThat(it, isAt(3, 1))
+            assertThat(it!!, isAt(3, 1))
         }
-
-/*
-        val twoElves = sampleBattlefield.identifyPossibleTargetsForActiveCombatant()
-        assertThat(twoElves.size, equalTo(2))
-        twoElves.let {
-            assertThat(it[0].type, equalTo(ELF))
-            assertThat(it[0].position, isAt(4, 2))
-
-            assertThat(it[1].type, equalTo(ELF))
-            assertThat(it[1].position, isAt(5, 4))
-        }
-
-        val target = sampleBattlefield.findTargetForActiveCombatant()
-        target!!.let {
-            assertThat(it.enemy.position, isAt(4, 2))
-            assertThat(it.path.calculateDistance(), equalTo(3))
-            val pathThroughBattleCoordinates = listOf(BattleCoordinate(2, 1), BattleCoordinate(3, 1), BattleCoordinate(4, 1), BattleCoordinate(4, 2))
-            assertThat(it.path.vertices, equalTo(pathThroughBattleCoordinates))
-        }
-*/
 
     }
 
 
     @Test
     fun validateEntireSampleCombat() {
-
 
         val sampleBattlefield = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
 
@@ -115,8 +94,18 @@ class GoblinVsElvesSimulatorTest {
     fun itShouldFindEnemyWithFewestPointsAndInReadingOrder() {
 
         val battlefield = parseIntoBattleField(FIRST_ADDITIONAL_EXAMPLE)
-        val elfAtOneDotTwo = Combatant(ELF, ScreenCoordinate(1, 2) )
-        findAdjacentEnemyWithFewestHitPoints(battlefield, elfAtOneDotTwo).let {
+
+        battlefield.findAdjacentEnemyWithFewestHitPoints().let {
+            assertThat(it.type, equalTo(ELF))
+            assertThat(it.hitPoints, equalTo(200))
+            assertThat(it.position, isAt(1, 2))
+        }
+
+        val battlefieldWithElfAtOneDotTwoActive = battlefield
+                .withNextCombatantActive()
+                .withNextCombatantActive()
+
+        battlefieldWithElfAtOneDotTwoActive.findAdjacentEnemyWithFewestHitPoints().let {
             assertThat(it.type, equalTo(GOBLIN))
             assertThat(it.hitPoints, equalTo(200))
             assertThat(it.position, isAt(1, 1))
@@ -125,7 +114,7 @@ class GoblinVsElvesSimulatorTest {
 
 
     @Test
-    fun SECOND_ADDITIONAL_EXAMPLE() {
+    fun secondAdditionalExample() {
 
         val battlefield = parseIntoBattleField(SECOND_ADDITIONAL_EXAMPLE)
         val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
@@ -134,7 +123,7 @@ class GoblinVsElvesSimulatorTest {
     }
 
     @Test
-    fun THIRD_ADDITIONAL_EXAMPLE() {
+    fun thirdAdditionalExample() {
 
         val battlefield = parseIntoBattleField(THIRD_ADDITIONAL_EXAMPLE)
         val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
@@ -144,7 +133,7 @@ class GoblinVsElvesSimulatorTest {
 
 
     @Test
-    fun FOURTH_ADDITIONAL_EXAMPLE() {
+    fun fourthAdditionalExample() {
 
         val battlefield = parseIntoBattleField(FOURTH_ADDITIONAL_EXAMPLE)
         val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
@@ -154,7 +143,7 @@ class GoblinVsElvesSimulatorTest {
 
 
     @Test
-    fun FIVE_ADDITIONAL_EXAMPLE() {
+    fun fiveAdditionalExample() {
 
         val battlefield = parseIntoBattleField(FIVE_ADDITIONAL_EXAMPLE)
         val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
@@ -163,10 +152,8 @@ class GoblinVsElvesSimulatorTest {
     }
 
 
-
-
-
-    @Test @Ignore
+    @Test
+    @Ignore
     fun actualPuzzle() {
 
         val battlefield = parseIntoBattleField(ACTUAL_BATTLEFIELD)
@@ -179,16 +166,14 @@ class GoblinVsElvesSimulatorTest {
 
 
         assertThat(outcome, lessThan(198516))
+        assertThat(outcome, !equalTo(196632))
 
         assertThat(numberOfCompletedRoundsOfBattle, equalTo(46))
         assertThat(hitPointsOfRemainingUnits, equalTo(859))
     }
 
 
-
-
 }
-
 
 
 const val ENTIRE_SAMPLE_COMBAT = """
