@@ -172,7 +172,23 @@ class GoblinVsElvesSimulatorTest {
         assertThat(hitPointsOfRemainingUnits, equalTo(859))
     }
 
+    @Test
+    fun itShouldPathFollowingReadingOrder() {
+        val CORNER_CASE = """
+#######
+#####G#
+#####.#
+#.....#
+#.....#
+#E....#
+#######"""
 
+
+        val battlefield = parseIntoBattleField(CORNER_CASE).copy(activeCombatantIndex = 1)
+        moveIfNeeded(battlefield).let {
+            assertThat(it.activeCombatant.position, isAt(1, 4))
+        }
+    }
 }
 
 

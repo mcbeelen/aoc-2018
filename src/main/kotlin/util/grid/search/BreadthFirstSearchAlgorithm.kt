@@ -8,7 +8,7 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
 
     private val logger = KotlinLogging.logger { }
 
-    private val unvisitedVertices: Queue<V> = PriorityQueue()
+    private val unvisitedVertices: Queue<V> = ArrayDeque()
 
     private val visitedVertices: MutableMap<ZobraistKey, V> = HashMap()
 

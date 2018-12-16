@@ -29,11 +29,12 @@ class Battlefield(
         val map = DIRECTION_IN_READING_ORDER
                 .map { vertex.coordinate.next(it) }
 
-        return map
+        val possibleMoves = map
                 .filter { openSpaces.contains(it) }
                 .filter { screenCoordinate -> combatants.none { combatant -> combatant.position.isAt(screenCoordinate) } }
                 .map { Move(vertex, BattleCoordinate(it)) }
                 .toList()
+        return possibleMoves
     }
 
 }
