@@ -48,9 +48,19 @@ class GoblinVsElvesSimulatorTest {
 
 
     @Test
-    fun theCombatantsShouldFightInDisciplineOrder() {
+    fun itShouldBeAbleToIdentifySquaresInRange() {
 
         val sampleBattlefield = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
+
+        val squaresInRangeOfEnemies = sampleBattlefield.findSquaresInRangeOfEnemiesOfActiveCompatant()
+
+        assertThat(squaresInRangeOfEnemies.size, equalTo(3))
+
+        squaresInRangeOfEnemies.let {
+            assertThat(it[0], isAt(4, 1))
+            assertThat(it[1], isAt(3, 2))
+            assertThat(it[2], isAt(5, 5))
+        }
 
         val twoElves = sampleBattlefield.identifyPossibleTargetsForActiveCombatant()
         assertThat(twoElves.size, equalTo(2))

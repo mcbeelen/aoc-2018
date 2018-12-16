@@ -8,11 +8,7 @@ class BattleCoordinate(val coordinate: ScreenCoordinate) : Vertex<BattleCoordina
 
     constructor(left: Int, top: Int) : this(ScreenCoordinate(left, top))
 
-
     override fun buildZobristKey() = ReadableZobraistKey(coordinate.toString())
-
-
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -33,5 +29,8 @@ class BattleCoordinate(val coordinate: ScreenCoordinate) : Vertex<BattleCoordina
         return "BC('<${coordinate.left}, ${coordinate.top}>')"
     }
 
-
 }
+
+
+
+

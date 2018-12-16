@@ -2,14 +2,17 @@ package day15_beverage_bandits
 
 import day15_beverage_bandits.CreatureType.ELF
 import day15_beverage_bandits.CreatureType.GOBLIN
-import mu.KotlinLogging
+import util.grid.CoordinatesInReadingOrder
+import util.grid.Direction.*
 import util.grid.ScreenCoordinate
 import util.grid.search.Path
 
+val coordinatesInReadingOrder = CoordinatesInReadingOrder()
 val combatantInBattleOrder = CombatantInBattleOrder()
 val combatantWithPathOrder = CombatantWithPathInBattleOrder()
 
-val logger = KotlinLogging.logger { }
+val DIRECTION_IN_READING_ORDER = listOf(UP, LEFT, RIGHT, DOWN)
+
 
 data class GoblinVsElvesSimulator(
         val numberOfCompletedRoundsOfBattle: Int = 0,
@@ -32,9 +35,6 @@ data class GoblinVsElvesSimulator(
     private fun findPositionOfAll(wantedType: CreatureType) =
             combatants.filter { it.type == wantedType }.map { it.position }.asIterable()
 
-    fun getUnitsInOrderForTakingTurns() = combatants.sortedWith(combatantInBattleOrder)
-
-
     fun identifyPossibleTargetsForActiveCombatant(): List<Combatant> {
 
         val enemies = findEnemiesOf(activeCombatant)
@@ -49,6 +49,26 @@ data class GoblinVsElvesSimulator(
             GOBLIN -> combatants.filter { it.type == ELF }
         }
     }
+
+    fun findSquaresInRangeOfEnemiesOfActiveCompatant(): List<ScreenCoordinate> {
+
+        val enemies = findEnemiesOf(activeCombatant)
+
+        val squaresInRangeOfAnEnemy = mutableListOf<ScreenCoordinate>()
+        for (enemy in enemies) {
+            for (direction in DIRECTION_IN_READING_ORDER) {
+
+                val potentialTargetSquare = enemy.position.next(direction)
+                if (openSpaces.contains(potentialTargetSquare) && combatants.none { it.isAt(potentialTargetSquare) }) {
+                    squaresInRangeOfAnEnemy.add(potentialTargetSquare)
+                }
+            }
+        }
+        return squaresInRangeOfAnEnemy.sortedWith(coordinatesInReadingOrder)
+
+
+    }
+
 
     fun findTargetForActiveCombatant(): Target? {
 
@@ -92,6 +112,8 @@ data class GoblinVsElvesSimulator(
     fun withNextCombatantActive(): GoblinVsElvesSimulator = copy(activeCombatantIndex = activeCombatantIndex + 1)
     fun isActiveCombatantStillAlive() =
             combatants.any { it.type == activeCombatant.type && it.position == activeCombatant.position }
+
+
 }
 
 
@@ -131,8 +153,6 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
 
     return updatedSituation
 }
-
-
 
 
 private fun playOneTurn(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {

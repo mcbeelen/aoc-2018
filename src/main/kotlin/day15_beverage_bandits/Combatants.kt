@@ -1,6 +1,5 @@
 package day15_beverage_bandits
 
-import util.grid.CoordinatesInReadingOrder
 import util.grid.ScreenCoordinate
 import util.grid.search.Path
 
@@ -12,13 +11,13 @@ data class Combatant(
         val hitPoints : Int = 200) {
 
     fun isAdjacentTo(enemy: Combatant) = position.isAdjacentTo(enemy.position)
+    fun isAt(coordinate: ScreenCoordinate) = position == coordinate
 
 
 }
 
 
 class CombatantInBattleOrder : Comparator<Combatant> {
-    private val coordinatesInReadingOrder = CoordinatesInReadingOrder()
     override fun compare(any: Combatant, other: Combatant) = coordinatesInReadingOrder.compare(any.position, other.position)
 }
 
