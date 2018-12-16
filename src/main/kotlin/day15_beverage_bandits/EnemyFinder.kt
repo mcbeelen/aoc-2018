@@ -23,7 +23,7 @@ class EnemyFinder(private val battlefield: Battlefield) : BreadthFirstSearchAlgo
 }
 class Battlefield(
         private val openSpaces: Set<ScreenCoordinate>,
-        private val combatants: Set<Combatant>) : Graph<BattleCoordinate, Move>() {
+        private val combatants: Collection<Combatant>) : Graph<BattleCoordinate, Move>() {
     override fun findNeighbours(vertex: BattleCoordinate): List<Move> {
 
         val map = Direction.values()
