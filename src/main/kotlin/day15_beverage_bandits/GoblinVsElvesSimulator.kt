@@ -148,8 +148,8 @@ data class GoblinVsElvesSimulator(
         val newActiveCombatantIndex = if (indexOfDiedCombatant < activeCombatantIndex) activeCombatantIndex - 1 else activeCombatantIndex
 
         return copy(
-                    combatants = updatedCombatants,
-                    activeCombatantIndex = newActiveCombatantIndex)
+                combatants = updatedCombatants,
+                activeCombatantIndex = newActiveCombatantIndex)
 
     }
 
@@ -213,28 +213,32 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
 
 private fun playOneTurn(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
 
+    val situationAfterUnitMovedIfNeeded = moveIfNeeded(originalSituation)
+    return attackIfPossible(situationAfterUnitMovedIfNeeded)
 
-    return if (originalSituation.isActiveCombatantAlreadyInRangeToAttack()) {
-        performAttack(originalSituation)
-    } else {
-        val situationWithMovedPlayer = tryToMove(originalSituation)
-        if (situationWithMovedPlayer.isActiveCombatantAlreadyInRangeToAttack()) {
-            performAttack(situationWithMovedPlayer)
-        } else {
-            situationWithMovedPlayer
-        }
+}
+
+fun attackIfPossible(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
+    if (!currentSituation.isActiveCombatantAlreadyInRangeToAttack()) {
+        return currentSituation
     }
+    return performAttack(currentSituation)
+}
 
+fun moveIfNeeded(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
+    if (currentSituation.isActiveCombatantAlreadyInRangeToAttack()) {
+        return currentSituation
+    }
+    return tryToMove(currentSituation)
 }
 
 
 private fun tryToMove(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
-    var updatedSituation = originalSituation
     val closestTarget = originalSituation.findSquareToMoveToAlongShortestPathToClosestTarget()
     if (closestTarget != null) {
-        updatedSituation = originalSituation.withActiveCombatantMovedTo(closestTarget)
+        return originalSituation.withActiveCombatantMovedTo(closestTarget)
     }
-    return updatedSituation
+    return originalSituation
 }
 
 
