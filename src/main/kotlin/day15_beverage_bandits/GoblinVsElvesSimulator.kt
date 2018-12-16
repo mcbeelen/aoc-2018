@@ -104,6 +104,8 @@ data class GoblinVsElvesSimulator(
                 .toSortedMap(coordinatesInReadingOrder)
                 .firstKey()
 
+        plotChosenPath(openSpaces, combatants, squaresInRangeOfEnemies, reachableSquaresWithShortestPath, targetSquareReachableWithFewestNumberOfSteps, chosenTargetSquare)
+
         return targetSquareReachableWithFewestNumberOfSteps[chosenTargetSquare]!!.vertices[1].coordinate
 
 
@@ -218,13 +220,6 @@ private fun playOneTurn(originalSituation: GoblinVsElvesSimulator): GoblinVsElve
 
 }
 
-fun attackIfPossible(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
-    if (!currentSituation.isActiveCombatantAlreadyInRangeToAttack()) {
-        return currentSituation
-    }
-    return performAttack(currentSituation)
-}
-
 fun moveIfNeeded(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
     if (currentSituation.isActiveCombatantAlreadyInRangeToAttack()) {
         return currentSituation
@@ -232,13 +227,21 @@ fun moveIfNeeded(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
     return tryToMove(currentSituation)
 }
 
-
 private fun tryToMove(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
     val closestTarget = originalSituation.findSquareToMoveToAlongShortestPathToClosestTarget()
     if (closestTarget != null) {
         return originalSituation.withActiveCombatantMovedTo(closestTarget)
     }
     return originalSituation
+}
+
+
+
+fun attackIfPossible(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
+    if (!currentSituation.isActiveCombatantAlreadyInRangeToAttack()) {
+        return currentSituation
+    }
+    return performAttack(currentSituation)
 }
 
 

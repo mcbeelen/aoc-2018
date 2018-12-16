@@ -153,7 +153,6 @@ class GoblinVsElvesSimulatorTest {
 
 
     @Test
-    @Ignore
     fun actualPuzzle() {
 
         val battlefield = parseIntoBattleField(ACTUAL_BATTLEFIELD)
@@ -167,6 +166,7 @@ class GoblinVsElvesSimulatorTest {
 
         assertThat(outcome, lessThan(198516))
         assertThat(outcome, !equalTo(196632))
+        assertThat(outcome, !equalTo(199874))
 
         assertThat(numberOfCompletedRoundsOfBattle, equalTo(46))
         assertThat(hitPointsOfRemainingUnits, equalTo(859))

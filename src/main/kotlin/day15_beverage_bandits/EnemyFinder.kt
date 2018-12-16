@@ -26,7 +26,7 @@ class Battlefield(
         private val combatants: Collection<Combatant>) : Graph<BattleCoordinate, Move>() {
     override fun findNeighbours(vertex: BattleCoordinate): List<Move> {
 
-        val map = Direction.values()
+        val map = DIRECTION_IN_READING_ORDER
                 .map { vertex.coordinate.next(it) }
 
         return map
