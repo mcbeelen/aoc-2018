@@ -12,15 +12,15 @@ fun plot(situation: GoblinVsElvesSimulator) {
     for (y in 0..size) {
         for (x in 0..size) {
             when {
-                isOccupied(x, y, situation.listCombatantsThisRound) -> printOccupant(x, y, situation.listCombatantsThisRound)
+                isOccupied(x, y, situation.combatants) -> printOccupant(x, y, situation.combatants)
                 situation.openSpaces.contains(ScreenCoordinate(x, y)) -> print('.')
                 else -> print('#')
             }
         }
 
         for (x in 0..size) {
-            if (isOccupied(x, y, situation.listCombatantsThisRound)) {
-                printHealthInfo(x, y, situation.listCombatantsThisRound)
+            if (isOccupied(x, y, situation.combatants)) {
+                printHealthInfo(x, y, situation.combatants)
             }
         }
 

@@ -14,7 +14,7 @@ class BattlefieldTest {
 
         val potentialEnemy = Combatant(CreatureType.ELF, position = ScreenCoordinate(4, 2))
         val battlefield = Battlefield(openSpaces = sampleBattleSimulator.openSpaces,
-                combatants = sampleBattleSimulator.listCombatantsThisRound)
+                combatants = sampleBattleSimulator.combatants)
 
         val foundNeighbours = battlefield.findNeighbours(BattleCoordinate(2, 1))
         foundNeighbours.let {
