@@ -4,8 +4,10 @@ import com.natpryce.hamkrest.allElements
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.isIn
+import com.natpryce.hamkrest.lessThan
 import day15_beverage_bandits.CreatureType.ELF
 import day15_beverage_bandits.CreatureType.GOBLIN
+import org.junit.Ignore
 import org.junit.Test
 import util.grid.ScreenCoordinate
 import util.grid.isAt
@@ -113,11 +115,71 @@ class GoblinVsElvesSimulatorTest {
             assertThat(it.type, equalTo(GOBLIN))
             assertThat(it.hitPoints, equalTo(200))
             assertThat(it.position, isAt(1, 1))
-
         }
-
-
     }
+
+
+    @Test
+    fun SECOND_ADDITIONAL_EXAMPLE() {
+
+        val battlefield = parseIntoBattleField(SECOND_ADDITIONAL_EXAMPLE)
+        val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
+        assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(46))
+        assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(859))
+    }
+
+    @Test
+    fun THIRD_ADDITIONAL_EXAMPLE() {
+
+        val battlefield = parseIntoBattleField(THIRD_ADDITIONAL_EXAMPLE)
+        val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
+        assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(35))
+        assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(793))
+    }
+
+
+    @Test
+    fun FOURTH_ADDITIONAL_EXAMPLE() {
+
+        val battlefield = parseIntoBattleField(FOURTH_ADDITIONAL_EXAMPLE)
+        val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
+        assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(54))
+        assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(536))
+    }
+
+
+    @Test
+    fun FIVE_ADDITIONAL_EXAMPLE() {
+
+        val battlefield = parseIntoBattleField(FIVE_ADDITIONAL_EXAMPLE)
+        val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
+        assertThat(battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle, equalTo(20))
+        assertThat(battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits(), equalTo(937))
+    }
+
+
+
+
+
+    @Test @Ignore
+    fun actualPuzzle() {
+
+        val battlefield = parseIntoBattleField(ACTUAL_BATTLEFIELD)
+        val battlefieldAtEndOfTheCombat = battleItOut(battlefield)
+        val numberOfCompletedRoundsOfBattle = battlefieldAtEndOfTheCombat.numberOfCompletedRoundsOfBattle
+        val hitPointsOfRemainingUnits = battlefieldAtEndOfTheCombat.sumOfHitPointsOfRemainingUnits()
+
+        val outcome = numberOfCompletedRoundsOfBattle * hitPointsOfRemainingUnits
+        println("Outcome of ${numberOfCompletedRoundsOfBattle} * ${hitPointsOfRemainingUnits} == $outcome")
+
+
+        assertThat(outcome, lessThan(198516))
+
+        assertThat(numberOfCompletedRoundsOfBattle, equalTo(46))
+        assertThat(hitPointsOfRemainingUnits, equalTo(859))
+    }
+
+
 
 
 }
@@ -142,3 +204,45 @@ const val FIRST_ADDITIONAL_EXAMPLE = """
 #...#E#
 #...E.#
 #######"""
+
+
+const val SECOND_ADDITIONAL_EXAMPLE = """
+#######
+#E..EG#
+#.#G.E#
+#E.##E#
+#G..#.#
+#..E#.#
+#######"""
+
+const val THIRD_ADDITIONAL_EXAMPLE = """
+#######
+#E.G#.#
+#.#G..#
+#G.#.G#
+#G..#.#
+#...E.#
+#######
+"""
+
+const val FOURTH_ADDITIONAL_EXAMPLE = """
+#######
+#.E...#
+#.#..G#
+#.###.#
+#E#G#G#
+#...#G#
+#######"""
+
+
+const val FIVE_ADDITIONAL_EXAMPLE = """
+#########
+#G......#
+#.E.#...#
+#..##..G#
+#...##..#
+#...#...#
+#.G...G.#
+#.....G.#
+#########
+"""
