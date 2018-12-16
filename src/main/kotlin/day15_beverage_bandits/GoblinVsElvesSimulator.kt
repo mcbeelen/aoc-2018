@@ -10,6 +10,8 @@ import util.grid.search.Path
 val coordinatesInReadingOrder = CoordinatesInReadingOrder()
 val combatantInBattleOrder = CombatantInBattleOrder()
 
+const val PRINT_DEBUG_INFO = false
+
 val DIRECTION_IN_READING_ORDER = listOf(UP, LEFT, RIGHT, DOWN)
 
 
@@ -104,7 +106,7 @@ data class GoblinVsElvesSimulator(
                 .toSortedMap(coordinatesInReadingOrder)
                 .firstKey()
 
-        plotChosenPath(openSpaces, combatants, squaresInRangeOfEnemies, reachableSquaresWithShortestPath, targetSquareReachableWithFewestNumberOfSteps, chosenTargetSquare)
+        // plotChosenPath(openSpaces, combatants, squaresInRangeOfEnemies, reachableSquaresWithShortestPath, targetSquareReachableWithFewestNumberOfSteps, chosenTargetSquare)
 
         return targetSquareReachableWithFewestNumberOfSteps[chosenTargetSquare]!!.vertices[1].coordinate
 
@@ -113,7 +115,9 @@ data class GoblinVsElvesSimulator(
 
     fun withActiveCombatantMovedTo(nextPosition: ScreenCoordinate): GoblinVsElvesSimulator {
 
-        println("${activeCombatant.type} at ${activeCombatant.position} moves to ${nextPosition}")
+        if (PRINT_DEBUG_INFO) {
+            println("${activeCombatant.type} at ${activeCombatant.position} moves to ${nextPosition}")
+        }
         val movedCombatant = activeCombatant.copy(position = nextPosition)
 
         val updatedCombatants = combatants.toMutableList()
@@ -158,8 +162,10 @@ data class GoblinVsElvesSimulator(
     fun withCombatantTakenHit(enemy: Combatant): GoblinVsElvesSimulator {
 
         // Register hit
-        val updatedEnemy = enemy.copy(hitPoints = enemy.hitPoints - ATTACK_POWER)
-        println("              --> Hit power reduced to ${updatedEnemy.hitPoints}")
+        val updatedEnemy = enemy.copy(hitPoints = enemy.hitPoints - activeCombatant.type.attackPower)
+        if (PRINT_DEBUG_INFO) {
+            println("              --> Hit power reduced to ${updatedEnemy.hitPoints}")
+        }
         val updatedCombatants = combatants.toMutableList()
         val indexOf = combatants.indexOf(enemy)
         updatedCombatants[indexOf] = updatedEnemy
@@ -204,7 +210,9 @@ fun battleItOut(originalSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulat
             }
         }
 
-        plot(updatedSituation)
+        if (PRINT_DEBUG_INFO) {
+            plot(updatedSituation)
+        }
 
 
     }
@@ -248,10 +256,20 @@ fun attackIfPossible(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSim
 fun performAttack(currentSituation: GoblinVsElvesSimulator): GoblinVsElvesSimulator {
 
     val enemy = currentSituation.findAdjacentEnemyWithFewestHitPoints()
-    println("${currentSituation.activeCombatant.type} at ${currentSituation.activeCombatant.position} is going to hit ${enemy.type} at ${enemy.position} with ${enemy.hitPoints}")
-    return if (enemy.hitPoints > ATTACK_POWER) {
+
+    if (PRINT_DEBUG_INFO) {
+        println("${currentSituation.activeCombatant.type} at ${currentSituation.activeCombatant.position} is going to hit ${enemy.type} at ${enemy.position} with ${enemy.hitPoints}")
+
+    }
+
+    return if (enemy.hitPoints > currentSituation.activeCombatant.type.attackPower) {
         currentSituation.withCombatantTakenHit(enemy)
     } else {
+
+        if (enemy.type == ELF) {
+            throw IllegalStateException("All elves should survive. ${enemy.type.attackPower} is not enough suffer no losses")
+        }
+
         println("   ${enemy.type} at ${enemy.position} dies in round: ${currentSituation.numberOfCompletedRoundsOfBattle}")
         currentSituation.withoutDiedCombatant(enemy)
     }

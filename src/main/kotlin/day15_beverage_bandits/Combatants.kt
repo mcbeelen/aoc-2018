@@ -3,8 +3,6 @@ package day15_beverage_bandits
 import util.grid.ScreenCoordinate
 import util.grid.search.Path
 
-const val ATTACK_POWER : Int = 3
-
 data class Combatant(
         val type: CreatureType,
         val position: ScreenCoordinate,
@@ -12,7 +10,6 @@ data class Combatant(
 
     fun isAdjacentTo(enemy: Combatant) = position.isAdjacentTo(enemy.position)
     fun isAt(coordinate: ScreenCoordinate) = position == coordinate
-
 
 }
 
@@ -31,8 +28,10 @@ class CombatantWithPathInBattleOrder : Comparator<Pair<Combatant, Path<BattleCoo
 
 
 
-enum class CreatureType {
-    ELF,
-    GOBLIN;
+enum class CreatureType(val attackPower: Int) {
+    ELF(17),
+    GOBLIN(3);
+
+
 
 }
