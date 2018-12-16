@@ -51,17 +51,6 @@ class GoblinVsElvesSimulatorTest {
     fun theCombatantsShouldFightInDisciplineOrder() {
 
         val sampleBattlefield = parseIntoBattleField(ENTIRE_SAMPLE_COMBAT)
-        val combatants: List<Combatant> = sampleBattlefield.getUnitsInOrderForTakingTurns()
-
-        sampleBattlefield.activeCombatant.let {
-            assertThat(it.type, equalTo(GOBLIN))
-            assertThat(it.position, isAt(2, 1))
-        }
-
-        combatants.last().let {
-            assertThat(it.type, equalTo(ELF))
-            assertThat(it.position, isAt(5, 4))
-        }
 
         val twoElves = sampleBattlefield.identifyPossibleTargetsForActiveCombatant()
         assertThat(twoElves.size, equalTo(2))
