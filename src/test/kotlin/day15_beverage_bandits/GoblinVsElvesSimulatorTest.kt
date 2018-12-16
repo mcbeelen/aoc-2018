@@ -62,6 +62,12 @@ class GoblinVsElvesSimulatorTest {
             assertThat(it[2], isAt(5, 5))
         }
 
+
+        sampleBattlefield.findSquareToMoveToAlongShortestPathToClosestTarget().let {
+            assertThat(it, isAt(3, 1))
+        }
+
+/*
         val twoElves = sampleBattlefield.identifyPossibleTargetsForActiveCombatant()
         assertThat(twoElves.size, equalTo(2))
         twoElves.let {
@@ -79,7 +85,7 @@ class GoblinVsElvesSimulatorTest {
             val pathThroughBattleCoordinates = listOf(BattleCoordinate(2, 1), BattleCoordinate(3, 1), BattleCoordinate(4, 1), BattleCoordinate(4, 2))
             assertThat(it.path.vertices, equalTo(pathThroughBattleCoordinates))
         }
-
+*/
 
     }
 

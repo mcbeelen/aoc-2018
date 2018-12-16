@@ -99,9 +99,16 @@ data class GoblinVsElvesSimulator(
 
     private fun pathTo(enemy: Combatant): Path<BattleCoordinate>? {
 
-        val caves = Battlefield(openSpaces, combatants.minus(enemy))
-        val enemyFinder = EnemyFinder(caves)
+        val battlefield = Battlefield(openSpaces, combatants.minus(enemy))
+        val enemyFinder = EnemyFinder(battlefield)
         return enemyFinder.findShortestPath(BattleCoordinate(activeCombatant.position), BattleCoordinate(enemy.position))
+    }
+
+
+    private fun shortestPathTo(destination: ScreenCoordinate): Path<BattleCoordinate>? {
+        val battlefield = Battlefield(openSpaces, combatants)
+        val enemyFinder = EnemyFinder(battlefield)
+        return enemyFinder.findShortestPath(activeCombatant.position, destination)
     }
 
 
@@ -112,6 +119,41 @@ data class GoblinVsElvesSimulator(
     fun withNextCombatantActive(): GoblinVsElvesSimulator = copy(activeCombatantIndex = activeCombatantIndex + 1)
     fun isActiveCombatantStillAlive() =
             combatants.any { it.type == activeCombatant.type && it.position == activeCombatant.position }
+
+    fun findSquareToMoveToAlongShortestPathToClosestTarget(): ScreenCoordinate? {
+
+        val squaresInRangeOfEnemies = findSquaresInRangeOfEnemiesOfActiveCompatant()
+        if (squaresInRangeOfEnemies.isEmpty()) {
+            return null
+        }
+
+
+        val reachableSquaresWithShortestPath = squaresInRangeOfEnemies
+                .associateWith { shortestPathTo(it) }
+                .filter { it.value != null }
+
+        if (reachableSquaresWithShortestPath.isEmpty()) {
+            return null
+        }
+
+
+        val numberOfStepsToClosestTargetSquare = reachableSquaresWithShortestPath.values
+                .map { it!!.calculateDistance() }
+                .min()
+
+        val targetSquareReachableWithFewestNumberOfSteps = reachableSquaresWithShortestPath
+                .filter { it.value!!.calculateDistance() == numberOfStepsToClosestTargetSquare }
+
+
+        val chosenTargetSquare = targetSquareReachableWithFewestNumberOfSteps
+                .toSortedMap(coordinatesInReadingOrder)
+                .firstKey()
+
+        return targetSquareReachableWithFewestNumberOfSteps[chosenTargetSquare]!!.vertices[1].coordinate
+
+
+    }
+
 
 
 }

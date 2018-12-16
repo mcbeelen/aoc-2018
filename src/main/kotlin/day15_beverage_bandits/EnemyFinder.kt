@@ -4,6 +4,7 @@ import util.grid.Direction
 import util.grid.ScreenCoordinate
 import util.grid.search.BreadthFirstSearchAlgorithm
 import util.grid.search.Graph
+import util.grid.search.Path
 
 class EnemyFinder(private val battlefield: Battlefield) : BreadthFirstSearchAlgorithm<BattleCoordinate, Move>(battlefield) {
     override fun exploreVertex(vertex: BattleCoordinate, callback: (Move) -> Unit) {
@@ -14,6 +15,11 @@ class EnemyFinder(private val battlefield: Battlefield) : BreadthFirstSearchAlgo
                     }
                 }
     }
+
+    fun findShortestPath(origin: ScreenCoordinate, destination: ScreenCoordinate): Path<BattleCoordinate>? {
+        return findShortestPath(BattleCoordinate(origin), BattleCoordinate(destination))
+    }
+
 }
 class Battlefield(
         private val openSpaces: Set<ScreenCoordinate>,
