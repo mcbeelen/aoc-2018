@@ -8,8 +8,9 @@ fun plot(situation: GoblinVsElvesSimulator) {
     println("Situation after ${situation.numberOfCompletedRoundsOfBattle}:")
     println()
 
-    for (y in 0..6) {
-        for (x in 0..6) {
+    val size = situation.openSpaces.map { it.left }.max()!! + 1
+    for (y in 0..size) {
+        for (x in 0..size) {
             when {
                 isOccupied(x, y, situation.combatants) -> printOccupant(x, y, situation.combatants)
                 situation.openSpaces.contains(ScreenCoordinate(x, y)) -> print('.')
@@ -17,7 +18,7 @@ fun plot(situation: GoblinVsElvesSimulator) {
             }
         }
 
-        for (x in 0..6) {
+        for (x in 0..size) {
             if (isOccupied(x, y, situation.combatants)) {
                 printHealthInfo(x, y, situation.combatants)
             }
