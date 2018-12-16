@@ -16,7 +16,6 @@ val DIRECTION_IN_READING_ORDER = listOf(UP, LEFT, RIGHT, DOWN)
 data class GoblinVsElvesSimulator(
         val numberOfCompletedRoundsOfBattle: Int = 0,
         val openSpaces: Set<ScreenCoordinate>,
-        internal val combatants: Set<Combatant>,
         val listCombatantsThisRound: List<Combatant>,
         internal val activeCombatantIndex: Int = 0) {
 
@@ -25,20 +24,20 @@ data class GoblinVsElvesSimulator(
         listCombatantsThisRound[activeCombatantIndex]
     }
 
-    fun sumOfHitPointsOfRemainingUnits() = combatants.map { it.hitPoints }.sum()
+    fun sumOfHitPointsOfRemainingUnits() = listCombatantsThisRound.map { it.hitPoints }.sum()
 
 
     fun findPositionOfAllElves() = findPositionOfAll(ELF)
     fun findPositionOfAllGoblins() = findPositionOfAll(GOBLIN)
 
     private fun findPositionOfAll(wantedType: CreatureType) =
-            combatants.filter { it.type == wantedType }.map { it.position }.asIterable()
+            listCombatantsThisRound.filter { it.type == wantedType }.map { it.position }.asIterable()
 
 
     private fun findEnemiesOf(combatant: Combatant): Iterable<Combatant> {
         return when (combatant.type) {
-            ELF -> combatants.filter { it.type == GOBLIN }
-            GOBLIN -> combatants.filter { it.type == ELF }
+            ELF -> listCombatantsThisRound.filter { it.type == GOBLIN }
+            GOBLIN -> listCombatantsThisRound.filter { it.type == ELF }
         }
     }
 
@@ -51,7 +50,7 @@ data class GoblinVsElvesSimulator(
             for (direction in DIRECTION_IN_READING_ORDER) {
 
                 val potentialTargetSquare = enemy.position.next(direction)
-                if (openSpaces.contains(potentialTargetSquare) && combatants.none { it.isAt(potentialTargetSquare) }) {
+                if (openSpaces.contains(potentialTargetSquare) && listCombatantsThisRound.none { it.isAt(potentialTargetSquare) }) {
                     squaresInRangeOfAnEnemy.add(potentialTargetSquare)
                 }
             }
@@ -63,7 +62,7 @@ data class GoblinVsElvesSimulator(
 
 
     private fun shortestPathTo(destination: ScreenCoordinate): Path<BattleCoordinate>? {
-        val battlefield = Battlefield(openSpaces, combatants)
+        val battlefield = Battlefield(openSpaces, listCombatantsThisRound)
         val enemyFinder = EnemyFinder(battlefield)
         return enemyFinder.findShortestPath(activeCombatant.position, destination)
     }
@@ -71,11 +70,11 @@ data class GoblinVsElvesSimulator(
 
     fun someCombatantMayTakeItsTurnThisRound(): Boolean = this.activeCombatantIndex < listCombatantsThisRound.size
 
-    fun theBattleIsntOver(): Boolean = combatants.map { it.type }.toSet().size > 1
+    fun theBattleIsntOver(): Boolean = listCombatantsThisRound.map { it.type }.toSet().size > 1
 
     fun withNextCombatantActive(): GoblinVsElvesSimulator = copy(activeCombatantIndex = activeCombatantIndex + 1)
     fun isActiveCombatantStillAlive() =
-            combatants.any { it.type == activeCombatant.type && it.position == activeCombatant.position }
+            listCombatantsThisRound.any { it.type == activeCombatant.type && it.position == activeCombatant.position }
 
 
     fun findSquareToMoveToAlongShortestPathToClosestTarget(): ScreenCoordinate? {
@@ -116,12 +115,9 @@ data class GoblinVsElvesSimulator(
         println("${activeCombatant.type} at ${activeCombatant.position} moves to ${nextPosition}")
         val movedCombatant = activeCombatant.copy(position = nextPosition)
 
-        val updatedCombatants = combatants.minus(activeCombatant).plus(movedCombatant)
-
         val updatedListCombatantsThisRound = listCombatantsThisRound.toMutableList()
         updatedListCombatantsThisRound[activeCombatantIndex] = movedCombatant
         return copy(
-                combatants = updatedCombatants,
                 listCombatantsThisRound = updatedListCombatantsThisRound)
 
 
@@ -132,7 +128,7 @@ data class GoblinVsElvesSimulator(
                     .any { it.isAdjacentTo(activeCombatant) }
 
     fun findAdjacentEnemyWithFewestHitPoints(): Combatant {
-        val adjacentEnemies = combatants
+        val adjacentEnemies = listCombatantsThisRound
                 .filter { it.type != activeCombatant.type }
                 .filter { it.isAdjacentTo(activeCombatant) }
 
@@ -151,13 +147,10 @@ data class GoblinVsElvesSimulator(
         val updatedListOfCombatantsThisRound = listCombatantsThisRound.toMutableList()
         updatedListOfCombatantsThisRound.remove(diedCombatant)
 
-        val updatedCombatants = combatants.minus(diedCombatant)
-
         val newActiveCombatantIndex = if (indexOfDiedCombatant < activeCombatantIndex) activeCombatantIndex - 1 else activeCombatantIndex
 
         return copy(
                     listCombatantsThisRound = updatedListOfCombatantsThisRound,
-                    combatants = updatedCombatants,
                     activeCombatantIndex = newActiveCombatantIndex)
 
     }
@@ -167,13 +160,11 @@ data class GoblinVsElvesSimulator(
         // Register hit
         val updatedEnemy = enemy.copy(hitPoints = enemy.hitPoints - ATTACK_POWER)
         println("              --> Hit power reduced to ${updatedEnemy.hitPoints}")
-        val updatedCombatants = combatants.minus(enemy).plus(updatedEnemy)
         val updatedListOfCombatantsThisRound = listCombatantsThisRound.toMutableList()
         val indexOf = listCombatantsThisRound.indexOf(enemy)
         updatedListOfCombatantsThisRound[indexOf] = updatedEnemy
 
-        return copy(combatants = updatedCombatants,
-                listCombatantsThisRound = updatedListOfCombatantsThisRound)
+        return copy(listCombatantsThisRound = updatedListOfCombatantsThisRound)
 
     }
 
@@ -181,7 +172,7 @@ data class GoblinVsElvesSimulator(
         val numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle + 1
         return copy(
                 numberOfCompletedRoundsOfBattle = numberOfCompletedRoundsOfBattle,
-                listCombatantsThisRound = combatants.sortedWith(combatantInBattleOrder),
+                listCombatantsThisRound = listCombatantsThisRound.sortedWith(combatantInBattleOrder),
                 activeCombatantIndex = 0)
     }
 
@@ -293,7 +284,6 @@ fun parseIntoBattleField(battlefieldInput: String): GoblinVsElvesSimulator {
 
     return GoblinVsElvesSimulator(
             openSpaces = openSpaces,
-            combatants = combatants,
             listCombatantsThisRound = combatants.sortedWith(combatantInBattleOrder))
 
 }
