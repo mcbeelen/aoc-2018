@@ -51,8 +51,7 @@ class ChronalDeviceSolver {
         fun main(args: Array<String>) {
 
 
-            val chunked = CHRONAL_DEVICE_PART_ONE_INPUT.trimIndent().lines().chunked(4)
-            val samples = chunked.map { parseIntoSample(it) }
+            val samples = readDeviceSamples(CHRONAL_DEVICE_PART_ONE_INPUT)
 
             val  numberOfRecordedSampleBehavingLikeThreeOrMoreOpCodes = samples
                     .filter { behavesLikeThreeOrMoreOpCodes(it) }
@@ -63,6 +62,8 @@ class ChronalDeviceSolver {
 
         }
 
+
+
         private fun behavesLikeThreeOrMoreOpCodes(sample: Sample) = OpCode.values()
                     .filter { doesSampleBehaveLike(it, sample) }
                     .count() >= 3
@@ -70,3 +71,51 @@ class ChronalDeviceSolver {
     }
 }
 
+
+
+
+class ChronalDeviceOpCodeResolver {
+
+
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+
+            val opCodeResolver : MutableMap<Int, Set<OpCode>> = HashMap()
+            (0 .. 15).forEach { opCodeResolver[it] = OpCode.values().toSet() }
+
+//            OpCode.values()
+//                    .filter { it.instruction != Int.MIN_VALUE }
+//                    .forEach {
+//                        opCodeResolver[it.instruction] = setOf(it)
+//                        (0 .. 15).forEach { index ->
+//                            if (index != it.instruction) {
+//                                opCodeResolver[index] = opCodeResolver[index]!!.minus(it)
+//                            }
+//                        }
+//                    }
+
+
+            val samples = readDeviceSamples(CHRONAL_DEVICE_PART_ONE_INPUT)
+
+            samples.forEach { sample ->
+                val possibleOpCodes = possibleOpCodeForInstruction(sample)
+                val opCodeIndex = sample.instruction[0]
+                opCodeResolver[opCodeIndex] = opCodeResolver[opCodeIndex]!!.intersect(possibleOpCodes)
+            }
+
+            (0 .. 15).forEach {
+                println("Instruction ${it} should maps to one of ${opCodeResolver[it]}")
+            }
+
+
+        }
+
+        private fun possibleOpCodeForInstruction(sample: Sample) =
+            values()
+                    .filter { opCode -> doesSampleBehaveLike(opCode, sample) }
+                    .toSet()
+    }
+
+
+}

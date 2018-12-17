@@ -5,6 +5,10 @@ data class Sample(val before: IntArray = intArrayOf(),
                   val instruction: IntArray = intArrayOf(),
                   val after: IntArray = intArrayOf())
 
+fun readDeviceSamples(actualInput: String): List<Sample> {
+    val chunked = actualInput.trimIndent().lines().chunked(4)
+    return chunked.map { parseIntoSample(it) }
+}
 
 
 fun parseIntoSample(chunkOfSampleInput: List<String>) = buildSampleFromChunk(chunkOfSampleInput.withIndex())
