@@ -1,5 +1,7 @@
 package day16_chronal_classification
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import day16_chronal_classification.OpCode.*
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -23,7 +25,18 @@ class ChronalDeviceTest {
             assertTrue("INSTRUCTION", Arrays.equals(it.instruction, intArrayOf(9, 2, 1, 2)))
             assertTrue("AFTER", Arrays.equals(it.after, intArrayOf(3, 2, 2, 1)))
         }
+
+        val chunked = CHRONAL_DEVICE_PART_ONE_INPUT.trimIndent().lines().chunked(4)
+        val samples = chunked
+                .map { parseIntoSample(it) }
+
+
+        assertThat(samples.size, equalTo(793))
+
+
     }
+
+
 
     @Test
     fun itShouldRecognizeExampleAsMURL() {
@@ -108,9 +121,12 @@ data class Sample(val before: IntArray = intArrayOf(),
                   val after: IntArray = intArrayOf())
 
 fun parseIntoSample(sampleInput: String) : Sample {
+    return buildSampleFromChunk(sampleInput.trimIndent().lines().withIndex())
+}
 
+private fun buildSampleFromChunk(withIndex: Iterable<IndexedValue<String>>): Sample {
     var sample = Sample()
-    sampleInput.trimIndent().lines().withIndex()
+    withIndex
             .forEach {
                 when (it.index) {
                     0 -> sample = sample.copy(before = parseBefore(it.value))
@@ -118,10 +134,13 @@ fun parseIntoSample(sampleInput: String) : Sample {
                     2 -> sample = sample.copy(after = parseAfter(it.value))
                 }
             }
-
     return sample
-
 }
+
+
+private fun parseIntoSample(chunkOfSampleInput: List<String>) = buildSampleFromChunk(chunkOfSampleInput.withIndex())
+
+
 
 
 
