@@ -1,8 +1,10 @@
 package day16_chronal_classification
 
-import day16_chronal_classification.OpCode.MULR
+import day16_chronal_classification.OpCode.*
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.lang.UnsupportedOperationException
 import java.util.*
 
 val sample = """
@@ -26,32 +28,36 @@ class ChronalDeviceTest {
     @Test
     fun itShouldRecognizeExampleAsMURL() {
 
-
         val sample = parseIntoSample(sample)
 
+        assertTrue(doesSampleBehaveLike(ADDI, sample))
+        assertFalse(doesSampleBehaveLike(ADDR, sample))
         assertTrue(doesSampleBehaveLike(MULR, sample))
+        assertTrue(doesSampleBehaveLike(SETI, sample))
 
     }
 
     private fun doesSampleBehaveLike(opcode: OpCode, sample: Sample): Boolean {
 
         return when (opcode) {
-            MULR -> validateMultiplyRegisters(sample)
-            else -> false
+            ADDI -> validate(sample, performAddImmediate(sample.instruction, sample.before))
+            ADDR -> validate(sample, performAddRegisters(sample.instruction, sample.before))
+            MULR -> validate(sample, performMultiplyRegisters(sample.instruction, sample.before))
+            SETI -> validate(sample, performSetImmediate(sample.instruction, sample.before))
+            else -> throw UnsupportedOperationException()
         }
 
     }
 
-    private fun validateMultiplyRegisters(sample: Sample) : Boolean {
-        return Arrays.equals(sample.after, performMultiplyRegisters(sample.instruction, sample.before))
+    private fun validate(sample: Sample, actual: IntArray) = validate(sample.after, actual)
+
+
+    private fun validate(expected: IntArray, actual: IntArray) : Boolean {
+        return Arrays.equals(expected, actual)
     }
 
-    private fun performMultiplyRegisters(instruction: IntArray, before: IntArray): IntArray {
-        val registers = before.clone()
-        registers[instruction[3]] = registers[instruction[1]] * registers[instruction[2]]
-        return registers
 
-    }
+
 }
 
 
