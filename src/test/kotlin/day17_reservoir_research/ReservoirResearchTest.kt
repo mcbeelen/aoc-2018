@@ -7,6 +7,9 @@ import org.junit.Test
 class ReservoirResearchTest {
 
 
+
+
+
     @Test
     fun itShouldParseInputIntoSliceOfLand() {
 
@@ -34,6 +37,10 @@ class ReservoirResearchTest {
     }
 
 
+    @Test
+    fun itShouldFind57TilesWithWater() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
 
 
