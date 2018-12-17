@@ -42,6 +42,17 @@ internal fun performBitwiseAndImmediate(instruction: IntArray, before: IntArray)
     return registers
 }
 
+internal fun performBitwiseOrRegister(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    registers[instruction[3]] = registers[instruction[1]] or registers[instruction[2]]
+    return registers
+}
+
+internal fun performBitwiseOrImmediate(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    registers[instruction[3]] = registers[instruction[1]] or instruction[2]
+    return registers
+}
 
 
 

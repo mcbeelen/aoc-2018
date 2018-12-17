@@ -54,8 +54,12 @@ class ChronalDeviceTest {
     fun itShouldSupportAllOperations() {
         val sample = parseIntoSample(sample)
         assertTrue(validate(intArrayOf(3, 2, 1, 1), performMultiplyImmediate(sample.instruction, sample.before)))
+
         assertTrue(validate(intArrayOf(3, 2, 0, 1), performBitwiseAndRegister(sample.instruction, sample.before)))
         assertTrue(validate(intArrayOf(3, 2, 1, 1), performBitwiseAndImmediate(sample.instruction, sample.before)))
+
+        assertTrue(validate(intArrayOf(3, 2, 3, 1), performBitwiseOrRegister(sample.instruction, sample.before)))
+        assertTrue(validate(intArrayOf(3, 2, 1, 1), performBitwiseOrImmediate(sample.instruction, sample.before)))
 
     }
 
