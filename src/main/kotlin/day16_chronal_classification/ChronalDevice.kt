@@ -1,173 +1,72 @@
 package day16_chronal_classification
 
-class ChronalDevice {
+import day16_chronal_classification.OpCode.*
+import java.util.Arrays
+
+
+fun doesSampleBehaveLike(opcode: OpCode, sample: Sample): Boolean {
+
+    return when (opcode) {
+        ADDI -> validate(sample, performAddImmediate(sample.instruction, sample.before))
+        ADDR -> validate(sample, performAddRegisters(sample.instruction, sample.before))
+
+        MULI -> validate(sample, performMultiplyImmediate(sample.instruction, sample.before))
+        MULR -> validate(sample, performMultiplyRegisters(sample.instruction, sample.before))
+
+        SETI -> validate(sample, performSetImmediate(sample.instruction, sample.before))
+        SETR -> validate(sample, performSetRegister(sample.instruction, sample.before))
+
+        BANI -> validate(sample, performBitwiseAndImmediate(sample.instruction, sample.before))
+        BANR -> validate(sample, performBitwiseAndRegister(sample.instruction, sample.before))
+
+        BORI -> validate(sample, performBitwiseOrImmediate(sample.instruction, sample.before))
+        BORR -> validate(sample, performBitwiseOrRegister(sample.instruction, sample.before))
+
+        GTIR -> validate(sample, performGreaterThanImmediateRegister(sample.instruction, sample.before))
+        GRRI -> validate(sample, performGreaterThanRegisterImmediate(sample.instruction, sample.before))
+        GTRR -> validate(sample, performGreaterThanRegisterRegister(sample.instruction, sample.before))
+
+        EQIR -> validate(sample, performEqualImmediateRegister(sample.instruction, sample.before))
+        EQRI -> validate(sample, performEqualRegisterImmediate(sample.instruction, sample.before))
+        EQRR -> validate(sample, performEqualRegisterRegister(sample.instruction, sample.before))
+    }
+
 }
 
+private fun validate(sample: Sample, actual: IntArray) = validate(sample.after, actual)
 
-internal fun performAddImmediate(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] + instruction[2]
-    return registers
-}
-
-internal fun performAddRegisters(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] + registers[instruction[2]]
-    return registers
-}
-
-
-
-internal fun performMultiplyRegisters(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] * registers[instruction[2]]
-    return registers
-}
-
-internal fun performMultiplyImmediate(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] * instruction[2]
-    return registers
-}
-
-
-
-internal fun performBitwiseAndRegister(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] and registers[instruction[2]]
-    return registers
-}
-
-internal fun performBitwiseAndImmediate(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] and instruction[2]
-    return registers
+fun validate(expected: IntArray, actual: IntArray) : Boolean {
+    return Arrays.equals(expected, actual)
 }
 
 
 
-internal fun performBitwiseOrRegister(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] or registers[instruction[2]]
-    return registers
-}
-
-internal fun performBitwiseOrImmediate(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]] or instruction[2]
-    return registers
-}
 
 
 
-internal fun performSetRegister(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = registers[instruction[1]]
-    return registers
-}
+class ChronalDeviceSolver {
 
-internal fun performSetImmediate(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    registers[instruction[3]] = instruction[1]
-    return registers
-}
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
 
 
+            val chunked = CHRONAL_DEVICE_PART_ONE_INPUT.trimIndent().lines().chunked(4)
+            val samples = chunked.map { parseIntoSample(it) }
 
-internal fun performGreaterThanImmediateRegister(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    if (instruction[1] > registers[instruction[2]]) {
-        registers[instruction[3]] = 1
-    } else {
-        registers[instruction[3]] = 0
+            val  numberOfRecordedSampleBehavingLikeThreeOrMoreOpCodes = samples
+                    .filter { behavesLikeThreeOrMoreOpCodes(it) }
+                    .count()
+
+            println("${numberOfRecordedSampleBehavingLikeThreeOrMoreOpCodes}")
+
+
+        }
+
+        private fun behavesLikeThreeOrMoreOpCodes(sample: Sample) = OpCode.values()
+                    .filter { doesSampleBehaveLike(it, sample) }
+                    .count() >= 3
 
     }
-    return registers
 }
 
-internal fun performGreaterThanRegisterImmediate(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    if (registers[instruction[1]] > instruction[2]) {
-        registers[instruction[3]] = 1
-    } else {
-        registers[instruction[3]] = 0
-
-    }
-    return registers
-}
-
-
-internal fun performGreaterThanRegisterRegister(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    if (registers[instruction[1]] > registers[instruction[2]]) {
-        registers[instruction[3]] = 1
-    } else {
-        registers[instruction[3]] = 0
-
-    }
-    return registers
-}
-
-
-
-
-internal fun performEqualImmediateRegister(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    if (instruction[1] == registers[instruction[2]]) {
-        registers[instruction[3]] = 1
-    } else {
-        registers[instruction[3]] = 0
-
-    }
-    return registers
-}
-
-internal fun performEqualRegisterImmediate(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    if (registers[instruction[1]] == instruction[2]) {
-        registers[instruction[3]] = 1
-    } else {
-        registers[instruction[3]] = 0
-
-    }
-    return registers
-}
-
-
-internal fun performEqualRegisterRegister(instruction: IntArray, before: IntArray): IntArray {
-    val registers = before.clone()
-    if (registers[instruction[1]] == registers[instruction[2]]) {
-        registers[instruction[3]] = 1
-    } else {
-        registers[instruction[3]] = 0
-
-    }
-    return registers
-}
-
-
-
-enum class OpCode {
-    ADDR,
-    ADDI,
-
-    MULR,
-    MULI,
-
-    BANR,
-    BANI,
-
-    BORR,
-    BORI,
-
-    SETR,
-    SETI,
-
-    GTIR,
-    GRRI,
-    GTRR,
-
-    EQIR,
-    EQRI,
-    EQRR
-}
