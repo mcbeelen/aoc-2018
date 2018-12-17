@@ -61,6 +61,9 @@ class ChronalDeviceTest {
         assertTrue(validate(intArrayOf(3, 2, 3, 1), performBitwiseOrRegister(sample.instruction, sample.before)))
         assertTrue(validate(intArrayOf(3, 2, 1, 1), performBitwiseOrImmediate(sample.instruction, sample.before)))
 
+
+        assertTrue(validate(intArrayOf(3, 2, 1, 1), performSetRegister(sample.instruction, sample.before)))
+
     }
 
     private fun validate(sample: Sample, actual: IntArray) = validate(sample.after, actual)

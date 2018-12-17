@@ -30,6 +30,8 @@ internal fun performMultiplyImmediate(instruction: IntArray, before: IntArray): 
     return registers
 }
 
+
+
 internal fun performBitwiseAndRegister(instruction: IntArray, before: IntArray): IntArray {
     val registers = before.clone()
     registers[instruction[3]] = registers[instruction[1]] and registers[instruction[2]]
@@ -41,6 +43,8 @@ internal fun performBitwiseAndImmediate(instruction: IntArray, before: IntArray)
     registers[instruction[3]] = registers[instruction[1]] and instruction[2]
     return registers
 }
+
+
 
 internal fun performBitwiseOrRegister(instruction: IntArray, before: IntArray): IntArray {
     val registers = before.clone()
@@ -55,6 +59,11 @@ internal fun performBitwiseOrImmediate(instruction: IntArray, before: IntArray):
 }
 
 
+internal fun performSetRegister(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    registers[instruction[3]] = registers[instruction[1]]
+    return registers
+}
 
 internal fun performSetImmediate(instruction: IntArray, before: IntArray): IntArray {
     val registers = before.clone()
