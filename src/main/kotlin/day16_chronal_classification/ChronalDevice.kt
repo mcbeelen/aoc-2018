@@ -84,16 +84,16 @@ class ChronalDeviceOpCodeResolver {
             val opCodeResolver : MutableMap<Int, Set<OpCode>> = HashMap()
             (0 .. 15).forEach { opCodeResolver[it] = OpCode.values().toSet() }
 
-//            OpCode.values()
-//                    .filter { it.instruction != Int.MIN_VALUE }
-//                    .forEach {
-//                        opCodeResolver[it.instruction] = setOf(it)
-//                        (0 .. 15).forEach { index ->
-//                            if (index != it.instruction) {
-//                                opCodeResolver[index] = opCodeResolver[index]!!.minus(it)
-//                            }
-//                        }
-//                    }
+            OpCode.values()
+                    .filter { it.instruction != Int.MIN_VALUE }
+                    .forEach {
+                        opCodeResolver[it.instruction] = setOf(it)
+                        (0 .. 15).forEach { index ->
+                            if (index != it.instruction) {
+                                opCodeResolver[index] = opCodeResolver[index]!!.minus(it)
+                            }
+                        }
+                    }
 
 
             val samples = readDeviceSamples(CHRONAL_DEVICE_PART_ONE_INPUT)

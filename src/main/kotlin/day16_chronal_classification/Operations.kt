@@ -3,28 +3,28 @@ package day16_chronal_classification
 import java.lang.Integer.MIN_VALUE
 
 enum class OpCode(val instruction: Int) {
-    ADDI(MIN_VALUE),
-    ADDR(MIN_VALUE),
+    ADDI(4),
+    ADDR(11),
 
     MULI(1),
-    MULR(MIN_VALUE),
+    MULR(13),
 
     BANI(10),
-    BANR(MIN_VALUE),
+    BANR(0),
 
     BORI(2),
-    BORR(MIN_VALUE),
+    BORR(8),
 
-    SETI(MIN_VALUE),
-    SETR(MIN_VALUE),
+    SETI(14),
+    SETR(3),
 
-    GTIR(MIN_VALUE),
-    GRRI(MIN_VALUE),
-    GTRR(MIN_VALUE),
+    GTIR(7),
+    GRRI(6),
+    GTRR(15),
 
-    EQIR(MIN_VALUE),
-    EQRI(MIN_VALUE),
-    EQRR(MIN_VALUE)
+    EQIR(12),
+    EQRI(9),
+    EQRR(5)
 }
 
 
