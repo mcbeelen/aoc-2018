@@ -4,6 +4,8 @@ import day16_chronal_classification.OpCode.*
 import java.util.Arrays
 
 
+
+
 fun doesSampleBehaveLike(opcode: OpCode, sample: Sample): Boolean {
 
     return when (opcode) {
@@ -42,23 +44,19 @@ fun validate(expected: IntArray, actual: IntArray) : Boolean {
 
 
 
-
-
 class ChronalDeviceSolver {
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
 
-
-            val samples = readDeviceSamples(CHRONAL_DEVICE_PART_ONE_INPUT)
+            val samples = readDeviceSamples(CHRONAL_DEVICE_RECORDED_SAMPLES)
 
             val  numberOfRecordedSampleBehavingLikeThreeOrMoreOpCodes = samples
                     .filter { behavesLikeThreeOrMoreOpCodes(it) }
                     .count()
 
             println("${numberOfRecordedSampleBehavingLikeThreeOrMoreOpCodes}")
-
 
         }
 
@@ -96,7 +94,7 @@ class ChronalDeviceOpCodeResolver {
                     }
 
 
-            val samples = readDeviceSamples(CHRONAL_DEVICE_PART_ONE_INPUT)
+            val samples = readDeviceSamples(CHRONAL_DEVICE_RECORDED_SAMPLES)
 
             samples.forEach { sample ->
                 val possibleOpCodes = possibleOpCodeForInstruction(sample)

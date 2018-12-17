@@ -25,7 +25,7 @@ class ChronalDeviceTest {
             assertTrue("AFTER", Arrays.equals(it.after, intArrayOf(3, 2, 2, 1)))
         }
 
-        val chunked = CHRONAL_DEVICE_PART_ONE_INPUT.trimIndent().lines().chunked(4)
+        val chunked = CHRONAL_DEVICE_RECORDED_SAMPLES.trimIndent().lines().chunked(4)
         val samples = chunked
                 .map { parseIntoSample(it) }
 

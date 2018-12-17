@@ -1,7 +1,5 @@
 package day16_chronal_classification
 
-import java.lang.Integer.MIN_VALUE
-
 enum class OpCode(val instruction: Int) {
     ADDI(4),
     ADDR(11),

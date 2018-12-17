@@ -1,7 +1,7 @@
 package day16_chronal_classification
 
 
-const val CHRONAL_DEVICE_PART_ONE_INPUT = """
+const val CHRONAL_DEVICE_RECORDED_SAMPLES = """
 Before: [3, 0, 1, 3]
 15 2 1 3
 After:  [3, 0, 1, 1]
@@ -3176,7 +3176,7 @@ After:  [0, 3, 1, 0]"""
 
 
 
-const val CHRONAL_DEVICE_PART_TWO_INPUT = """1 0 0 1
+const val CHRONAL_DEVICE_INSTRUCTIONS = """1 0 0 1
 4 1 1 1
 14 0 0 3
 14 3 2 2
