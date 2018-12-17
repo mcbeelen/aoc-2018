@@ -50,13 +50,17 @@ tailrec fun followTheFlowOfTheWaterFrom(sliceOfLand: SliceOfLand): SliceOfLand {
     return followTheFlowOfTheWaterFrom(exploreTile(sliceOfLand.findTileToExplore(), sliceOfLand))
 }
 
-fun exploreTile(tileWithWater: Tile, sliceOfLand: SliceOfLand): SliceOfLand {
+fun exploreTile(tileToExplore: Tile, sliceOfLand: SliceOfLand): SliceOfLand {
 
-    if (sliceOfLand.canWaterFlowDownwardsFrom(tileWithWater)) {
-        val newTileWithWater = Tile(tileWithWater.location.next(DOWN), tileWithWater.location)
-        return sliceOfLand.withNewTileWithWater(newTileWithWater, tileWithWater.withDownExplored())
+    if (sliceOfLand.isTileAtTheFurthestPointDownward(tileToExplore)) {
+        return sliceOfLand.withExploredTile(tileToExplore.withDownExplored())
+    }
+
+    if (sliceOfLand.canWaterFlowDownwardsFrom()) {
+        val newTileWithWater = Tile(tileToExplore.location.next(DOWN), tileToExplore.location)
+        return sliceOfLand.withNewTileWithWater(newTileWithWater, tileToExplore.withDownExplored())
     } else {
-        val exploredTile = tileWithWater.copy(directionsToExplore = emptyList())
+        val exploredTile = tileToExplore.withDownExplored()
         return sliceOfLand.withExploredTile(exploredTile)
     }
 
@@ -77,6 +81,10 @@ data class Tile(val location: ScreenCoordinate,
 
 data class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>,
                        val tilesWithWater: SortedSet<Tile> = TreeSet()) {
+
+
+    val maxY : Int by lazy { tilesWithClay.map { it.top }.max() ?: Int.MIN_VALUE}
+
 
     fun isThereClayAt(x: Int, y: Int) = tilesWithClay.contains(ScreenCoordinate(x, y))
 
@@ -101,8 +109,7 @@ data class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>,
             .plus(exploredTile)
             .toSortedSet())
 
-
-
+    fun isTileAtTheFurthestPointDownward(tile: Tile) = tile.location.top == maxY
 
 }
 
