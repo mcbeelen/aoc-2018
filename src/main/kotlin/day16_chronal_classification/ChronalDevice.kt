@@ -59,6 +59,7 @@ internal fun performBitwiseOrImmediate(instruction: IntArray, before: IntArray):
 }
 
 
+
 internal fun performSetRegister(instruction: IntArray, before: IntArray): IntArray {
     val registers = before.clone()
     registers[instruction[3]] = registers[instruction[1]]
@@ -68,6 +69,79 @@ internal fun performSetRegister(instruction: IntArray, before: IntArray): IntArr
 internal fun performSetImmediate(instruction: IntArray, before: IntArray): IntArray {
     val registers = before.clone()
     registers[instruction[3]] = instruction[1]
+    return registers
+}
+
+
+
+internal fun performGreaterThanImmediateRegister(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    if (instruction[1] > registers[instruction[2]]) {
+        registers[instruction[3]] = 1
+    } else {
+        registers[instruction[3]] = 0
+
+    }
+    return registers
+}
+
+internal fun performGreaterThanRegisterImmediate(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    if (registers[instruction[1]] > instruction[2]) {
+        registers[instruction[3]] = 1
+    } else {
+        registers[instruction[3]] = 0
+
+    }
+    return registers
+}
+
+
+internal fun performGreaterThanRegisterRegister(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    if (registers[instruction[1]] > registers[instruction[2]]) {
+        registers[instruction[3]] = 1
+    } else {
+        registers[instruction[3]] = 0
+
+    }
+    return registers
+}
+
+
+
+
+internal fun performEqualImmediateRegister(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    if (instruction[1] == registers[instruction[2]]) {
+        registers[instruction[3]] = 1
+    } else {
+        registers[instruction[3]] = 0
+
+    }
+    return registers
+}
+
+internal fun performEqualRegisterImmediate(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    if (registers[instruction[1]] == instruction[2]) {
+        registers[instruction[3]] = 1
+    } else {
+        registers[instruction[3]] = 0
+
+    }
+    return registers
+}
+
+
+internal fun performEqualRegisterRegister(instruction: IntArray, before: IntArray): IntArray {
+    val registers = before.clone()
+    if (registers[instruction[1]] == registers[instruction[2]]) {
+        registers[instruction[3]] = 1
+    } else {
+        registers[instruction[3]] = 0
+
+    }
     return registers
 }
 
