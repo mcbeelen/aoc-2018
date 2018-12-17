@@ -1,4 +1,4 @@
-package util
+package util.collections
 
 fun <T> circularSequence(input: List<T>): Sequence<T> {
     return sequence {

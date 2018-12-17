@@ -1,6 +1,6 @@
 package day01_chronal_calibration
 
-import util.circularSequence
+import util.collections.circularSequence
 import kotlin.system.measureTimeMillis
 
 class SameFrequenceFinder {
