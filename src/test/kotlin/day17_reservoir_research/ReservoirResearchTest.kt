@@ -1,5 +1,7 @@
 package day17_reservoir_research
 
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -39,8 +41,13 @@ class ReservoirResearchTest {
 
     @Test
     fun itShouldFind57TilesWithWater() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+        val timesWithWater = findTilesWithWater(EXAMPLE_VEINS_OF_CLAY_INPUT)
+        assertThat(timesWithWater.size, equalTo(57))
+
+
     }
+
 }
 
 

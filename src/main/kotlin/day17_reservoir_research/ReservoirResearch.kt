@@ -32,6 +32,17 @@ class SliceOfLand(private val tilesWithClay : Set<ScreenCoordinate>) {
 }
 
 
+fun findTilesWithWater(scanResults: String): Collection<Tile> {
+    return emptyList()
+
+}
+
+
+data class Tile(val location: ScreenCoordinate)
+
+
+
+
 internal fun parseScanResults(foundVeinsOfClay: String): SliceOfLand {
 
     val tilesWithClay : MutableSet<ScreenCoordinate> = HashSet()
