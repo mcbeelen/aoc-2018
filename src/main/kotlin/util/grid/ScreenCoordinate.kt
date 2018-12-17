@@ -18,13 +18,13 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
 
             UP -> copy(top = top - 1)
             RIGHT -> copy(left = left + 1)
-            DOWN -> copy(top =  top + 1)
+            DOWN -> copy(top = top + 1)
             LEFT -> copy(left = left - 1)
         }
 
     }
 
-    fun isAt(left: Int, top: Int) : Boolean = this.left == left && this.top == top
+    fun isAt(left: Int, top: Int): Boolean = this.left == left && this.top == top
 
     fun isAt(other: ScreenCoordinate) = isAt(other.left, other.top)
 
@@ -34,7 +34,13 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
 
     fun isAdjacentTo(other: ScreenCoordinate) = distanceTo(other) == 1
 
+    fun isAbove(other: ScreenCoordinate) = this.left == other.left && this.top == other.top - 1
+    fun isToTheRightOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left + 1
+    fun isToTheLeftOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left - 1
+
+
 }
+
 
 class CoordinatesInReadingOrder : Comparator<ScreenCoordinate> {
     override fun compare(any: ScreenCoordinate, other: ScreenCoordinate): Int {
@@ -47,8 +53,7 @@ class CoordinatesInReadingOrder : Comparator<ScreenCoordinate> {
 }
 
 
-
-fun parseXcommaY(input: String) : ScreenCoordinate {
+fun parseXcommaY(input: String): ScreenCoordinate {
     val split = input.split(",")
     val left = split[0].trim().toInt()
     val top = split[1].trim().toInt()

@@ -42,12 +42,9 @@ class ReservoirResearchTest {
     @Test
     fun itShouldFind57TilesWithWater() {
 
-        val timesWithWater = findTilesWithWater(EXAMPLE_VEINS_OF_CLAY_INPUT)
-        assertTrue(timesWithWater.any { it.location.isAt(500, 1)})
+        val timesWithWater = findAllTilesWithWater(EXAMPLE_VEINS_OF_CLAY_INPUT)
 
-
-        assertThat(timesWithWater.size, equalTo(57))
-
+        assertThat(timesWithWater.countTilesWithWater(), equalTo(57))
 
     }
 
