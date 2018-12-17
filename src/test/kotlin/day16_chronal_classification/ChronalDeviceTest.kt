@@ -49,6 +49,16 @@ class ChronalDeviceTest {
 
     }
 
+    // [3, 2, 1, 1] -> (9 2 1 2)
+    @Test
+    fun itShouldSupportAllOperations() {
+        val sample = parseIntoSample(sample)
+        assertTrue(validate(intArrayOf(3, 2, 1, 1), performMultiplyImmediate(sample.instruction, sample.before)))
+        assertTrue(validate(intArrayOf(3, 2, 0, 1), performBitwiseAndRegister(sample.instruction, sample.before)))
+        assertTrue(validate(intArrayOf(3, 2, 1, 1), performBitwiseAndImmediate(sample.instruction, sample.before)))
+
+    }
+
     private fun validate(sample: Sample, actual: IntArray) = validate(sample.after, actual)
 
 
