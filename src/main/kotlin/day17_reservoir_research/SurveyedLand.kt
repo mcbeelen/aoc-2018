@@ -7,11 +7,14 @@ import util.grid.ScreenCoordinate
 
 
 sealed class Tile(val location: ScreenCoordinate) {
+
     abstract fun isSpring() : Boolean
+
+    abstract val linkToSource : Link
 
     private val flows : MutableMap<Direction, FlowState> = HashMap()
 
-    fun markAsBlocked(direction: Direction) {
+    fun markAsBlockedFrom(direction: Direction) {
         flows[direction] = BLOCKED
     }
 
@@ -21,24 +24,30 @@ sealed class Tile(val location: ScreenCoordinate) {
         if (this is TileOfSoil) {
             this.linkToSource.markAsOverflowing()
         }
-
     }
+
+    fun canNotFlowSideways() = canNotFlow(LEFT) && canNotFlow(RIGHT)
+
+    private fun canNotFlow(direction: Direction) = flows.containsKey(direction) && flows.get(direction) == BLOCKED
+
 
     override fun toString(): String {
         return "${location}"
     }
 
-
 }
 
 class TileOfSoil(location: ScreenCoordinate, from: Tile, direction: Direction) : Tile(location) {
 
-    val linkToSource = Link(from, this, direction, FLOWING)
+    override val linkToSource = Link(from, this, direction, FLOWING)
 
     override fun isSpring() = false
 }
 
 class SpringOfWater(location: ScreenCoordinate) : Tile(location) {
+
+    override val linkToSource = Link(this, this, DOWN, FLOWING)
+
     override fun isSpring() = true
 }
 
@@ -48,7 +57,7 @@ data class DirectionToExplore(val from: Tile, val direction: Direction) {
     fun nextLocation() = from.location.next(direction)
 
     fun markAsBlocked() {
-        from.markAsBlocked(direction)
+        from.markAsBlockedFrom(direction)
     }
 
     fun markAsOverflowing() {

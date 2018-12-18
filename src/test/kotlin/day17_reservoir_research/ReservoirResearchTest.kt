@@ -88,10 +88,62 @@ class ReservoirResearchTest {
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(9))
 
+    }
+
+
+    @Test
+    fun itShouldOverflowEqualSidedBucket() {
+
+        val sliceOfLand = parseScanResults("""
+            x=498, y=2..3
+            x=502, y=2..3
+            y=3, x=498..502
+            x=510, y=1..1
+            """)
+        sliceOfLand.exploreToFindAllTilesOfWater()
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(14))
 
     }
 
-    @Test @Ignore
+    @Test
+    fun itShouldOverflowLopsidedBucket() {
+
+        val sliceOfLand = parseScanResults("""
+            x=499, y=2..4
+            x=501, y=3..4
+            y=4, x=499..501
+            x=510, y=1..1
+            """)
+        sliceOfLand.exploreToFindAllTilesOfWater()
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(7))
+
+    }
+
+    @Test
+    fun itShouldFillBothSidesOfCommunicatingVessels() {
+
+        val sliceOfLand = parseScanResults("""
+            x=490, y=3..9
+            x=508, y=2..9
+            y=9, x=490..508
+            x=502, y=5..6
+            x=503, y=5..6
+            x=510, y=1..1
+            """)
+        sliceOfLand.exploreToFindAllTilesOfWater()
+
+        plotReservoir(sliceOfLand )
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(125))
+
+    }
+
+
+
+
+
+
+
+    @Test
     fun itShouldFind57TilesWithWater() {
 
         val timesWithWater = findAllTilesWithWater(EXAMPLE_VEINS_OF_CLAY_INPUT)
