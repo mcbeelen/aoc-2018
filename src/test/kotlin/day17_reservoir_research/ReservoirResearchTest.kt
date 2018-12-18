@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.greaterThan
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.Int.Companion.MIN_VALUE
 
@@ -55,15 +56,31 @@ class ReservoirResearchTest {
     @Test
     fun itShouldFlowAroundSingleDot() {
 
-        val sliceOfLand = parseScanResults("x=500, y=2..2")
+        val sliceOfLand = parseScanResults("""
+            x=500, y=2..2
+            x=510, y=1..2
+            """)
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(5))
 
     }
 
-
-
     @Test
+    fun itShouldFlowAroundSmallStructure() {
+
+        val sliceOfLand = parseScanResults("""
+            x=500, y=2..2
+            x=510, y=1..2
+            y=3, x=499..501
+            """)
+        sliceOfLand.exploreToFindAllTilesOfWater()
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(9))
+
+    }
+
+
+
+    @Test @Ignore
     fun itShouldFind57TilesWithWater() {
 
         val timesWithWater = findAllTilesWithWater(EXAMPLE_VEINS_OF_CLAY_INPUT)
@@ -72,7 +89,7 @@ class ReservoirResearchTest {
 
     }
 
-    @Test
+    @Test @Ignore
     fun actualPartOne() {
 
         val timesWithWater = findAllTilesWithWater(CLAY_SCAN_RESULTS)

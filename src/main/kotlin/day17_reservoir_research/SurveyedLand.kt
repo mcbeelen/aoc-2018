@@ -55,11 +55,11 @@ data class DirectionToExplore(val from: Tile, val direction: Direction) {
         from.markAsOverflowing(direction)
     }
 
-
-
 }
 
 fun downwardsFrom(from: Tile) = DirectionToExplore(from, DOWN)
+fun leftwardsFrom(from: Tile) = DirectionToExplore(from, LEFT)
+fun rightwardsFrom(from: Tile) = DirectionToExplore(from, RIGHT)
 
 class Link(val from: Tile, val to: Tile, val direction: Direction, var state: FlowState) {
     fun markAsOverflowing() {
