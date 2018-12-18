@@ -2,6 +2,7 @@ package day17_reservoir_research
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.greaterThan
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -47,6 +48,20 @@ class ReservoirResearchTest {
         assertThat(timesWithWater.countTilesWithWater(), equalTo(57))
 
     }
+
+    @Test
+    fun actualPartOne() {
+
+        val timesWithWater = findAllTilesWithWater(CLAY_SCAN_RESULTS)
+
+
+        plotReservoir(timesWithWater)
+
+
+        assertThat(timesWithWater.countTilesWithWater(), greaterThan(499))
+
+    }
+
 
 }
 

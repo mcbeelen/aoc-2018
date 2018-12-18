@@ -73,7 +73,9 @@ private fun exploreDownwards(sliceOfLand: SliceOfLand, tileToExplore: Tile): Sli
 
     // Do not try to explore tile, which we already explored
     if (sliceOfLand.isThereWaterAt(tileToExplore.location.next(DOWN))) {
-        if (tileToExplore.hasSourceOnTheRight()) {
+        if (tileToExplore.hasSourceFromAbove()) {
+            return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreSideways())
+        } else if (tileToExplore.hasSourceOnTheRight()) {
             return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreLeftWards().withExplored(DOWN))
         } else if (tileToExplore.hasSourceOnTheLeft()) {
             return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreRightwards().withExplored(DOWN))
