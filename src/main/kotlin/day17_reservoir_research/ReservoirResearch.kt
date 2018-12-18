@@ -113,19 +113,24 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
         }
     }
 
-    private fun handleRunningIntoTileWithWater(directionToExplore: DirectionToExplore, origin: Tile, nextLocation: ScreenCoordinate) {
-        if (directionToExplore.direction == DOWN) {
+    private fun handleRunningIntoTileWithWater(currentExploration: DirectionToExplore, origin: Tile, nextLocation: ScreenCoordinate) {
+        if (currentExploration.direction == DOWN) {
             if (origin.linkToSource.direction == DOWN) {
                 // We are splashing into existing flow of water
                 val joiningTile = surveyedLand.getValue(nextLocation)
                 if (joiningTile.isOverflowing()) {
-                    directionToExplore.markAsOverflowing()
+                    currentExploration.markAsOverflowing()
                 } else {
 
-                    //TODO("We could be slashing into the blocked part of a prefilled bucket")
-                    // FIX:
-                    // Communicating Vessels: We need to continue to fill the bucket
-                    scheduleFurtherExploration(leftwardsFrom(origin), rightwardsFrom(origin))
+                    //TODO("We could be splashing into the blocked part of a prefilled bucket")
+                    if (joiningTile.isOnBlockSideOfOverflowingBucket()) {
+                        joiningTile.markAsOverflowingTowards(UP)
+                        currentExploration.markAsOverflowing()
+                    } else {
+                        // Communicating Vessels: We need to continue to fill the bucket
+                        scheduleFurtherExploration(leftwardsFrom(origin), rightwardsFrom(origin))
+
+                    }
 
                 }
 
@@ -137,14 +142,14 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
             // We are running into a wave or a waterfall
             val joiningTile = surveyedLand.getValue(nextLocation)
             if (joiningTile.isOverflowing()) {
-                directionToExplore.markAsOverflowing()
+                currentExploration.markAsOverflowing()
             } else {
                 logger.warn("Figure out how to handle flowing into into ${joiningTile}")
-                logger.warn("Situation: exploring from ${directionToExplore.from} in ${directionToExplore.direction}")
+                logger.warn("Situation: exploring from ${currentExploration.from} in ${currentExploration.direction}")
                 logger.info("Running into a tile with source ${joiningTile.linkToSource.from} with ${joiningTile.linkToSource.state}")
                 plotReservoir(this)
                 println("Marking section as blocking, since it ran sideways into water ")
-                applyBackPressure(directionToExplore.from.linkToSource)
+                applyBackPressure(currentExploration.from.linkToSource)
                 // scheduleFurtherExploration(DirectionToExplore(surveyedLand.getValue(nextLocation), origin.linkToSource.direction))
 
             }
@@ -246,6 +251,12 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
     fun tileAt(x: Int, y: Int) = surveyedLand.getValue(ScreenCoordinate(x, y))
 
 
+
+    fun drainAllExcessWater() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+
 }
 
 
@@ -287,4 +298,28 @@ fun clayInHorizontalVein(horizontalVein: String): Set<ScreenCoordinate> {
         tilesWithClay.add(ScreenCoordinate(x, y))
     }
     return tilesWithClay
+}
+
+
+
+
+class ReservoirResearchSolver {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+
+
+            val sliceOfLand = findAllTilesWithWater(CLAY_SCAN_RESULTS)
+            println("Initially water will be available at ${sliceOfLand.countTilesWithWater()} locations")
+
+
+            sliceOfLand.drainAllExcessWater()
+
+            println("Eventually water will remain at ${sliceOfLand.countTilesWithWater()} locations")
+
+
+
+
+        }
+    }
 }

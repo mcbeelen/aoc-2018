@@ -18,7 +18,7 @@ sealed class Tile(val location: ScreenCoordinate) {
         flows[direction] = BLOCKED
     }
 
-    fun markAsOverflowing(direction: Direction) {
+    fun markAsOverflowingTowards(direction: Direction) {
         flows[direction] = OVERFLOWING
 
         if (this is TileOfSoil) {
@@ -27,6 +27,16 @@ sealed class Tile(val location: ScreenCoordinate) {
     }
 
     fun isOverflowing() = flows.any { it.value == OVERFLOWING }
+
+    fun isOnBlockSideOfOverflowingBucket(): Boolean {
+        if (! isSourceOnSameLine() ) {
+            return linkToSource.from.isOverflowing()
+        }
+
+        return linkToSource.from.isOnBlockSideOfOverflowingBucket()
+    }
+
+    private fun isSourceOnSameLine() = linkToSource.from.location.top == location.top
 
 
     fun canNotFlowSideways() = canNotFlow(LEFT) && canNotFlow(RIGHT)
@@ -50,6 +60,8 @@ sealed class Tile(val location: ScreenCoordinate) {
     override fun toString(): String {
         return "${location}"
     }
+
+
 
 }
 
@@ -79,7 +91,7 @@ data class DirectionToExplore(val from: Tile, val direction: Direction) {
     }
 
     fun markAsOverflowing() {
-        from.markAsOverflowing(direction)
+        from.markAsOverflowingTowards(direction)
     }
 
 }
@@ -92,7 +104,7 @@ class Link(val from: Tile, val to: Tile, val direction: Direction, var state: Fl
 
     fun markAsOverflowing() {
         this.state = OVERFLOWING
-        this.from.markAsOverflowing(direction)
+        this.from.markAsOverflowingTowards(direction)
     }
 }
 
