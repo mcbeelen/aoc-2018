@@ -1,9 +1,10 @@
 package day17_reservoir_research
 
-import util.grid.Direction
+import util.collections.Queue
 import util.grid.Direction.*
 import util.grid.ScreenCoordinate
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
 How many tiles can be reached by the water?
@@ -31,122 +32,73 @@ fun findAllTilesWithWater(foundVeinsOfClay: String): SliceOfLand {
 
     val sliceOfLand = parseScanResults(foundVeinsOfClay)
 
-    val locationOfSpring = ScreenCoordinate(500, 0)
-    val tileWithSpring = Tile(locationOfSpring, null)
+    sliceOfLand.exploreToFindAllTilesOfWater()
 
-    val sliceWithExtraTile = sliceOfLand.withAdditionalTile(tileWithSpring)
-
-
-    return followTheFlowOfTheWaterFrom(sliceWithExtraTile)
-
-}
-
-tailrec fun followTheFlowOfTheWaterFrom(sliceOfLand: SliceOfLand): SliceOfLand {
-
-    if (sliceOfLand.allTilesHaveBeenExplored()) {
-        return sliceOfLand
-    }
-
-    return followTheFlowOfTheWaterFrom(exploreTile(sliceOfLand.findTileToExplore(), sliceOfLand))
-}
-
-fun exploreTile(tileToExplore: Tile, sliceOfLand: SliceOfLand): SliceOfLand {
-
-    println("Going to explore tile at ${tileToExplore.location} in ${tileToExplore.directionsToExplore}")
-
-    if (sliceOfLand.isTileAtTheFurthestPointDownward(tileToExplore)) {
-        return sliceOfLand.withExploredTile(tileToExplore.withExplored(DOWN))
-    }
-
-    return when {
-        tileToExplore.directionsToExplore.contains(DOWN) -> exploreDownwards(sliceOfLand, tileToExplore)
-        tileToExplore.directionsToExplore.contains(LEFT) -> exploreLeftwards(sliceOfLand, tileToExplore)
-        tileToExplore.directionsToExplore.contains(RIGHT) -> exploreRightwards(sliceOfLand, tileToExplore)
-        else -> throw IllegalArgumentException("tileToExplore does not have a direction to explore")
-    }
-
+    return sliceOfLand
 
 }
 
 
-private fun exploreDownwards(sliceOfLand: SliceOfLand, tileToExplore: Tile): SliceOfLand {
+class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
 
-    // Do not try to explore tile, which we already explored
-    if (sliceOfLand.isThereWaterAt(tileToExplore.location.next(DOWN))) {
-        if (tileToExplore.hasSourceFromAbove()) {
-            return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreSideways())
-        } else if (tileToExplore.hasSourceOnTheRight()) {
-            return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreLeftWards().withExplored(DOWN))
-        } else if (tileToExplore.hasSourceOnTheLeft()) {
-            return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreRightwards().withExplored(DOWN))
+    private val spring = SpringOfWater(ScreenCoordinate(500, 0))
+    private val surveyedLand: MutableMap<ScreenCoordinate, TileOfSoil> = HashMap()
+
+    private val directionsToExplore = Queue<DirectionToExplore>()
+
+    init {
+        directionsToExplore.enqueue(DirectionToExplore(spring, DOWN))
+    }
+
+
+    fun isThereClayAt(location: ScreenCoordinate) = tilesWithClay.contains(location)
+    internal fun isThereClayAt(x: Int, y: Int) = isThereClayAt(ScreenCoordinate(x, y))
+
+    fun isThereWaterAt(location: ScreenCoordinate) = surveyedLand.containsKey(location)
+    internal fun isThereWaterAt(x: Int, y: Int) = isThereWaterAt(ScreenCoordinate(x, y))
+
+
+    fun exploreToFindAllTilesOfWater() {
+        while (directionsToExplore.isNotEmpty()) {
+            explore(directionsToExplore.dequeue())
         }
     }
 
-    if (sliceOfLand.canWaterFlowDownwardsFrom(tileToExplore)) {
-        val newTileWithWater = Tile(tileToExplore.location.next(DOWN), tileToExplore)
-        return sliceOfLand.withNewTileWithWater(newTileWithWater, tileToExplore.withExplored(DOWN))
-    } else {
-        if (tileToExplore.hasSourceFromAbove()) {
-            return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreSideways())
-        } else if (tileToExplore.hasSourceOnTheRight()) {
-            return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreLeftWards().withExplored(DOWN))
-        } else if (tileToExplore.hasSourceOnTheLeft()) {
-            return sliceOfLand.withExploredTile(tileToExplore.withNeedToExploreRightwards().withExplored(DOWN))
+    private fun explore(directionToExplore: DirectionToExplore) {
+
+        println("Exploring from ${directionToExplore.from}  ${directionToExplore.direction}")
+
+        if (isOverflowing(directionToExplore.from)) {
+            directionToExplore.markAsOverflowing()
+        } else {
+            val nextLocation = directionToExplore.nextLocation()
+
+            if (isThereClayAt(nextLocation)) {
+                directionToExplore.markAsBlocked()
+                TODO("Schedule exploring LEFT and RIGHT from currentLocation")
+                // directionsToExplore.enqueue(directionToExplore.from, LEFT)
+            } else {
+                reachedNewLocation(directionToExplore)
+            }
         }
+
+
     }
 
-    throw IllegalStateException("We should not end up on this spot!")
-}
+    private fun isOverflowing(from: Tile) = from.location.top == maxY
+
+    private fun reachedNewLocation(directionToExplore: DirectionToExplore) {
+        val from = directionToExplore.from
+        val location = directionToExplore.nextLocation()
+        val to = TileOfSoil(location, from, directionToExplore.direction)
 
 
-fun exploreLeftwards(sliceOfLand: SliceOfLand, tileToExplore: Tile): SliceOfLand {
-    if (sliceOfLand.canWaterFlowFrom(tileToExplore, LEFT)) {
-        val newTileWithWater = Tile(tileToExplore.location.next(LEFT), tileToExplore)
-        return sliceOfLand.withNewTileWithWater(newTileWithWater, tileToExplore.withExplored(LEFT))
-    } else {
-        return sliceOfLand.withExploredTile(tileToExplore.withExplored(LEFT))
+        surveyedLand[location] = to
+        println("Reached from ${to.location} from ${from.location} heading ${directionToExplore.direction}")
+
+        directionsToExplore.enqueue(downwardsFrom(to))
+
     }
-}
-
-fun exploreRightwards(sliceOfLand: SliceOfLand, tileToExplore: Tile): SliceOfLand {
-
-    // Do not try to explore tile, which we already explored
-    if (sliceOfLand.isThereWaterAt(tileToExplore.location.next(RIGHT))) {
-        return sliceOfLand.withExploredTile(tileToExplore.withExplored(RIGHT))
-    }
-
-    if (sliceOfLand.canWaterFlowFrom(tileToExplore, RIGHT)) {
-        val newTileWithWater = Tile(tileToExplore.location.next(RIGHT), tileToExplore)
-        return sliceOfLand.withNewTileWithWater(newTileWithWater, tileToExplore.withExplored(RIGHT))
-    } else {
-        return sliceOfLand.withExploredTile(tileToExplore.withExplored(RIGHT))
-                .withStartingToFillTheReservoir(tileToExplore)
-    }
-}
-
-
-data class Tile(val location: ScreenCoordinate,
-                val source: Tile?,
-                val directionsToExplore: List<Direction> = listOf(DOWN)) : Comparable<Tile> {
-
-    override fun compareTo(other: Tile) = location.compareTo(other.location)
-
-    fun withExplored(direction: Direction) = copy(directionsToExplore = directionsToExplore.minus(direction))
-
-    fun withNeedToExploreSideways() = copy(directionsToExplore = listOf(LEFT, RIGHT))
-    fun withNeedToExploreLeftWards() = copy(directionsToExplore = listOf(LEFT))
-    fun withNeedToExploreRightwards() = copy(directionsToExplore = listOf(RIGHT))
-
-
-    fun hasSourceFromAbove() = source == null || source.location.isAbove(location)
-    fun hasSourceOnTheRight() = source!!.location.isToTheRightOf(location)
-    fun hasSourceOnTheLeft() = source!!.location.isToTheLeftOf(location)
-
-}
-
-
-data class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>,
-                       val tilesWithWater: SortedSet<Tile> = TreeSet()) {
 
 
     val minX: Int by lazy { tilesWithClay.map { it.left }.min() ?: Int.MIN_VALUE }
@@ -154,58 +106,6 @@ data class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>,
 
     val minY: Int by lazy { tilesWithClay.map { it.top }.min() ?: Int.MIN_VALUE }
     val maxY: Int by lazy { tilesWithClay.map { it.top }.max() ?: Int.MIN_VALUE }
-
-
-    fun isThereClayAt(x: Int, y: Int) = tilesWithClay.contains(ScreenCoordinate(x, y))
-
-    fun isThereWaterAt(x: Int, y: Int) = tilesWithWater.any { it.location.isAt(x, y) }
-    fun isThereWaterAt(location: ScreenCoordinate) = tilesWithWater.any { it.location == location }
-
-
-    fun canWaterFlowDownwardsFrom(tile: Tile) = !tilesWithClay.contains(tile.location.next(DOWN))
-
-    fun canWaterFlowFrom(from: Tile, direction: Direction): Boolean {
-        val nextLocation = from.location.next(direction)
-        return !tilesWithClay.contains(nextLocation)
-    }
-
-
-    fun findTileToExplore() = tilesWithWater.first { it.directionsToExplore.isNotEmpty() }
-
-    fun allTilesHaveBeenExplored() = tilesWithWater.all { it.directionsToExplore.isEmpty() }
-
-    fun withAdditionalTile(additionalTile: Tile) = copy(tilesWithWater = tilesWithWater
-            .plus(additionalTile)
-            .toSortedSet())
-
-    fun withNewTileWithWater(foundTile: Tile, exploredTile: Tile) =
-            withAdditionalTile(foundTile)
-                    .withExploredTile(exploredTile)
-
-
-    fun withExploredTile(exploredTile: Tile): SliceOfLand {
-        val exploredTileInPreviousState = tilesWithWater.first { it.location == exploredTile.location }
-        return copy(tilesWithWater = tilesWithWater
-                .minus(exploredTileInPreviousState)
-                .plus(exploredTile)
-                .toSortedSet())
-    }
-
-    fun isTileAtTheFurthestPointDownward(tile: Tile) = tile.location.top == maxY
-    fun withStartingToFillTheReservoir(tileToExplore: Tile): SliceOfLand {
-
-        val upstreamTile = findUpstreamTileToExplore(tileToExplore).withNeedToExploreSideways()
-        return withExploredTile(upstreamTile)
-
-    }
-
-    private tailrec fun findUpstreamTileToExplore(tileToExplore: Tile): Tile {
-        if (tileToExplore.source!!.location.isAbove(tileToExplore.location)) {
-            return tileToExplore.source
-        }
-        return findUpstreamTileToExplore(tileToExplore.source)
-
-    }
 
     fun countTilesWithWater(): Int {
 

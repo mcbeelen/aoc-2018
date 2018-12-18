@@ -6,10 +6,9 @@ import com.natpryce.hamkrest.greaterThan
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.Int.Companion.MIN_VALUE
 
 class ReservoirResearchTest {
-
-
 
 
 
@@ -41,6 +40,30 @@ class ReservoirResearchTest {
 
 
     @Test
+    fun itShouldPassAlongMissedBucket() {
+
+        val sliceOfLand = parseScanResults("""
+            x=499, y=1..2
+            x=503, y=1..2
+        """.trimMargin())
+        sliceOfLand.exploreToFindAllTilesOfWater()
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(2))
+
+    }
+
+
+    @Test
+    fun itShouldFlowAroundSingleDot() {
+
+        val sliceOfLand = parseScanResults("x=500, y=2..2")
+        sliceOfLand.exploreToFindAllTilesOfWater()
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(5))
+
+    }
+
+
+
+    @Test
     fun itShouldFind57TilesWithWater() {
 
         val timesWithWater = findAllTilesWithWater(EXAMPLE_VEINS_OF_CLAY_INPUT)
@@ -59,6 +82,7 @@ class ReservoirResearchTest {
 
 
         assertThat(timesWithWater.countTilesWithWater(), greaterThan(499))
+        assertThat(timesWithWater.countTilesWithWater(), equalTo(MIN_VALUE))
 
     }
 
