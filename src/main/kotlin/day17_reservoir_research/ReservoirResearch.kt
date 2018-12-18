@@ -158,6 +158,48 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
         }
     }
 
+
+    fun drainAllExcessWater() {
+        surveyedLand
+                .filter { it.value.isOverflowing() }
+                .forEach { surveyedLand.remove(it.key)}
+
+
+        surveyedLand
+                .filter { hasAnOpeningOnTheSide(it.value) }
+                .forEach { surveyedLand.remove(it.key)}
+
+
+    }
+
+    private fun hasAnOpeningOnTheSide(tile: TileOfSoil): Boolean {
+
+        return (! isClosedToTheRight(tile)) || (! isClosedToTheLeft(tile))
+
+
+
+    }
+
+    private fun isClosedToTheLeft(tile: TileOfSoil): Boolean {
+        var x = tile.location.left
+        val y = tile.location.top
+        while (isThereWaterAt(x, y)) {
+            x--
+        }
+        return isThereClayAt(x, y)
+    }
+
+
+    private fun isClosedToTheRight(tile: TileOfSoil): Boolean {
+        var x = tile.location.left
+        val y = tile.location.top
+        while (isThereWaterAt(x, y)) {
+            x++
+        }
+        return isThereClayAt(x, y)
+    }
+
+
     private fun scheduleFurtherExploration(vararg newDirections: DirectionToExplore) {
         newDirections.forEach {
             directionsToExplore.push(it)
@@ -252,9 +294,7 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
 
 
 
-    fun drainAllExcessWater() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+
 
 
 }
@@ -314,6 +354,8 @@ class ReservoirResearchSolver {
 
 
             sliceOfLand.drainAllExcessWater()
+
+            plotReservoir(sliceOfLand)
 
             println("Eventually water will remain at ${sliceOfLand.countTilesWithWater()} locations")
 

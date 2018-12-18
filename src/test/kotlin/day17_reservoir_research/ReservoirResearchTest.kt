@@ -50,6 +50,11 @@ class ReservoirResearchTest {
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(2))
 
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(0))
+
+
     }
 
 
@@ -62,6 +67,10 @@ class ReservoirResearchTest {
             """)
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(5))
+
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(0))
 
     }
 
@@ -76,6 +85,10 @@ class ReservoirResearchTest {
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(9))
 
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(0))
+
     }
 
     @Test
@@ -87,6 +100,10 @@ class ReservoirResearchTest {
             """)
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(9))
+
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(0))
 
     }
 
@@ -103,6 +120,10 @@ class ReservoirResearchTest {
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(14))
 
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(3))
+
     }
 
     @Test
@@ -116,6 +137,10 @@ class ReservoirResearchTest {
             """)
         sliceOfLand.exploreToFindAllTilesOfWater()
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(7))
+
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(1))
 
     }
 
@@ -135,6 +160,10 @@ class ReservoirResearchTest {
         plotReservoir(sliceOfLand )
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(125))
 
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(98))
+
     }
 
 
@@ -142,10 +171,12 @@ class ReservoirResearchTest {
     fun itShouldFind57TilesWithWater() {
 
         val sliceOfLand = findAllTilesWithWater(EXAMPLE_VEINS_OF_CLAY_INPUT)
-
         plotReservoir(sliceOfLand)
-
         assertThat(sliceOfLand.countTilesWithWater(), equalTo(57))
+
+        sliceOfLand.drainAllExcessWater()
+
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(29))
 
     }
 
