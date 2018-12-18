@@ -26,10 +26,26 @@ sealed class Tile(val location: ScreenCoordinate) {
         }
     }
 
+    fun isOverflowing() = flows.any { it.value == OVERFLOWING }
+
+
     fun canNotFlowSideways() = canNotFlow(LEFT) && canNotFlow(RIGHT)
 
     private fun canNotFlow(direction: Direction) = flows.containsKey(direction) && flows.get(direction) == BLOCKED
 
+    fun getPrint(): Char {
+        if (flows.any{ it.value == OVERFLOWING}) {
+            return when (linkToSource.direction) {
+                DOWN -> '↓'
+                RIGHT -> '>'
+                LEFT -> '<'
+                UP -> '^'
+            }
+        } else if (flows.all { it.value == BLOCKED }) {
+            return '~'
+        } else return '?'
+
+    }
 
     override fun toString(): String {
         return "${location}"
@@ -42,6 +58,8 @@ class TileOfSoil(location: ScreenCoordinate, from: Tile, direction: Direction) :
     override val linkToSource = Link(from, this, direction, FLOWING)
 
     override fun isSpring() = false
+
+
 }
 
 class SpringOfWater(location: ScreenCoordinate) : Tile(location) {
@@ -71,6 +89,7 @@ fun leftwardsFrom(from: Tile) = DirectionToExplore(from, LEFT)
 fun rightwardsFrom(from: Tile) = DirectionToExplore(from, RIGHT)
 
 class Link(val from: Tile, val to: Tile, val direction: Direction, var state: FlowState) {
+
     fun markAsOverflowing() {
         this.state = OVERFLOWING
         this.from.markAsOverflowing(direction)

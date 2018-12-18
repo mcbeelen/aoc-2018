@@ -1,6 +1,6 @@
 package day17_reservoir_research
 
-import util.collections.Queue
+import mu.KotlinLogging
 import util.collections.Stack
 import util.grid.Direction.*
 import util.grid.ScreenCoordinate
@@ -25,8 +25,10 @@ the total number of tiles the water can reach is 57.
 
 How many tiles can the water reach within the range of y values in your scan?
 
+2500 //
+
  */
-const val INSPECTION_FREQUENCY = 50
+const val INSPECTION_FREQUENCY = Int.MIN_VALUE
 
 
 fun findAllTilesWithWater(foundVeinsOfClay: String): SliceOfLand {
@@ -42,16 +44,15 @@ fun findAllTilesWithWater(foundVeinsOfClay: String): SliceOfLand {
 
 class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
 
+    private val logger = KotlinLogging.logger { }
+
     private val spring = SpringOfWater(ScreenCoordinate(500, 0))
     private val surveyedLand: MutableMap<ScreenCoordinate, TileOfSoil> = HashMap()
 
-    private val directionsToExplore = Queue<DirectionToExplore>()
-
-    private val upstreamTiles = Stack<Tile>()
-
+    private val directionsToExplore = Stack<DirectionToExplore>()
 
     init {
-        schedule(DirectionToExplore(spring, DOWN))
+        scheduleFurtherExploration(DirectionToExplore(spring, DOWN))
     }
 
     fun isThereClayAt(location: ScreenCoordinate) = tilesWithClay.contains(location)
@@ -61,15 +62,13 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
     internal fun isThereWaterAt(x: Int, y: Int) = isThereWaterAt(ScreenCoordinate(x, y))
 
 
-
     fun exploreToFindAllTilesOfWater() {
 
         while (directionsToExplore.isNotEmpty()) {
-            explore(directionsToExplore.dequeue())
+            explore(directionsToExplore.pop())
             allowInspection()
         }
     }
-
 
 
     private fun explore(directionToExplore: DirectionToExplore) {
@@ -77,54 +76,86 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
         if (isOverflowing(origin)) {
             directionToExplore.markAsOverflowing()
         } else {
-            val nextLocation = directionToExplore.nextLocation()
+            performActualExploration(directionToExplore)
+        }
+    }
 
-            if (isThereWaterAt(nextLocation)) {
-                if (directionToExplore.direction == DOWN) {
-                    if (origin.linkToSource.direction == DOWN) {
-                        // We are splashing into water
-                        schedule(leftwardsFrom(origin), rightwardsFrom(origin))
-                    } else {
-                        // We are filling up some bucket, so continue in same direction
-                        schedule(DirectionToExplore(origin, origin.linkToSource.direction))
-                    }
+    private fun performActualExploration(directionToExplore: DirectionToExplore) {
+
+        val origin = directionToExplore.from
+        val nextLocation = directionToExplore.nextLocation()
+
+        if (isThereWaterAt(nextLocation)) {
+            handleRunningIntoTileWithWater(directionToExplore, origin, nextLocation)
+        } else {
+            if (isThereClayAt(nextLocation)) {
+                handleRunningIntoSomeClay(directionToExplore, origin)
+            } else {
+                handleDiscoverOfNewTileWithWater(directionToExplore)
+            }
+        }
+    }
+
+    private fun handleRunningIntoSomeClay(directionToExplore: DirectionToExplore, origin: Tile) {
+        directionToExplore.markAsBlocked()
+
+        when (directionToExplore.direction) {
+            DOWN -> {
+                if (!surveyedLand.containsKey(origin.location.next(LEFT))) {
+                    scheduleFurtherExploration(leftwardsFrom(origin))
+                }
+
+                if (!surveyedLand.containsKey(origin.location.next(RIGHT))) {
+                    scheduleFurtherExploration(rightwardsFrom(origin))
+                }
+            }
+            LEFT, RIGHT -> applyBackPressure((origin as TileOfSoil).linkToSource)
+        }
+    }
+
+    private fun handleRunningIntoTileWithWater(directionToExplore: DirectionToExplore, origin: Tile, nextLocation: ScreenCoordinate) {
+        if (directionToExplore.direction == DOWN) {
+            if (origin.linkToSource.direction == DOWN) {
+                // We are splashing into existing flow of water
+                val joiningTile = surveyedLand.getValue(nextLocation)
+                if (joiningTile.isOverflowing()) {
+                    directionToExplore.markAsOverflowing()
                 } else {
-                    // We are running into a wave or a waterfall
-                    println("Marking section as blocking, since it ran sideways into water ")
-                    applyBackPressure(directionToExplore.from.linkToSource)
-                    // schedule(DirectionToExplore(surveyedLand.getValue(nextLocation), origin.linkToSource.direction))
+
+                    //TODO("We could be slashing into the blocked part of a prefilled bucket")
+                    // FIX:
+                    // Communicating Vessels: We need to continue to fill the bucket
+                    scheduleFurtherExploration(leftwardsFrom(origin), rightwardsFrom(origin))
 
                 }
 
             } else {
-                if (isThereClayAt(nextLocation)) {
+                // We are filling up some bucket, so continue in same direction
+                scheduleFurtherExploration(DirectionToExplore(origin, origin.linkToSource.direction))
+            }
+        } else {
+            // We are running into a wave or a waterfall
+            val joiningTile = surveyedLand.getValue(nextLocation)
+            if (joiningTile.isOverflowing()) {
+                directionToExplore.markAsOverflowing()
+            } else {
+                logger.warn("Figure out how to handle flowing into into ${joiningTile}")
+                logger.warn("Situation: exploring from ${directionToExplore.from} in ${directionToExplore.direction}")
+                logger.info("Running into a tile with source ${joiningTile.linkToSource.from} with ${joiningTile.linkToSource.state}")
+                plotReservoir(this)
+                println("Marking section as blocking, since it ran sideways into water ")
+                applyBackPressure(directionToExplore.from.linkToSource)
+                // scheduleFurtherExploration(DirectionToExplore(surveyedLand.getValue(nextLocation), origin.linkToSource.direction))
 
-                    directionToExplore.markAsBlocked()
-
-                    when (directionToExplore.direction) {
-                        DOWN -> {
-                            if (!surveyedLand.containsKey(origin.location.next(LEFT))) {
-                                schedule(leftwardsFrom(origin))
-                            }
-
-                            if (!surveyedLand.containsKey(origin.location.next(RIGHT))) {
-                                schedule(rightwardsFrom(origin))
-                            }
-                        }
-                        LEFT, RIGHT -> applyBackPressure((origin as TileOfSoil).linkToSource)
-                    }
-                } else {
-                    reachedNewLocation(directionToExplore)
-                }
             }
 
 
         }
     }
 
-    private fun schedule(vararg newDirections: DirectionToExplore) {
+    private fun scheduleFurtherExploration(vararg newDirections: DirectionToExplore) {
         newDirections.forEach {
-            directionsToExplore.enqueue(it)
+            directionsToExplore.push(it)
         }
 
 
@@ -142,7 +173,13 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
 
         if (forkingTile.canNotFlowSideways()) {
             val upstreamTile = forkingTile.linkToSource.from
-            schedule(leftwardsFrom(upstreamTile), rightwardsFrom(upstreamTile))
+            if (!surveyedLand.containsKey(upstreamTile.location.next(LEFT))) {
+                scheduleFurtherExploration(leftwardsFrom(upstreamTile))
+            }
+            if (!surveyedLand.containsKey(upstreamTile.location.next(RIGHT))) {
+                scheduleFurtherExploration(rightwardsFrom(upstreamTile))
+            }
+
         }
 
     }
@@ -160,22 +197,17 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
 
     private fun isOverflowing(from: Tile) = from.location.top == maxY
 
-    private fun reachedNewLocation(directionToExplore: DirectionToExplore) {
-
+    private fun handleDiscoverOfNewTileWithWater(directionToExplore: DirectionToExplore) {
 
         val from = directionToExplore.from
         val location = directionToExplore.nextLocation()
         val to = TileOfSoil(location, from, directionToExplore.direction)
 
         surveyedLand[location] = to
-        println("Reached from ${to.location} from ${from.location} heading ${directionToExplore.direction}")
 
-        upstreamTiles.push(to)
-
-        schedule(downwardsFrom(to))
+        scheduleFurtherExploration(downwardsFrom(to))
 
     }
-
 
 
     var counter = 0
@@ -187,8 +219,6 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
             plotReservoir(this)
         }
     }
-
-
 
 
     val minX: Int by lazy { tilesWithClay.map { it.left }.min() ?: Int.MIN_VALUE }
@@ -212,6 +242,8 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
         return counter
 
     }
+
+    fun tileAt(x: Int, y: Int) = surveyedLand.getValue(ScreenCoordinate(x, y))
 
 
 }
