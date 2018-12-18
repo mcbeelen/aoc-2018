@@ -77,8 +77,13 @@ class SliceOfLand(private val tilesWithClay: Set<ScreenCoordinate>) {
                 directionToExplore.markAsBlocked()
                 when (directionToExplore.direction) {
                     DOWN -> {
-                        directionsToExplore.enqueue(leftwardsFrom(directionToExplore.from))
-                        directionsToExplore.enqueue(rightwardsFrom(directionToExplore.from))
+                        if (!surveyedLand.containsKey(directionToExplore.from.location.next(LEFT))) {
+                            directionsToExplore.enqueue(leftwardsFrom(directionToExplore.from))
+                        }
+
+                        if (!surveyedLand.containsKey(directionToExplore.from.location.next(RIGHT))) {
+                            directionsToExplore.enqueue(rightwardsFrom(directionToExplore.from))
+                        }
                     }
                     RIGHT -> println("Stop exploration at ${directionToExplore.from}")
                     LEFT -> println("Stop exploration at ${directionToExplore.from}")

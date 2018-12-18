@@ -78,7 +78,18 @@ class ReservoirResearchTest {
 
     }
 
+    @Test
+    fun itShouldFlowFromSingleEndedPlateau() {
 
+        val sliceOfLand = parseScanResults("""
+            y=2, x=503..503
+            y=3, x=496..503
+            """)
+        sliceOfLand.exploreToFindAllTilesOfWater()
+        assertThat(sliceOfLand.countTilesWithWater(), equalTo(9))
+
+
+    }
 
     @Test @Ignore
     fun itShouldFind57TilesWithWater() {
