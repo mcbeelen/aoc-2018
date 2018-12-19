@@ -2,7 +2,7 @@ package day16_chronal_classification
 
 
 data class Sample(val before: IntArray = intArrayOf(),
-                  val instruction: IntArray = intArrayOf(),
+                  val instruction: Instruction = Instruction(OpCode.NOOP, intArrayOf()),
                   val after: IntArray = intArrayOf())
 
 fun readDeviceSamples(actualInput: String): List<Sample> {
@@ -37,10 +37,23 @@ fun buildSampleFromChunk(withIndex: Iterable<IndexedValue<String>>): Sample {
  */
 fun parseBefore(value: String) = parseCommaSeperatedValueBetweenBrackets(value)
 
-fun parseInstruction(value: String) = value
-        .split(" ")
-        .map { it.trim().toInt() }
-        .toIntArray()
+fun parseInstruction(value: String) : Instruction {
+
+    val assemblyCodes = value
+            .split(" ")
+            .map { it.trim().toInt() }
+            .toIntArray()
+
+    return decompileInstruction(assemblyCodes)
+
+
+}
+
+fun decompileInstruction(assemblyCodes: IntArray): Instruction {
+    val opCode = opCode(assemblyCodes.first())
+    val arguments = assemblyCodes.toList().drop(1).toIntArray()
+    return Instruction(opCode, arguments)
+}
 
 fun parseAfter(value: String) = parseCommaSeperatedValueBetweenBrackets(value)
 

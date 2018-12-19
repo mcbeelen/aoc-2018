@@ -21,7 +21,8 @@ class ChronalDeviceTest {
     fun itShouldProperlyParseProvidedSamples() {
         parseIntoSample(sample).let {
             assertTrue("BEFORE", Arrays.equals(it.before, intArrayOf(3, 2, 1, 1)))
-            assertTrue("INSTRUCTION", Arrays.equals(it.instruction, intArrayOf(9, 2, 1, 2)))
+            assertThat("INSTRUCTION", it.instruction.opCode, equalTo(EQRI))
+            assertTrue("INSTRUCTION", Arrays.equals(it.instruction.arguments, intArrayOf(2, 1, 2)))
             assertTrue("AFTER", Arrays.equals(it.after, intArrayOf(3, 2, 2, 1)))
         }
 
@@ -67,26 +68,26 @@ class ChronalDeviceTest {
         assertTrue(validate(3, 2, 1, 1, performSetRegister(sample.instruction, sample.before)))
 
 
-        assertTrue(validate(4, 4, 1, 0, performGreaterThanImmediateRegister(intArrayOf(9, 1, 3, 2), intArrayOf(4, 4, 4, 0))))
-        assertTrue(validate(4, 4, 0, 0, performGreaterThanImmediateRegister(intArrayOf(9, 1, 2, 2), intArrayOf(4, 4, 4, 0))))
+        assertTrue(validate(4, 4, 1, 0, performGreaterThanImmediateRegister(decompileInstruction(intArrayOf(9, 1, 3, 2)), intArrayOf(4, 4, 4, 0))))
+        assertTrue(validate(4, 4, 0, 0, performGreaterThanImmediateRegister(decompileInstruction(intArrayOf(9, 1, 2, 2)), intArrayOf(4, 4, 4, 0))))
 
-        assertTrue(validate(1, 4, 4, 0, performGreaterThanRegisterImmediate(intArrayOf(9, 1, 2, 0), intArrayOf(4, 4, 4, 0))))
-        assertTrue(validate(0, 4, 4, 0, performGreaterThanRegisterImmediate(intArrayOf(9, 1, 9, 0), intArrayOf(4, 4, 4, 0))))
+        assertTrue(validate(1, 4, 4, 0, performGreaterThanRegisterImmediate(decompileInstruction(intArrayOf(9, 1, 2, 0)), intArrayOf(4, 4, 4, 0))))
+        assertTrue(validate(0, 4, 4, 0, performGreaterThanRegisterImmediate(decompileInstruction(intArrayOf(9, 1, 9, 0)), intArrayOf(4, 4, 4, 0))))
 
-        assertTrue(validate(1, 2, 3, 4, performGreaterThanRegisterRegister(intArrayOf(9, 2, 1, 0), intArrayOf(9, 2, 3, 4))))
-        assertTrue(validate(0, 2, 3, 4, performGreaterThanRegisterRegister(intArrayOf(9, 1, 3, 0), intArrayOf(9, 2, 3, 4))))
-
-
-        assertTrue(validate(1, 2, 3, 4, performEqualImmediateRegister(intArrayOf(9, 2, 1, 0), intArrayOf(9, 2, 3, 4))))
-        assertTrue(validate(0, 2, 3, 4, performEqualImmediateRegister(intArrayOf(9, 1, 3, 0), intArrayOf(9, 2, 3, 4))))
+        assertTrue(validate(1, 2, 3, 4, performGreaterThanRegisterRegister(decompileInstruction(intArrayOf(9, 2, 1, 0)), intArrayOf(9, 2, 3, 4))))
+        assertTrue(validate(0, 2, 3, 4, performGreaterThanRegisterRegister(decompileInstruction(intArrayOf(9, 1, 3, 0)), intArrayOf(9, 2, 3, 4))))
 
 
-        assertTrue(validate(1, 2, 3, 4, performEqualRegisterImmediate(intArrayOf(9, 2, 3, 0), intArrayOf(9, 2, 3, 4))))
-        assertTrue(validate(0, 2, 3, 4, performEqualRegisterImmediate(intArrayOf(9, 2, 9, 0), intArrayOf(9, 2, 3, 4))))
+        assertTrue(validate(1, 2, 3, 4, performEqualImmediateRegister(decompileInstruction(intArrayOf(9, 2, 1, 0)), intArrayOf(9, 2, 3, 4))))
+        assertTrue(validate(0, 2, 3, 4, performEqualImmediateRegister(decompileInstruction(intArrayOf(9, 1, 3, 0)), intArrayOf(9, 2, 3, 4))))
 
 
-        assertTrue(validate(1, 2, 4, 4, performEqualRegisterRegister(intArrayOf(9, 2, 3, 0), intArrayOf(9, 2, 4, 4))))
-        assertTrue(validate(0, 2, 3, 4, performEqualRegisterRegister(intArrayOf(9, 2, 3, 0), intArrayOf(9, 2, 3, 4))))
+        assertTrue(validate(1, 2, 3, 4, performEqualRegisterImmediate(decompileInstruction(intArrayOf(9, 2, 3, 0)), intArrayOf(9, 2, 3, 4))))
+        assertTrue(validate(0, 2, 3, 4, performEqualRegisterImmediate(decompileInstruction(intArrayOf(9, 2, 9, 0)), intArrayOf(9, 2, 3, 4))))
+
+
+        assertTrue(validate(1, 2, 4, 4, performEqualRegisterRegister(decompileInstruction(intArrayOf(9, 2, 3, 0)), intArrayOf(9, 2, 4, 4))))
+        assertTrue(validate(0, 2, 3, 4, performEqualRegisterRegister(decompileInstruction(intArrayOf(9, 2, 3, 0)), intArrayOf(9, 2, 3, 4))))
 
     }
 

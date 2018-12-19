@@ -6,11 +6,13 @@ class ChronalDeviceSimulator {
 
     var registers = intArrayOf(0, 0, 0, 0)
 
-    val opCodes = values().toList().sortedBy { it.instruction }
 
-    fun executeInstruction(instruction: IntArray, registers: IntArray) : IntArray {
-        val opCode = opCodes[instruction[0]]
-        return when (opCode) {
+    fun executeInstruction(instruction: Instruction, registers: IntArray) : IntArray {
+        return performOperation(instruction, registers)
+    }
+
+    fun performOperation(instruction: Instruction, registers: IntArray): IntArray {
+        return when (instruction.opCode) {
             ADDI -> performAddImmediate(instruction, registers)
             ADDR -> performAddRegisters(instruction, registers)
 
@@ -33,6 +35,10 @@ class ChronalDeviceSimulator {
             EQIR -> performEqualImmediateRegister(instruction, registers)
             EQRI -> performEqualRegisterImmediate(instruction, registers)
             EQRR -> performEqualRegisterRegister(instruction, registers)
+
+
+
+            NOOP -> registers
         }
     }
 

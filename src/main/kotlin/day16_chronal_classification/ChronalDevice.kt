@@ -31,7 +31,13 @@ fun doesSampleBehaveLike(opcode: OpCode, sample: Sample): Boolean {
         EQIR -> validate(sample, performEqualImmediateRegister(sample.instruction, sample.before))
         EQRI -> validate(sample, performEqualRegisterImmediate(sample.instruction, sample.before))
         EQRR -> validate(sample, performEqualRegisterRegister(sample.instruction, sample.before))
+
+
+        NOOP -> true
     }
+
+
+
 
 }
 
@@ -71,7 +77,7 @@ class ChronalDeviceSolver {
 
 
 
-
+/**
 class ChronalDeviceOpCodeResolver {
 
 
@@ -117,3 +123,4 @@ class ChronalDeviceOpCodeResolver {
 
 
 }
+*/
