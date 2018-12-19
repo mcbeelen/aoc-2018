@@ -1,5 +1,7 @@
 package day16_chronal_classification
 
+import day16_chronal_classification.OpCode.*
+
 enum class OpCode(val instruction: Int) {
     ADDI(4),
     ADDR(11),
@@ -33,10 +35,43 @@ enum class OpCode(val instruction: Int) {
 }
 
 
-val opCodes = OpCode.values().toList().sortedBy { it.instruction }
+val opCodes = values().toList().sortedBy { it.instruction }
 fun opCode(opCodeIndex: Int) = opCodes[opCodeIndex]
 
 data class Instruction(val opCode: OpCode, val arguments: IntArray)
+
+
+fun performOperation(instruction: Instruction, registers: IntArray): IntArray {
+    return when (instruction.opCode) {
+        ADDI -> performAddImmediate(instruction, registers)
+        ADDR -> performAddRegisters(instruction, registers)
+
+        MULI -> performMultiplyImmediate(instruction, registers)
+        MULR -> performMultiplyRegisters(instruction, registers)
+
+        SETI -> performSetImmediate(instruction, registers)
+        SETR -> performSetRegister(instruction, registers)
+
+        BANI -> performBitwiseAndImmediate(instruction, registers)
+        BANR -> performBitwiseAndRegister(instruction, registers)
+
+        BORI -> performBitwiseOrImmediate(instruction, registers)
+        BORR -> performBitwiseOrRegister(instruction, registers)
+
+        GTIR -> performGreaterThanImmediateRegister(instruction, registers)
+        GRRI -> performGreaterThanRegisterImmediate(instruction, registers)
+        GTRR -> performGreaterThanRegisterRegister(instruction, registers)
+
+        EQIR -> performEqualImmediateRegister(instruction, registers)
+        EQRI -> performEqualRegisterImmediate(instruction, registers)
+        EQRR -> performEqualRegisterRegister(instruction, registers)
+
+
+
+        NOOP -> registers
+    }
+}
+
 
 
 internal fun performAddImmediate(instruction: Instruction, before: IntArray): IntArray {
