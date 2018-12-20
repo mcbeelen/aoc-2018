@@ -17,7 +17,9 @@ interface Position {
 
 data class Door(override val location: ScreenCoordinate) : Position {}
 
-data class Wall(override val location: ScreenCoordinate) : Position {}
+data class Wall(override val location: ScreenCoordinate) : Position {
+    constructor(x: Int, y: Int) : this(ScreenCoordinate(x, y))
+}
 
 
 data class Room(override val location: ScreenCoordinate) : Position, Vertex<Room>() {

@@ -39,11 +39,13 @@ class FacilityTest {
      */
     @Test
     fun itShouldBeAbleToBuildMapForTheSecondExample() {
-        val mapOfCompound = drawMap("^ENWWW(NEEE|SSE(EE|N))\$")
+        val facility = drawMap("^ENWWW(NEEE|SSE(EE|N))\$")
 
         val origin = Room(0 , 0)
 
-        assertThat(mapOfCompound, hasDoorInDirection(origin, EAST))
+        assertThat(facility, hasDoorInDirection(origin, EAST))
+
+        plotFacility(facility)
 
     }
 

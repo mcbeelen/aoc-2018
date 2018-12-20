@@ -1,8 +1,5 @@
 package day20_regular_map
 
-import day20_regular_map.Bearing.*
-import util.grid.Direction
-import util.grid.Direction.*
 import util.grid.ScreenCoordinate
 
 data class Facility(val map: Map<ScreenCoordinate, Position>) {
@@ -16,8 +13,9 @@ data class Facility(val map: Map<ScreenCoordinate, Position>) {
         return 0
     }
 
-    fun withDoor(currentRoom: Room, bearing: Bearing): Facility {
+    fun withDoor(currentLocation: ScreenCoordinate, bearing: Bearing): Facility {
 
+        val currentRoom = findRoom(currentLocation)
         val theNewDoor = Door(currentRoom.findLocation(bearing))
         val theNextRoom = Room(theNewDoor.findLocation(bearing))
 
@@ -37,6 +35,17 @@ data class Facility(val map: Map<ScreenCoordinate, Position>) {
         return copy(map = updatedMap)
     }
 
+    fun isThereADoorAt(x: Int, y: Int) = map.getOrDefault(ScreenCoordinate(x, y), Wall(x, y)) is Door
+
+
+    val minX: Int by lazy { map.map { it.key.left }.min() ?: Int.MIN_VALUE }
+    val maxX: Int by lazy { map.map { it.key.left }.max() ?: Int.MIN_VALUE }
+
+    val minY: Int by lazy { map.map { it.key.top }.min() ?: Int.MIN_VALUE }
+    val maxY: Int by lazy { map.map { it.key.top }.max() ?: Int.MIN_VALUE }
+
+
+
 }
 
 
@@ -46,22 +55,46 @@ fun drawMap(regularDirections: String): Facility {
     val route : Route = parseRoute(regularDirections)
 
     val facility = buildFacilityToExplore()
-    explore(route, facility)
 
-    return facility
+    return explore(route, facility, origin())
+
 }
 
-fun explore(route: Route, facility: Facility) {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+fun explore(route: Route, facility: Facility, screenCoordinate: ScreenCoordinate) : Facility {
+
+    var currentLocation = screenCoordinate
+
+    var updatedFacility = facility
+
+    route.getDirections().forEach { direction ->
+        when (direction) {
+            is Step -> {
+                updatedFacility = updatedFacility.withDoor(currentLocation, direction.bearing)
+                val direction = direction.bearing.direction
+                currentLocation = currentLocation.next(direction).next(direction)
+            }
+            is Branch -> {
+                direction.getRoutes().forEach { route ->
+                    updatedFacility = explore(route, updatedFacility, currentLocation)
+                }
+            }
+        }
+    }
+
+
+    return updatedFacility
 }
+
+
 
 
 private fun buildFacilityToExplore(): Facility {
-    val origin = ScreenCoordinate(0, 0)
+    val origin = origin()
     val roomAtOrigin = Room(origin)
     val unexploredMap = mapOf(Pair(origin, roomAtOrigin))
 
-    var facility = Facility(unexploredMap)
-    return facility
+    return Facility(unexploredMap)
 }
+
+private fun origin() = ScreenCoordinate(0, 0)
 
