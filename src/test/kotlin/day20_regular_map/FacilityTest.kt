@@ -3,12 +3,26 @@ package day20_regular_map
 import com.natpryce.hamkrest.MatchResult
 import com.natpryce.hamkrest.Matcher
 import com.natpryce.hamkrest.assertion.assertThat
-import day20_regular_map.CardinalDirection.*
+import day20_regular_map.Bearing.*
 import org.junit.Test
 
 
-class RegularMapOfCompoundTest {
+class FacilityTest {
 
+
+    @Test
+    fun itShouldBeAbleToParseTheFirstExample() {
+
+        val mapOfCompound = drawMap("^WNE\$")
+
+        val origin = Room(0 , 0)
+
+        assertThat(mapOfCompound, hasDoorInDirection(origin, WEST))
+
+
+
+
+    }
 
     /**
      *
@@ -29,17 +43,17 @@ class RegularMapOfCompoundTest {
 
         val origin = Room(0 , 0)
 
-        assertThat(mapOfCompound, hasDoorToTheNorth(origin, NORTH))
+        assertThat(mapOfCompound, hasDoorInDirection(origin, EAST))
 
     }
 
-    private fun hasDoorToTheNorth(origin: Room, direction: CardinalDirection): Matcher<RegularMapOfCompound> {
+    private fun hasDoorInDirection(origin: Room, direction: Bearing): Matcher<Facility> {
 
-        return object : Matcher<RegularMapOfCompound> {
+        return object : Matcher<Facility> {
             override val description: String
                 get() = "does have a door heading ${direction} from ${origin}"
 
-            override fun invoke(actual: RegularMapOfCompound): MatchResult {
+            override fun invoke(actual: Facility): MatchResult {
                 if (actual.hasDoorToThe(origin, direction)) {
                     return MatchResult.Match
                 } else {

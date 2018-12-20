@@ -29,5 +29,5 @@ class Stack<E> : Collection<E> {
 
     fun peek() : E? = elements.lastOrNull()
 
-    override fun toString(): String = elements.toString()
+    override fun toString(): String = "Size ${size}"
 }
