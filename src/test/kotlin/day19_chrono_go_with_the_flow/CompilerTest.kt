@@ -1,4 +1,4 @@
-package day19_chronl_go_with_the_flow
+package day19_chrono_go_with_the_flow
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

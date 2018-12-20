@@ -1,4 +1,4 @@
-package day19_chronl_go_with_the_flow
+package day19_chrono_go_with_the_flow
 
 
 const val EXAMPLE_INSTRUCTIONS = """
