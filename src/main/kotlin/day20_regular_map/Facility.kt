@@ -1,16 +1,23 @@
 package day20_regular_map
 
 import util.grid.ScreenCoordinate
+import util.grid.search.Graph
 
-data class Facility(val map: Map<ScreenCoordinate, Position>) {
+data class Facility(val map: Map<ScreenCoordinate, Position>) : Graph<Room, Passage>() {
+
+    override fun findNeighbours(vertex: Room): List<Passage> {
+
+        return Bearing.values()
+                .map { Pair(it, vertex.findLocation(it)) }
+                .filter { map.getOrDefault(it.second, Wall(it.second)) is Door }
+                .map { Passage(vertex, map[it.second.next(it.first.direction)] as Room) }
+
+
+    }
 
     fun hasDoorToThe(room: Room, bearing: Bearing) : Boolean {
         val location = room.findLocation(bearing)
         return (map.getOrDefault(location, Wall(location)) is Door)
-    }
-
-    fun findLengthOfShortestPathToFurthestRoom(): Int {
-        return 0
     }
 
     fun withDoor(currentLocation: ScreenCoordinate, bearing: Bearing): Facility {
@@ -36,6 +43,8 @@ data class Facility(val map: Map<ScreenCoordinate, Position>) {
     }
 
     fun isThereADoorAt(x: Int, y: Int) = map.getOrDefault(ScreenCoordinate(x, y), Wall(x, y)) is Door
+
+    fun origin(): Room  = map[ScreenCoordinate(0, 0)] as Room
 
 
     val minX: Int by lazy { map.map { it.key.left }.min() ?: Int.MIN_VALUE }

@@ -8,12 +8,28 @@ class RegularAcceptanceTests {
 
 
     @Test
+    fun firstOfTheMoreExamples() {
+        val directionsFromElf = "^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))\$"
+        val facility = drawMap(directionsFromElf)
+
+        println()
+        println(directionsFromElf)
+        println()
+        plotFacility(facility)
+
+        assertThat(findLengthOfShortestPathToFurthestRoom(facility), equalTo(23))
+
+
+    }
+
+    @Test
     fun itShouldBeAbleToCreateMapOfTheCompound() {
 
-        val mapOfCompound = drawMap("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))\$")
+        val facility = drawMap("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))\$")
 
+        plotFacility(facility)
 
-        assertThat(mapOfCompound.findLengthOfShortestPathToFurthestRoom(), equalTo(31))
+        assertThat(findLengthOfShortestPathToFurthestRoom(facility), equalTo(31))
 
 
     }
