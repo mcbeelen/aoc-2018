@@ -8,11 +8,11 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
 
     private val logger = KotlinLogging.logger { }
 
-    private val unvisitedVertices: Queue<V> = ArrayDeque()
+    protected val unvisitedVertices: Queue<V> = buildQueue()
+
+    open fun <V> buildQueue(): Queue<V> = ArrayDeque<V>()
 
     private val visitedVertices: MutableMap<ZobraistKey, V> = HashMap()
-
-    private var reachedDestination = false
 
     fun findShortestPath(origin: V, destination: V): Path<V>? {
         try {
@@ -43,8 +43,10 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
     }
 
     open fun stillNeedToProcessNodes(destination: V): Boolean {
-        return !visitedVertices.containsKey(destination.key)
+        return hasDestinationBeenReached(destination)
     }
+
+    protected fun hasDestinationBeenReached(destination: V) = visitedVertices.containsKey(destination.key)
 
     protected fun peekAtClosestVertex() : V = unvisitedVertices.peek()
 

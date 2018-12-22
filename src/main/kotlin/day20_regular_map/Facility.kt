@@ -1,6 +1,6 @@
 package day20_regular_map
 
-import util.grid.ScreenCoordinate
+import util.grid.*
 import util.grid.search.Graph
 
 data class Facility(val map: Map<ScreenCoordinate, Position>) : Graph<Room, Passage>() {
@@ -47,11 +47,10 @@ data class Facility(val map: Map<ScreenCoordinate, Position>) : Graph<Room, Pass
     fun origin(): Room  = map[ScreenCoordinate(0, 0)] as Room
 
 
-    val minX: Int by lazy { map.map { it.key.left }.min() ?: Int.MIN_VALUE }
-    val maxX: Int by lazy { map.map { it.key.left }.max() ?: Int.MIN_VALUE }
-
-    val minY: Int by lazy { map.map { it.key.top }.min() ?: Int.MIN_VALUE }
-    val maxY: Int by lazy { map.map { it.key.top }.max() ?: Int.MIN_VALUE }
+    val minX: Int by lazy { findMinX(map.keys) }
+    val maxX: Int by lazy { findMaxX(map.keys)}
+    val minY: Int by lazy { findMinY(map.keys) }
+    val maxY: Int by lazy { findMaxY(map.keys) }
 
 
 

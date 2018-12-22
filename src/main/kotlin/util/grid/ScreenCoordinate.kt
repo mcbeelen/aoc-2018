@@ -1,5 +1,6 @@
 package util.grid
 
+import org.checkerframework.framework.qual.TargetLocations
 import util.grid.Direction.*
 import kotlin.math.abs
 
@@ -38,8 +39,21 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
     fun isToTheRightOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left + 1
     fun isToTheLeftOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left - 1
 
+    fun getAdjacentLocations() = listOf(
+            ScreenCoordinate(left - 1, top),
+            ScreenCoordinate(left + 1, top),
+            ScreenCoordinate(left, top - 1),
+            ScreenCoordinate(left, top + 1)
+    )
 
 }
+
+fun findMaxX(locations: Set<ScreenCoordinate>) = locations.map { it.left }.max() ?: Int.MIN_VALUE
+fun findMaxY(locations: Set<ScreenCoordinate>) = locations.map { it.top }.max() ?: Int.MIN_VALUE
+
+
+fun findMinX(locations: Set<ScreenCoordinate>) = locations.map { it.left }.min() ?: Int.MIN_VALUE
+fun findMinY(locations: Set<ScreenCoordinate>) = locations.map { it.top }.min() ?: Int.MIN_VALUE
 
 
 class CoordinatesInReadingOrder : Comparator<ScreenCoordinate> {
