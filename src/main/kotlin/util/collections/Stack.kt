@@ -18,6 +18,10 @@ class Stack<E> : Collection<E> {
 
     fun push(item: E) = elements.add(item)
 
+    fun pushAll(elements: List<E>) {
+        elements.forEach { push(it) }
+    }
+
     fun pop() : E {
         if (elements.isEmpty()) {
             throw EmptyStackException()
@@ -30,4 +34,5 @@ class Stack<E> : Collection<E> {
     fun peek() : E? = elements.lastOrNull()
 
     override fun toString(): String = "Size ${size}"
+
 }
