@@ -28,6 +28,7 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
     private fun initiateStartingVertex(origin: V) {
         origin.distanceFromSource = 0
         unvisitedVertices.offer(origin)
+        visitedVertices.put(origin.key, origin)
     }
 
     fun exploreGraphFrom(origin: V) {
@@ -43,10 +44,10 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
     }
 
     open fun stillNeedToProcessNodes(destination: V): Boolean {
-        return hasDestinationBeenReached(destination)
+        return ! hasDestinationBeenReached(destination)
     }
 
-    protected fun hasDestinationBeenReached(destination: V) = visitedVertices.containsKey(destination.key)
+    private fun hasDestinationBeenReached(destination: V) = visitedVertices.containsKey(destination.key)
 
     protected fun peekAtClosestVertex() : V = unvisitedVertices.peek()
 
