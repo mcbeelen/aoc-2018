@@ -1,6 +1,5 @@
 package util.grid
 
-import org.checkerframework.framework.qual.TargetLocations
 import util.grid.Direction.*
 import kotlin.math.abs
 
@@ -39,12 +38,6 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
     fun isToTheRightOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left + 1
     fun isToTheLeftOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left - 1
 
-    fun getAdjacentLocations() = listOf(
-            ScreenCoordinate(left - 1, top),
-            ScreenCoordinate(left + 1, top),
-            ScreenCoordinate(left, top - 1),
-            ScreenCoordinate(left, top + 1)
-    )
 
 }
 

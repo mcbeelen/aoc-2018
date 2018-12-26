@@ -68,18 +68,20 @@ class CaveTest {
 
         assertThat(redditCave.calculateRiskLevel(), equalTo(6318))
 
-
         val path = caveExploration.findShortestPath(origin, destination)
 
-        plotCave(redditCave, path!!)
+        if (path != null) {
+            plotCave(redditCave, path)
 
-        path!!.vertices.forEach {
-                println(it.region.location)
+            path.vertices.forEach {
+                    println(it.region.location)
+            }
+
+            println("Getting to the man's friend takes at least ${path.calculateDistance()} minutes")
+
+            assertThat(path.calculateDistance(), equalTo(1075))
+
         }
-
-        println("Getting to the man's friend takes at least ${path!!.calculateDistance()} minutes")
-
-        assertThat(path!!.calculateDistance(), equalTo(1075))
 
     }
 
@@ -101,7 +103,7 @@ class CaveTest {
 
         println("Getting to the man's friend takes at least ${path!!.calculateDistance()} minutes")
 
-        assertThat(path!!.calculateDistance(), lessThan(1053))
+        assertThat(path.calculateDistance(), lessThan(1053))
 
 
     }

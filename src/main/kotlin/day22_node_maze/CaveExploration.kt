@@ -20,17 +20,7 @@ class CaveExploration(private val cave: Cave) : BreadthFirstSearchAlgorithm<Reac
     }
 
     override fun <ReachedRegion> buildQueue(): Queue<ReachedRegion> {
-        // val comparatorByDistance = ClosestToTargetFirstComparator((graph as Cave).target)
         return PriorityQueue(TimeNeededComparator()) as Queue<ReachedRegion>
-    }
-
-    override fun stillNeedToProcessNodes(destination: ReachedRegion): Boolean {
-
-        if (!hasDestinationBeenReached(destination)) {
-            return true
-        }
-
-        return false
     }
 
 }
@@ -45,17 +35,6 @@ data class ReachedRegion(val region: Region, val equipedWith: Equipment, val tim
 }
 
 
-class ClosestToTargetFirstComparator(val target: ScreenCoordinate) : Comparator<ReachedRegion> {
-    val timeNeededComparator = TimeNeededComparator()
-    override fun compare(first: ReachedRegion, other: ReachedRegion): Int {
-        val compareByDistance = first.region.location.distanceTo(target).compareTo(other.region.location.distanceTo(target))
-        if (compareByDistance != 0) {
-            return compareByDistance
-        }
-        return timeNeededComparator.compare(first, other)
-    }
-
-}
 
 class TimeNeededComparator : Comparator<ReachedRegion> {
     override fun compare(first: ReachedRegion, other: ReachedRegion): Int {

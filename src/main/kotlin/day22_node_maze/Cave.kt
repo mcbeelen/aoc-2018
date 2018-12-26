@@ -78,7 +78,7 @@ class Cave(private val depth: Int, val target: ScreenCoordinate) : Graph<Reached
 
         val currentLocation = reachedRegion.region.location
 
-        val adjacentLocations = currentLocation.getAdjacentLocations()
+        val adjacentLocations = getAdjacentLocations(currentLocation)
         return adjacentLocations
                 .filter { it.top >= 0 && it.left >= 0 }
                 .filter { regionAt(it).regionType.requiredEquipment.contains(reachedRegion.equipedWith)}
@@ -87,6 +87,13 @@ class Cave(private val depth: Int, val target: ScreenCoordinate) : Graph<Reached
 
     }
 
+    private fun getAdjacentLocations(location: ScreenCoordinate) = listOf(
+            location.copy(top = location.top + 1),
+            location.copy(top = location.top - 1),
+            location.copy(left = location.left + 1),
+            location.copy(left = location.left + 1)
+
+    )
     private fun regionAt(location: ScreenCoordinate): Region {
         return caveMap.getOrPut(location) { exploreRegion(location) }
 
