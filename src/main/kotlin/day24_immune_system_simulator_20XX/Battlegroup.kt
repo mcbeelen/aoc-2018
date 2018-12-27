@@ -1,22 +1,61 @@
 package day24_immune_system_simulator_20XX
 
+import java.util.*
 
-data class Battlegroup(val size: Int,
-                       val hitPoints : Int,
+
+data class Battlegroup(val fighter: Fighter,
+                       val size: Int,
+                       val hitPoints: Int,
                        val attackDamage: Int,
                        val attackType: AttackType,
                        val initiative: Int,
-                       val weaknesses : Set<AttackType> = emptySet(),
-                       val immunities: Set<AttackType> = emptySet()) {
+                       val weaknesses: Set<AttackType> = emptySet(),
+                       val immunities: Set<AttackType> = emptySet(),
+                       val uuid: String = UUID.randomUUID().toString()) {
 
     val effectivePower = size * attackDamage
 
+    fun isImmuneTo(attackType: AttackType) = immunities.contains(attackType)
+    fun hasWeaknessFor(attackType: AttackType) = weaknesses.contains(attackType)
+
+    fun reducedBy(unitsLost: Int) = copy(size = size - unitsLost)
+
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) {
+            return false
+        }
+        if (other is Battlegroup) {
+            return this.uuid == other.uuid && this.fighter == other.fighter
+        }
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return uuid.hashCode()
+    }
+
+    override fun toString(): String {
+        return "${fighter}(uuid='$uuid': $size units with $hitPoints)"
+    }
+
+
+}
+
+enum class Fighter {
+    IMMUNE_SYSTEM,
+    INFECTION
 }
 
 
 val BATTLEGROUP_REGEX = Regex("(\\d+) units each with (\\d+) hit points (\\(.*\\) )*with an attack that does (\\d+) (bludgeoning|cold|fire|radiation|slashing) damage at initiative (\\d+)")
 
-fun parseBattlegroup(battleGroupDefinition: String): Battlegroup {
+
+fun parseBattlegroups(fighter: Fighter, battleGroupsDefinition: String, boost: Int = 0): List<Battlegroup> {
+    return battleGroupsDefinition.trimIndent().lines().withIndex().map { parseBattlegroup(fighter, it.index, it.value, boost) }
+}
+
+fun parseBattlegroup(fighter: Fighter, index: Int, battleGroupDefinition: String, boost: Int = 0): Battlegroup {
     if (!BATTLEGROUP_REGEX.matches(battleGroupDefinition)) {
         throw IllegalArgumentException("Definition does not match the Regex: ${battleGroupDefinition}")
     }
@@ -28,13 +67,14 @@ fun parseBattlegroup(battleGroupDefinition: String): Battlegroup {
         val groupValues = matchResult.groupValues
         val size = groupValues[1].toInt()
         val hitPoints = groupValues[2].toInt()
-        val attackDamage = groupValues[4].toInt()
+        val attackDamage = groupValues[4].toInt() + boost
         val attackType = AttackType.valueOf(groupValues[5].toUpperCase())
         val initiative = groupValues[6].toInt()
 
         val (weaknesses, immunities) = parseSpecialties(groupValues[3])
 
-        return Battlegroup(size, hitPoints, attackDamage, attackType, initiative, weaknesses, immunities)
+        return Battlegroup(fighter, size, hitPoints, attackDamage, attackType, initiative, weaknesses, immunities,
+                uuid = (index + 1).toString())
     }
 
 }
@@ -61,7 +101,7 @@ fun parseSpecialties(specialtiesDefinition: String, indicator: String): Set<Atta
         } else {
             weakTo = weakTo.substringBefore(")")
         }
-        return weakTo.split(",").map { AttackType.valueOf(it.trimIndent().toUpperCase())}.toSet()
+        return weakTo.split(",").map { AttackType.valueOf(it.trimIndent().toUpperCase()) }.toSet()
     }
     return emptySet()
 }

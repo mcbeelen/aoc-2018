@@ -1,6 +1,6 @@
 package day24_immune_system_simulator_20XX
 
-const val IMMUNE_SYSTEM = """1432 units each with 7061 hit points (immune to cold; weak to bludgeoning) with an attack that does 41 slashing damage at initiative 17
+const val IMMUNE_SYSTEM_DEFINITION = """1432 units each with 7061 hit points (immune to cold; weak to bludgeoning) with an attack that does 41 slashing damage at initiative 17
 3387 units each with 9488 hit points (weak to bludgeoning) with an attack that does 27 slashing damage at initiative 20
 254 units each with 3249 hit points (immune to fire) with an attack that does 89 cold damage at initiative 1
 1950 units each with 8201 hit points with an attack that does 39 fire damage at initiative 15
@@ -13,7 +13,7 @@ const val IMMUNE_SYSTEM = """1432 units each with 7061 hit points (immune to col
 
 
 
-const val INFECTION = """290 units each with 29776 hit points (weak to cold, radiation) with an attack that does 204 bludgeoning damage at initiative 16
+const val INFECTION_DEFINITION = """290 units each with 29776 hit points (weak to cold, radiation) with an attack that does 204 bludgeoning damage at initiative 16
 7268 units each with 14114 hit points (immune to radiation; weak to bludgeoning) with an attack that does 3 bludgeoning damage at initiative 19
 801 units each with 5393 hit points with an attack that does 13 slashing damage at initiative 13
 700 units each with 12182 hit points with an attack that does 29 cold damage at initiative 4

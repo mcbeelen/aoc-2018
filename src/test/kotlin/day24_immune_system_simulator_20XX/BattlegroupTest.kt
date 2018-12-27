@@ -10,8 +10,8 @@ class BattlegroupTest {
     @Test
     fun parseFirstOfImmuneGroup() {
 
-        val immuneSystemGroups = IMMUNE_SYSTEM.trimIndent().lines().map { parseBattlegroup(it) }
-
+        val immuneSystemGroups = parseBattlegroups(Fighter.IMMUNE_SYSTEM, IMMUNE_SYSTEM_DEFINITION)
+        
         assertThat(immuneSystemGroups.size, equalTo(10))
         immuneSystemGroups[0].let {
 
@@ -22,7 +22,6 @@ class BattlegroupTest {
         }
 
         immuneSystemGroups[9].let {
-
             assertThat(it.weaknesses, equalTo(setOf(FIRE, RADIATION)))
         }
     }
