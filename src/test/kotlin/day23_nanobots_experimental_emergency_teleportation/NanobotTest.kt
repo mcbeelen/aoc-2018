@@ -3,11 +3,25 @@ package day23_nanobots_experimental_emergency_teleportation
 import com.google.common.math.Stats
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import util.space.Cube
 import util.space.Point
 import kotlin.math.roundToInt
+import kotlin.ranges.IntRange.Companion.EMPTY
 
 class NanobotTest {
+
+
+    @Test
+    fun itShouldReachCertainCubes() {
+        val bot = Nanobot(Point(10, 10, 10), 11)
+        assertTrue(bot.reaches(Cube(Point(-20, -20, -20), Point(100, 100, 0))))
+        assertTrue(bot.reaches(Cube(Point(-20, -20, -20), Point(6, 6, 7))))
+        assertFalse(bot.reaches(Cube(Point(-20, -20, -20), Point(6, 6, 6))))
+        assertFalse(bot.reaches(Cube(Point(-20, -20, -20), Point(100, 100, -2))))
+    }
 
     @Test
     fun itShouldDetermineTheBiggestBotToBeAtZeroZeroZero() {
@@ -23,6 +37,36 @@ class NanobotTest {
     }
 
 
+    @Test
+    fun itShouldDetermineReachIntoSectorHotel() {
+
+        val alpha = Nanobot(Point(-20, -30, -10), 75)
+        assertThat(alpha.rangeInSectorHotel(), equalTo(0 .. 15))
+
+        val beta = Nanobot(Point(-20, 60, -10), 75)
+        assertThat(beta.rangeInSectorHotel(), equalTo(15 .. 105))
+
+        val charlie = Nanobot(Point(75, -20, -10), 75)
+        assertThat(charlie.rangeInSectorHotel(), equalTo(30 .. 120))
+
+        val delta = Nanobot(Point(75, 74, -10), 50)
+        assertThat(delta.rangeInSectorHotel(), equalTo(109 .. 189))
+
+        val echo = Nanobot(Point(-20, -30, 105), 75)
+        assertThat(echo.rangeInSectorHotel(), equalTo(80 .. 130))
+
+        val foxtrot = Nanobot(Point(-20, 30, 105), 75)
+        assertThat(foxtrot.rangeInSectorHotel(), equalTo(80 .. 190))
+
+        val empty = Nanobot(Point(20, -30, 105), 25)
+        assertThat(empty.rangeInSectorHotel(), equalTo(EMPTY))
+
+        val gamma = Nanobot(Point(20, -30, 105), 65)
+        assertThat(gamma.rangeInSectorHotel(), equalTo(90 .. 160))
+
+        val hotel = Nanobot(Point(20, 30, 105), 65)
+        assertThat(hotel.rangeInSectorHotel(), equalTo(90 .. 220))
+    }
 
     @Test
     fun itShouldZoomOut() {

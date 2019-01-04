@@ -7,7 +7,6 @@ import org.junit.Test
 import util.space.Cube
 import util.space.ORIGIN
 import util.space.Point
-import util.space.Sector
 import util.space.Sector.*
 
 class FormationTest {
@@ -74,10 +73,9 @@ class FormationTest {
         val from = Point(formation.xRange.first, formation.yRange.first, formation.zRange.first)
         val to = Point(formation.xRange.last, formation.yRange.last, formation.zRange.last)
 
-       // val point = formation.findPointInRangeOfMostNanobotsClosestToOrigin(from, to)
-        //val point = formation.searchFormPointInRangeOfMostNanobotsClosestToOrigin()
+       val point = formation.findPointInRangeOfMostNanobotsClosestToOrigin(from, to)
 
-       // assertThat(point, equalTo(Point(12, 12, 12)))
+       assertThat(point, equalTo(Point(12, 12, 12)))
 
     }
 
@@ -92,7 +90,7 @@ class FormationTest {
         assertThat("FROM", searchSpace.from, equalTo(Point(12, 12, 10)))
         assertThat("TO",   searchSpace.to,   equalTo(Point(12, 14, 14)))
 
-        assertThat(searchSpace.size(), equalTo(15))
+        assertThat(searchSpace.size(), equalTo(15L))
     }
 
 
@@ -126,35 +124,17 @@ class FormationTest {
         println("Largest Clique: " + biggestClique.bots.count())
 
         if (biggestClique.bots.all { it.isPointWithinRange(ORIGIN) }) {
-            println("")
+            println("Origin is in range of all needed bots")
+        } else {
+            val searchSpace = biggestClique.determineSearchSpace()
+            println("The answer to part two is somewhere between ${searchSpace.from} and ${searchSpace.to}")
+
+            val possibleSolutions = biggestClique.determineRangeForPossibleSolutions()
+
+            println("The distance from the origin must be in ${possibleSolutions}")
         }
 
-        val originBots = biggestClique.bots.filter { it.isPointWithinRange(ORIGIN) }
-        println("Bots reaching origin: " + originBots.count())
-        val botWithSmallestReachBeyondOrigin = originBots.filter { it.sector == ALPHA }.minBy { it.reachBeyondOrigin }
-        val reachOfSmallestRange = botWithSmallestReachBeyondOrigin!!.reachBeyondOrigin
-        println("Answer top part two MUST be smaller then $reachOfSmallestRange")
 
-
-        val inOuterSpace = biggestClique.bots.filter { !it.isPointWithinRange(ORIGIN) }
-        println("Bots inOuterSpace: " + inOuterSpace.count())
-        val botWithFurtestBorder = inOuterSpace.maxBy { it.distanceToBorder }
-        val minimumDistanceFromOrigin = botWithFurtestBorder!!.reachBeyondOrigin
-        println("Answer top part two MUST be greater then $minimumDistanceFromOrigin")
-
-        val possibleBotLimiting = inOuterSpace
-                .filter { it.distanceToBorder <= reachOfSmallestRange }
-                .filter { it.distanceToBorder >= minimumDistanceFromOrigin}
-        possibleBotLimiting.sortedByDescending { it.distanceToBorder }
-                .forEach {
-                    println("${it.distanceToBorder}")
-                }
-
-        // 84087794 is too low!
-
-        val searchSpace = biggestClique.determineSearchSpace()
-
-        println("The answer to part two is somewhere between ${searchSpace.from} and ${searchSpace.to}")
     }
 
 
@@ -197,6 +177,24 @@ class FormationTest {
         println(sectorsWithNumberOfBots.maxBy { it.value })
 
 
+
+
+    }
+
+
+    @Test
+    fun solve23b() {
+
+        val formation = parseFormation(NANOBOTS_FORMATION)
+
+        val from = Point(formation.xRange.first, formation.yRange.first, formation.zRange.first)
+        val to = Point(formation.xRange.last, formation.yRange.last, formation.zRange.last)
+
+        val point = formation.findPointInRangeOfMostNanobotsClosestToOrigin(from, to)
+
+        assertThat(point, equalTo(Point(27147759, 23024627, 33915430)))
+
+        assertThat(point.distanceTo(ORIGIN), equalTo(84087816))
 
 
     }

@@ -1,8 +1,10 @@
 package day23_nanobots_experimental_emergency_teleportation
 
 import util.space.Cube
-import util.space.ORIGIN
 import util.space.Point
+import java.util.*
+import kotlin.Int.Companion.MAX_VALUE
+import kotlin.Int.Companion.MIN_VALUE
 
 
 data class Formation(val bots: List<Nanobot>) {
@@ -24,10 +26,36 @@ data class Formation(val bots: List<Nanobot>) {
 
     fun findPointInRangeOfMostNanobotsClosestToOrigin(from: Point, to: Point): Point {
 
-        println("Exploring space from ${from} to ${to}")
+        val octantComparator = OctantComparator()
+        val explorationQueue = PriorityQueue(octantComparator)
 
-        val pointsWithMaxNumberOfBotsInRange: MutableList<Point> = findPointsInRangeOfMaximumAmountOfBots(from, to)
-        return pointsWithMaxNumberOfBotsInRange.minBy { it.distanceTo(ORIGIN) }!!
+
+
+        val searchSpace = constructOctant(Cube(from, to))
+        explorationQueue.add(searchSpace)
+
+        while (explorationQueue.peek().cube.size() > 1) {
+            val octantToExplore = explorationQueue.poll()
+            println("Exploring space from ${octantToExplore.cube.from} to ${octantToExplore.cube.to}")
+
+            val cubes : Iterable<Cube> = octantToExplore.divideIntoCubes()
+            cubes.forEach {
+                explorationQueue.add(constructOctant(it))
+            }
+
+        }
+
+        return explorationQueue.poll().cube.from
+
+
+    }
+
+    private fun constructOctant(cube: Cube): Octant {
+
+        return Octant(cube, bots
+                .filter { it.reaches(cube) }
+                .count())
+
     }
 
     private fun findPointsInRangeOfMaximumAmountOfBots(from: Point, to: Point): MutableList<Point> {
@@ -86,13 +114,13 @@ data class Formation(val bots: List<Nanobot>) {
 
     fun determineSearchSpace(): Cube {
 
-        var minX = Int.MIN_VALUE
-        var minY = Int.MIN_VALUE
-        var minZ = Int.MIN_VALUE
+        var minX = MIN_VALUE
+        var minY = MIN_VALUE
+        var minZ = MIN_VALUE
 
-        var maxX = Int.MAX_VALUE
-        var maxY = Int.MAX_VALUE
-        var maxZ = Int.MAX_VALUE
+        var maxX = MAX_VALUE
+        var maxY = MAX_VALUE
+        var maxZ = MAX_VALUE
 
         bots.forEach {
             val (x, y, z) = it.point
@@ -154,7 +182,36 @@ data class Formation(val bots: List<Nanobot>) {
 
     }
 
+    fun determineRangeForPossibleSolutions() : IntRange {
+
+        println("My search space is entirely in sector: HOTEL_RIGHT_BACK_UP")
+
+        val botsPerSector = bots.groupingBy { it.sector }
+        val eachCount = botsPerSector.eachCount()
+        println("Sectors: ${eachCount}")
+
+
+
+        var range = MIN_VALUE .. MAX_VALUE
+
+        bots.forEach {
+            val rangeInSectorHotel = it.rangeInSectorHotel()
+            if (rangeInSectorHotel.first > range.first) {
+                range = rangeInSectorHotel.first .. range.last
+            }
+            if (rangeInSectorHotel.last < range.last) {
+                range = range.first .. rangeInSectorHotel.last
+            }
+        }
+
+
+        return range
+        // 84087794 is too low!
+    }
+
+
 }
+
 
 
 
