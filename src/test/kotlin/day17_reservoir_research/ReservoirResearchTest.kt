@@ -189,8 +189,7 @@ class ReservoirResearchTest {
         plotReservoir(timesWithWater)
 
 
-        assertThat(timesWithWater.countTilesWithWater(), greaterThan(34244))
-        assertThat(timesWithWater.countTilesWithWater(), equalTo(MIN_VALUE))
+        assertThat(timesWithWater.countTilesWithWater(), equalTo(34244))
 
     }
 

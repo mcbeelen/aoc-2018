@@ -1,5 +1,7 @@
 package day17_reservoir_research
 
+import util.console.*
+
 fun plotReservoir(sliceOfLand: SliceOfLand) {
 
     println()
@@ -20,9 +22,9 @@ fun plotReservoir(sliceOfLand: SliceOfLand) {
 
         for (x in sliceOfLand.minX - 1..sliceOfLand.maxX + 1) {
             when {
-                sliceOfLand.isThereClayAt(x, y) -> print('#')
+                sliceOfLand.isThereClayAt(x, y) -> print("$ANSI_WHITE$ANSI_YELLOW_BACKGROUND#$ANSI_RESET")
                 sliceOfLand.isThereWaterAt(x, y) -> plotTile(sliceOfLand.tileAt(x, y))
-                else -> print(' ')
+                else -> print("$ANSI_BLACK_BACKGROUND $ANSI_RESET")
             }
         }
         println()
@@ -36,7 +38,7 @@ fun plotReservoir(sliceOfLand: SliceOfLand) {
 }
 
 fun plotTile(tile: TileOfSoil) {
-    print(tile.getPrint())
+    print("$ANSI_WHITE$ANSI_BLUE_BACKGROUND${tile.getPrint()}$ANSI_RESET")
 }
 
 
