@@ -1,6 +1,6 @@
 package util.grid
 
-import day13_cart_madness.Turn
+import y2018.day13_cart_madness.Turn
 
 enum class Direction {
 
