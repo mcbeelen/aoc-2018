@@ -74,6 +74,7 @@
                 <configuration>
                     <args>
                         <arg>-XXLanguage:+InlineClasses</arg>
+                        <arg>-Xinline-classes</arg>
                     </args>
                 </configuration>
                 <executions>
