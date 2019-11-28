@@ -9,19 +9,56 @@ data class Coordinate(val row: RowIndex, val column: ColumnIndex)
 
 val gridSize = 1000
 
+class GridOfBrightLights {
+
+
+    private val lightsInGrid: Table<RowIndex, ColumnIndex, Int> = HashBasedTable.create()
+
+    init {
+        allCoordinates().forEach {
+            lightsInGrid.put(it.row, it.column, 0)
+        }
+    }
+
+    fun countTotalBrightness() = allCoordinates()
+            .sumBy { lightsInGrid.get(it.row, it.column) }
+
+    fun processInstruction(instruction: String) {
+        val regex = Regex("(turn on|turn off|toggle) (\\d+),(\\d+) through (\\d+),(\\d+)")
+        val matchResult = regex.matchEntire(instruction)
+
+        if (matchResult == null) {
+            throw IllegalArgumentException("Instruction does not match the Regex: ${regex}")
+        } else {
+            val groupValues = matchResult.groupValues
+            val action = groupValues[1]
+            val rowStart = groupValues[2].toInt()
+            val columnStart = groupValues[3].toInt()
+            val rowEnd = groupValues[4].toInt()
+            val columnEnd = groupValues[5].toInt()
+
+            when (action) {
+                "turn off" -> adjustBrightness(rowStart, rowEnd, columnStart, columnEnd) { maxOf(0, it - 1) }
+                "turn on" ->  adjustBrightness(rowStart, rowEnd, columnStart, columnEnd) { it + 1  }
+                "toggle" ->  adjustBrightness(rowStart, rowEnd, columnStart, columnEnd) { it + 2 }
+            }
+        }
+
+    }
+
+    private fun adjustBrightness (rowStart: Int, rowEnd: Int, columnStart: Int, columnEnd: Int, adjust: (current: Int) -> Int) {
+        through(rowStart, rowEnd, columnStart, columnEnd).forEach {
+            val newBrightness = adjust(lightsInGrid.get(it.row, it.column))
+            lightsInGrid.put(it.row, it.column, newBrightness)
+        }
+    }
+
+
+}
+
 class GridOfLights {
 
     private val lightsInGrid: Table<RowIndex, ColumnIndex, Boolean> = HashBasedTable.create()
-
-    private fun allCoordinates(): Sequence<Coordinate> = through(0, gridSize, 0, gridSize)
-
-    private fun through(rowStart: Int, rowEnd: Int, columnStart: Int, columnEnd: Int): Sequence<Coordinate> = sequence {
-        for (rowCounter in rowStart..rowEnd) {
-            for (columnCounter in columnStart..columnEnd) {
-                yield(Coordinate(RowIndex(rowCounter), ColumnIndex(columnCounter)))
-            }
-        }
-    }
 
     init {
         allCoordinates().forEach {
@@ -34,11 +71,6 @@ class GridOfLights {
             .filter { lightsInGrid.get(it.row, it.column) }
             .count()
 
-    /**
-     * turn off 427,423 through 929,502
-    turn on 774,14 through 977,877
-    turn on 410,146 through 864,337
-     */
     fun processInstruction(instruction: String) {
         val regex = Regex("(turn on|turn off|toggle) (\\d+),(\\d+) through (\\d+),(\\d+)")
         val matchResult = regex.matchEntire(instruction)
@@ -57,10 +89,7 @@ class GridOfLights {
                 "turn off" -> switch(rowStart, rowEnd, columnStart, columnEnd) { false }
                 "turn on" ->  switch(rowStart, rowEnd, columnStart, columnEnd) { true }
                 "toggle" ->  switch(rowStart, rowEnd, columnStart, columnEnd) { isLit -> isLit.not()  }
-
             }
-
-
         }
 
 
@@ -76,8 +105,27 @@ class GridOfLights {
 
 }
 
+fun allCoordinates(): Sequence<Coordinate> = through(0, gridSize, 0, gridSize)
+
+fun through(rowStart: Int, rowEnd: Int, columnStart: Int, columnEnd: Int): Sequence<Coordinate> = sequence {
+    for (rowCounter in rowStart..rowEnd) {
+        for (columnCounter in columnStart..columnEnd) {
+            yield(Coordinate(RowIndex(rowCounter), ColumnIndex(columnCounter)))
+        }
+    }
+}
+
+
 
 fun main() {
+    // partOne()
+    val grid = GridOfBrightLights()
+    INPUT_2015_06.lines().forEach { grid.processInstruction(it) }
+    println(grid.countTotalBrightness())
+
+}
+
+private fun partOne() {
     val grid = GridOfLights()
     INPUT_2015_06.lines().forEach { grid.processInstruction(it) }
     println(grid.countNumberOfLightsLit())
