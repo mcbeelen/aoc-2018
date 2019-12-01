@@ -7,13 +7,16 @@ import org.junit.Test
 class FuelRequirementCalculatorTest {
 
     @Test
-    fun `mass 12 requires 2`() {
+    fun `examples from the instructions`() {
 
         assertThat(fuelRequired(12), equalTo(2))
+        assertThat(fuelRequired(14), equalTo(2))
+        assertThat(fuelRequired(1969), equalTo(654))
+        assertThat(fuelRequired(100756), equalTo(33583))
     }
 
     private fun fuelRequired(mass: Int): Int {
-        return 2
+        return mass / 3 - 2
 
     }
 }
