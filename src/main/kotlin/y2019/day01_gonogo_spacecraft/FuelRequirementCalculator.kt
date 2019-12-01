@@ -1,9 +1,18 @@
 package y2019.day01_gonogo_spacecraft
 
+import kotlin.math.max
+
 
 fun fuelRequired(mass: Int): Int {
     return mass / 3 - 2
+}
 
+fun realFuelRequired(mass: Int) : Int {
+    val fuelRequired = max(fuelRequired(mass), 0)
+    if (fuelRequired == 0) {
+        return fuelRequired
+    }
+    return fuelRequired + realFuelRequired(fuelRequired)
 }
 
 fun main() {
@@ -13,6 +22,13 @@ fun main() {
             .sum()
 
     println(requiredAmountOfFuel)
+
+    val realAmountOfRequiredFuel = INPUT.lines()
+            .map { it.toInt() }
+            .map { realFuelRequired(it) }
+            .sum()
+
+    println(realAmountOfRequiredFuel)
 }
 
 

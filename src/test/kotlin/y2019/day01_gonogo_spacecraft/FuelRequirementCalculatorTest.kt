@@ -14,5 +14,11 @@ class FuelRequirementCalculatorTest {
         assertThat(fuelRequired(100756), equalTo(33583))
     }
 
+    @Test
+    fun `examples from part two`() {
+        assertThat(realFuelRequired(14), equalTo(2))
+        assertThat(realFuelRequired(1969), equalTo(966))
+        assertThat(realFuelRequired(100756), equalTo(50346))
+    }
 }
 
