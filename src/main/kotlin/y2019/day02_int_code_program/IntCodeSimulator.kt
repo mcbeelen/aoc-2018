@@ -1,12 +1,18 @@
 package y2019.day02_int_code_program
 
-data class IntCodeSimulator(val intCode: List<Int>) {
+data class IntCodeSimulator(val intCode: List<Int>, val cursor : Int = 0) {
+
+
     constructor(intCode: String) : this(parseIntCode(intCode))
 
 
     fun tick(): IntCodeSimulator {
         val newIntCode = intCode.toMutableList()
-        newIntCode[3] = 70
+        val firstInputPosition = intCode[cursor + 1]
+        val secondInputPosition = intCode[cursor + 2]
+        val i = intCode[firstInputPosition] + intCode[secondInputPosition]
+        val resultPosition = intCode[cursor + 3]
+        newIntCode[resultPosition] = i
         return IntCodeSimulator(newIntCode)
     }
 }
