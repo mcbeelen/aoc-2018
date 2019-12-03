@@ -1,5 +1,8 @@
 package y2019.day02_int_code_program
 
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
+
 data class IntCodeSimulator(val intCode: List<Int>, val cursor : Int = 0) {
 
 
@@ -30,11 +33,44 @@ data class IntCodeSimulator(val intCode: List<Int>, val cursor : Int = 0) {
 fun parseIntCode(intCode: String) = intCode.split(',').map { it.toInt() }
 
 
+@ExperimentalTime
 fun main() {
-    val intCode = parseIntCode(INPUT).toMutableList()
-    intCode[1] = 12
-    intCode[2] = 2
+    val (_, duration) = measureTimedValue { partTwo() }
+    println("Simulation took:$duration")
 
+}
+
+private fun partTwo() {
+    for (noun in 0..99) {
+        for (verb in 0..99) {
+            val output = runSimulator(noun, verb)
+            if (output == 19690720) {
+                println(noun * 100 + verb)
+            }
+        }
+    }
+}
+
+private fun partOne() {
+    val noun = 12
+    val verb = 2
+    val output = runSimulator(noun, verb)
+    println(output)
+}
+
+private fun runSimulator(noun: Int, verb: Int): Int {
+    val intCode = parseIntCode(INPUT).toMutableList()
+    intCode[1] = noun
+    intCode[2] = verb
+
+    var simulator = IntCodeSimulator(intCode)
+
+    while (!simulator.isProgramFinished()) {
+        simulator = simulator.tick()
+    }
+
+    val output = simulator.intCode[0]
+    return output
 }
 
 
