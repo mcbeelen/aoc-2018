@@ -42,3 +42,14 @@ enum class Direction {
     }
 
 }
+
+fun parseDirection(c: Char): Direction {
+    return when (c) {
+        'D' -> Direction.DOWN
+        'L' -> Direction.LEFT
+        'R' -> Direction.RIGHT
+        'U' -> Direction.UP
+        else -> throw IllegalArgumentException()
+    }
+
+}

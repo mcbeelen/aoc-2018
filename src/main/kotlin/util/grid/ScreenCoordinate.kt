@@ -3,6 +3,8 @@ package util.grid
 import util.grid.Direction.*
 import kotlin.math.abs
 
+val ORIGIN = ScreenCoordinate(0, 0)
+
 data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<ScreenCoordinate> {
 
     override fun compareTo(other: ScreenCoordinate): Int {
