@@ -5,6 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import y2019.computer.IntCodeSimulator
 
 class IntCodeSimulatorTest {
     @Test
@@ -16,7 +17,7 @@ class IntCodeSimulatorTest {
         simulator = simulator.tick()
 
         assertThat(simulator.intCode[3], equalTo(70))
-        assertThat(simulator.cursor, equalTo(4))
+        assertThat(simulator.instructionPointer, equalTo(4))
     }
 
     @Test
@@ -27,7 +28,7 @@ class IntCodeSimulatorTest {
         simulator = simulator.tick()
 
         assertThat(simulator.intCode[0], equalTo(3500))
-        assertThat(simulator.cursor, equalTo(8))
+        assertThat(simulator.instructionPointer, equalTo(8))
     }
 
 

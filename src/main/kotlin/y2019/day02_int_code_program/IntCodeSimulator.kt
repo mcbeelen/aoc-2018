@@ -1,36 +1,9 @@
 package y2019.day02_int_code_program
 
+import y2019.computer.IntCodeSimulator
+import y2019.computer.parseIntCode
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
-
-data class IntCodeSimulator(val intCode: List<Int>, val cursor : Int = 0) {
-
-
-    constructor(intCode: String) : this(parseIntCode(intCode))
-    constructor(intCode: String, cursor: Int) : this(parseIntCode(intCode), cursor)
-
-
-    fun tick(): IntCodeSimulator {
-        val newIntCode = intCode.toMutableList()
-        val firstInputPosition = intCode[cursor + 1]
-        val secondInputPosition = intCode[cursor + 2]
-
-        val output =  when (intCode[cursor]) {
-            1 -> intCode[firstInputPosition] + intCode[secondInputPosition]
-            2 -> intCode[firstInputPosition] * intCode[secondInputPosition]
-            else -> 0
-        }
-
-        val resultPosition = intCode[cursor + 3]
-        newIntCode[resultPosition] = output
-        return IntCodeSimulator(newIntCode, cursor + 4)
-    }
-
-    fun isProgramFinished() = intCode[cursor] == 99
-}
-
-
-fun parseIntCode(intCode: String) = intCode.split(',').map { it.toInt() }
 
 
 @ExperimentalTime
@@ -63,7 +36,7 @@ private fun runSimulator(noun: Int, verb: Int): Int {
     intCode[1] = noun
     intCode[2] = verb
 
-    var simulator = IntCodeSimulator(intCode)
+    var simulator = IntCodeSimulator(intCode = intCode)
 
     while (!simulator.isProgramFinished()) {
         simulator = simulator.tick()
