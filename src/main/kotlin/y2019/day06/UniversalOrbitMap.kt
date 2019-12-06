@@ -16,9 +16,16 @@ class UniversalOrbitMap(orbitMap: String) {
     tailrec fun numberOfOrbits(objectId: String): Int {
         if (objectId == CENTER_OF_MASS) return 0
 
-        val orbitDefinition = orbits.filter { it.endsWith(ORBIT_SEPERATOR + objectId) }.first()
+        val orbitDefinition = findOrbitDefinition(objectId)
 
-        return 1 + numberOfOrbits(orbitDefinition.substringBefore(ORBIT_SEPERATOR))
+        return 1 + numberOfOrbits(orbits(orbitDefinition))
+    }
+
+    private fun orbits(orbitDefinition: String) = orbitDefinition.substringBefore(ORBIT_SEPERATOR)
+
+    private fun findOrbitDefinition(objectId: String): String {
+        val orbitDefinition = orbits.filter { it.endsWith(ORBIT_SEPERATOR + objectId) }.first()
+        return orbitDefinition
     }
 
     fun sumOfAllNumberOfOrbits() = orbits.map { toOjectId(it) }
@@ -26,7 +33,26 @@ class UniversalOrbitMap(orbitMap: String) {
             .sum()
 
 
+    fun minimumNumberOfRequiredOrbitTransfersToReachSanta(): Int {
+
+        val you = pathToCom("YOU")
+        val san = pathToCom("SAN")
+        val shared = you intersect  san
+
+
+        return (you.size - shared.size) + (san.size - shared.size)
+    }
+
+    fun pathToCom(objectId: String): List<String> {
+        if (objectId == CENTER_OF_MASS) return emptyList()
+        val orbits = orbits(findOrbitDefinition(objectId))
+        return pathToCom(orbits) + orbits
+    }
+
+
     private fun toOjectId(orbitDefinition: String) = orbitDefinition.substringAfter(ORBIT_SEPERATOR)
+
+
 
 }
 
@@ -35,9 +61,12 @@ class UniversalOrbitMap(orbitMap: String) {
 fun main() {
     val (_, duration) = measureTimedValue {
         val universalOrbitMap = UniversalOrbitMap(Y2019D06)
-        println(universalOrbitMap.sumOfAllNumberOfOrbits())
+        // println(universalOrbitMap.sumOfAllNumberOfOrbits())
+        println(universalOrbitMap.minimumNumberOfRequiredOrbitTransfersToReachSanta())
     }
     println("Took: $duration")
+
+
 }
 
 private const val Y2019D06 = """WX9)CQ4
