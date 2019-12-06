@@ -6,6 +6,9 @@ interface Input {
 
 open class ConstantInput(private val value : Int) : Input {
     override fun read() = value
+
+    override fun toString() = "-> $value"
+
 }
 
 class AlwaysZeroInput : ConstantInput(0)

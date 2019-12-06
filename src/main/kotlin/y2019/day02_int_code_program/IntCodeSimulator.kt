@@ -1,6 +1,6 @@
 package y2019.day02_int_code_program
 
-import y2019.computer.IntCodeSimulator
+import y2019.computer.IntcodeComputer
 import y2019.computer.parseIntCode
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
@@ -36,13 +36,13 @@ private fun runSimulator(noun: Int, verb: Int): Int {
     intCode[1] = noun
     intCode[2] = verb
 
-    var simulator = IntCodeSimulator(intCode = intCode)
+    var simulator = IntcodeComputer(program = intCode)
 
     while (!simulator.isProgramFinished()) {
         simulator = simulator.tick()
     }
 
-    val output = simulator.intCode[0]
+    val output = simulator.program[0]
     return output
 }
 

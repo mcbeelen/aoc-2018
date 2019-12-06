@@ -1,16 +1,20 @@
 package y2019.day05
 
 import y2019.computer.ConstantInput
-import y2019.computer.Input
-import y2019.computer.IntCodeSimulator
+import y2019.computer.IntcodeComputer
 import y2019.computer.parseIntCode
 
-
+// Part one: 9654885
 fun main() {
+    // simulate(ConstantInput(1))
+    simulate(ConstantInput(5)) // 6825729 is too low
+}
+
+private fun simulate(input: ConstantInput) {
     val intCode = parseIntCode(INPUT).toMutableList()
-    var simulator = IntCodeSimulator(
-            input = ConstantInput(1),
-            intCode = intCode)
+    var simulator = IntcodeComputer(
+            input = input,
+            program = intCode)
 
     while (!simulator.isProgramFinished()) {
         simulator = simulator.tick()

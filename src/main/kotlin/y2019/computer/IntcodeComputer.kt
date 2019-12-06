@@ -2,15 +2,16 @@ package y2019.computer
 
 import y2019.computer.ParameterMode.*
 
-data class IntCodeSimulator(
+data class IntcodeComputer(
         val input: Input = AlwaysZeroInput(),
-        val intCode: List<Int>,
+        val output : Output = WriteToSystemOutOutput(),
+        val program: List<Int>,
         val instructionPointer: Int = 0) {
 
-    constructor(intCode: String) : this(intCode = parseIntCode(intCode))
-    constructor(intCode: String, cursor: Int) : this(intCode = parseIntCode(intCode), instructionPointer = cursor)
+    constructor(intCode: String) : this(program = parseIntCode(intCode))
+    constructor(intCode: String, cursor: Int) : this(program = parseIntCode(intCode), instructionPointer = cursor)
 
-    fun tick(): IntCodeSimulator {
+    fun tick(): IntcodeComputer {
 
         val currentInstruction = currentInstruction()
         val opcode = currentOpcode(currentInstruction)
@@ -19,12 +20,12 @@ data class IntCodeSimulator(
         val parameterModeFlags = fetchParameterModeFlags(currentInstruction)
 
         val parameters = fetchParameters(opcode, parameterModeFlags)
+
         val effect: Effect = instruction.handle(parameters)
-        val newIntCode = effect.apply(intCode)
+        val newIntCode = effect.apply(program)
+        val newInstructionPointer = effect.goto(instructionPointer, instruction.numberOfParameters())
 
-        val newInstructionPointer = instructionPointer + 1 + instruction.numberOfParameters()
-
-        return IntCodeSimulator(input, newIntCode, newInstructionPointer)
+        return this.copy(program = newIntCode, instructionPointer = newInstructionPointer)
     }
 
 
@@ -36,7 +37,11 @@ data class IntCodeSimulator(
             1 -> AddInstruction()
             2 -> MultiplyInstruction()
             3 -> ReadInputInstruction(input)
-            4 -> WriteToOutputInstruction(intCode)
+            4 -> WriteToOutputInstruction(program, output)
+            5 -> JumpIfTrueInstruction()
+            6 -> JumpIfFalseInstruction()
+            7 -> LessThanInstruction()
+            8 -> EqualsInstruction()
             99 -> ExitInstruction()
             else -> UnknownOpcodeInstruction(currentInstruction(), opcode)
         }
@@ -50,7 +55,10 @@ data class IntCodeSimulator(
             opcode == 2 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
             opcode == 3 -> listOf(readParameterImmediatly(instructionPointer + 1))
             opcode == 4 -> listOf(fetchParameter(0, parameterModes))
-
+            opcode == 5 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
+            opcode == 6 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
+            opcode == 7 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
+            opcode == 8 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
             else -> emptyList()
 
         }
@@ -64,10 +72,10 @@ data class IntCodeSimulator(
 
     }
 
-    private fun readParameterByPosition(index: Int) = readParameterImmediatly(intCode[index])
+    private fun readParameterByPosition(index: Int) = readParameterImmediatly(program[index])
 
 
-    private fun readParameterImmediatly(index: Int) = intCode[index]
+    private fun readParameterImmediatly(index: Int) = program[index]
 
 
 
@@ -89,13 +97,15 @@ data class IntCodeSimulator(
 
     fun isProgramFinished() = currentInstruction() == 99
 
-    private fun currentInstruction() = intCode[instructionPointer]
+    private fun currentInstruction() = program[instructionPointer]
 }
 
 interface Effect {
     fun apply(intCode: List<Int>): List<Int> {
         return intCode
     }
+
+    fun goto(instructionPointer: Int, numberOfParameters: Int) = instructionPointer + 1 + numberOfParameters
 }
 
 data class WriteToMemoryEffect(val address: Int, val value: Int) : Effect {
@@ -109,6 +119,10 @@ data class WriteToMemoryEffect(val address: Int, val value: Int) : Effect {
 
 class NoOpEffect : Effect {
 
+}
+
+class JumpToEffect(val position: Int) : Effect {
+    override fun goto(instructionPointer: Int, numberOfParameters: Int) = position
 }
 
 fun parseIntCode(intCode: String) = intCode.split(',').map { it.toInt() }

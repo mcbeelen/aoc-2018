@@ -43,9 +43,9 @@ class ReadInputInstruction(private val input: Input) : Instruction {
     override fun numberOfParameters() = 1
 }
 
-class WriteToOutputInstruction(private val intCode: List<Int>) : Instruction {
+class WriteToOutputInstruction(private val intCode: List<Int>, val output: Output) : Instruction {
     override fun handle(parameters: List<Int>): Effect {
-        println("Test: ${parameters[0]}")
+        output.print(parameters[0])
         return NoOpEffect()
     }
 
@@ -53,6 +53,46 @@ class WriteToOutputInstruction(private val intCode: List<Int>) : Instruction {
 
 }
 
+class JumpIfTrueInstruction : Instruction {
+
+    override fun numberOfParameters() = 2
+
+    override fun handle(parameters: List<Int>) = if (parameters[0] == 0)
+        NoOpEffect()
+    else
+        JumpToEffect(parameters[1])
+
+}
+
+class JumpIfFalseInstruction : Instruction {
+
+    override fun numberOfParameters() = 2
+
+    override fun handle(parameters: List<Int>) = if (parameters[0] == 0)
+        JumpToEffect(parameters[1])
+    else
+        NoOpEffect()
+
+}
+
+class LessThanInstruction : Instruction {
+    override fun numberOfParameters() = 3
+
+    override fun handle(parameters: List<Int>) = if (parameters[0] < parameters[1])
+        WriteToMemoryEffect(parameters[2], 1)
+    else
+        WriteToMemoryEffect(parameters[2], 0)
+}
+
+class EqualsInstruction : Instruction {
+
+    override fun numberOfParameters() = 3
+
+    override fun handle(parameters: List<Int>) = if (parameters[0] == parameters[1])
+        WriteToMemoryEffect(parameters[2], 1)
+    else
+        WriteToMemoryEffect(parameters[2], 0)
+}
 
 
 class ExitInstruction : Instruction {
@@ -60,7 +100,7 @@ class ExitInstruction : Instruction {
 }
 
 class UnknownOpcodeInstruction(val currentInstruction: Int, val opcode: Int) : Instruction {
-    override fun handle(parameters: List<Int>) : Effect {
+    override fun handle(parameters: List<Int>): Effect {
         System.err.println("$opcode from $currentInstruction")
         return NoOpEffect()
     }
