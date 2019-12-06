@@ -11,8 +11,15 @@ class UniversalOrbitMapTest {
     fun `d orbits 3`() {
         val map = UniversalOrbitMap(TEST_INPUT)
 
-
         assertThat(map.numberOfOrbits("D"), equalTo(3))
+        assertThat(map.numberOfOrbits("L"), equalTo(7))
+    }
+
+    @Test
+    fun sumOfAllOrbits() {
+        val map = UniversalOrbitMap(TEST_INPUT)
+
+        assertThat(map.sumOfAllNumberOfOrbits(), equalTo(42))
     }
 }
 

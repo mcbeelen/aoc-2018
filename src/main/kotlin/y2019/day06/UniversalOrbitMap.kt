@@ -1,21 +1,46 @@
 package y2019.day06
 
-class UniversalOrbitMap(map: String) {
-    fun numberOfOrbits(objectId: String): Int {
-        return 3
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
+
+private const val ORBIT_SEPERATOR = ")"
+
+
+class UniversalOrbitMap(orbitMap: String) {
+
+    private val orbits = orbitMap.lines()
+
+    private val CENTER_OF_MASS = "COM"
+
+
+    tailrec fun numberOfOrbits(objectId: String): Int {
+        if (objectId == CENTER_OF_MASS) return 0
+
+        val orbitDefinition = orbits.filter { it.endsWith(ORBIT_SEPERATOR + objectId) }.first()
+
+        return 1 + numberOfOrbits(orbitDefinition.substringBefore(ORBIT_SEPERATOR))
     }
+
+    fun sumOfAllNumberOfOrbits() = orbits.map { toOjectId(it) }
+            .map { numberOfOrbits(it) }
+            .sum()
+
+
+    private fun toOjectId(orbitDefinition: String) = orbitDefinition.substringAfter(ORBIT_SEPERATOR)
 
 }
 
 
+@ExperimentalTime
+fun main() {
+    val (_, duration) = measureTimedValue {
+        val universalOrbitMap = UniversalOrbitMap(Y2019D06)
+        println(universalOrbitMap.sumOfAllNumberOfOrbits())
+    }
+    println("Took: $duration")
+}
 
-
-
-
-
-
-
-const val INPUT = """WX9)CQ4
+private const val Y2019D06 = """WX9)CQ4
 7LX)WVR
 25Q)7HB
 DCB)979
