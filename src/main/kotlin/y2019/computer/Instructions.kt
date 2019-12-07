@@ -45,7 +45,7 @@ class ReadInputInstruction(private val input: Input) : Instruction {
 
 class WriteToOutputInstruction(private val intCode: List<Int>, val output: Output) : Instruction {
     override fun handle(parameters: List<Int>): Effect {
-        output.print(parameters[0])
+        output.write(parameters[0])
         return NoOpEffect()
     }
 
