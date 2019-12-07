@@ -1,7 +1,5 @@
 package y2019.computer
 
-import kotlin.system.exitProcess
-
 
 interface Instruction {
     fun handle(parameters: List<Int>): Effect
@@ -94,9 +92,10 @@ class EqualsInstruction : Instruction {
         WriteToMemoryEffect(parameters[2], 0)
 }
 
-
-class ExitInstruction : Instruction {
-    override fun handle(parameters: List<Int>) = exitProcess(0)
+class ExitInstruction(val instructionPointer: Int) : Instruction {
+    override fun handle(parameters: List<Int>): StopEffect {
+        return StopEffect()
+    }
 }
 
 class UnknownOpcodeInstruction(val currentInstruction: Int, val opcode: Int) : Instruction {

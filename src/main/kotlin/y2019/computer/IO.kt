@@ -37,7 +37,7 @@ class LastPrintedReadableOutput : Output {
 }
 
 
-class Buffer : Input, Output {
+open class Buffer : Input, Output {
 
     private val storage : Queue<Int> = LinkedList()
 
@@ -49,4 +49,12 @@ class Buffer : Input, Output {
 
     fun isEmpty() = storage.isEmpty()
 
+}
+
+class BufferWithMemory : Buffer() {
+    var lastPrintedValue : Int = Int.MIN_VALUE
+    override fun write(value: Int) {
+        lastPrintedValue = value
+        super.write(value)
+    }
 }

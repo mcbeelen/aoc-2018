@@ -1,6 +1,7 @@
 package y2019.computer
 
 import y2019.computer.ParameterMode.*
+import kotlin.Int.Companion.MIN_VALUE
 
 data class Memory(val program: List<Int>, val instructionPointer: Int = 0)
 
@@ -52,7 +53,7 @@ class IntcodeComputer(
             6 -> JumpIfFalseInstruction()
             7 -> LessThanInstruction()
             8 -> EqualsInstruction()
-            99 -> ExitInstruction()
+            99 -> ExitInstruction(memory.instructionPointer)
             else -> UnknownOpcodeInstruction(currentInstruction(), opcode)
         }
 
@@ -107,7 +108,7 @@ class IntcodeComputer(
     }
 
 
-    fun isProgramFinished() = currentInstruction() == 99
+    fun isProgramFinished() = memory.instructionPointer == MIN_VALUE
 
     private fun currentInstruction() = memory.program[memory.instructionPointer]
 }
@@ -130,11 +131,14 @@ data class WriteToMemoryEffect(val address: Int, val value: Int) : Effect {
 }
 
 class NoOpEffect : Effect {
-
 }
 
 class JumpToEffect(val position: Int) : Effect {
     override fun goto(instructionPointer: Int, numberOfParameters: Int) = position
+}
+
+class StopEffect() : Effect {
+    override fun goto(instructionPointer: Int, numberOfParameters: Int) = MIN_VALUE
 }
 
 fun parseIntCode(intCode: String) = intCode.split(',').map { it.toInt() }

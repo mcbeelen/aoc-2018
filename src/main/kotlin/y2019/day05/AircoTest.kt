@@ -8,7 +8,7 @@ import y2019.computer.parseIntCode
 // Part one: 9654885
 fun main() {
     // simulate(ConstantInput(1))
-    simulate(ConstantInput(5)) // 6825729 is too low
+    simulate(ConstantInput(5)) // 6825729 is too low --> 7079459
 }
 
 private fun simulate(input: ConstantInput) {
