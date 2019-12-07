@@ -52,13 +52,13 @@ class PartTwoTest  {
         val program = parseIntCode(intCode)
         val input = ConstantInput(value)
         val output = LastPrintedReadableOutput()
-        var simulator = IntcodeComputer(
+        val simulator = IntcodeComputer(
                 input = input,
                 output = output,
-                program = program)
+                sourceCode = program)
 
         while (!simulator.isProgramFinished()) {
-            simulator = simulator.tick()
+            simulator.tick()
         }
 
         assertThat(output.lastPrintedValue, equalTo(expected))

@@ -12,23 +12,21 @@ class IntcodeComputerTest {
     fun simulateOpsCode1() {
         val intCode = "1,9,10,3,2,3,11,0,99,30,40,50"
 
-        var simulator = IntcodeComputer(intCode)
+        val simulator = IntcodeComputer(intCode)
 
-        simulator = simulator.tick()
+        simulator.tick()
 
-        assertThat(simulator.program[3], equalTo(70))
-        assertThat(simulator.instructionPointer, equalTo(4))
+        assertThat(simulator.memory.program[3], equalTo(70))
+        assertThat(simulator.memory.instructionPointer, equalTo(4))
     }
 
     @Test
     fun `simpulateOpsCode2 multiply`() {
         val intCode = "1,9,10,70,2,3,11,0,99,30,40,50"
-        var simulator = IntcodeComputer(intCode, 4)
+        val simulator = IntcodeComputer(intCode, 4)
 
-        simulator = simulator.tick()
-
-        assertThat(simulator.program[0], equalTo(3500))
-        assertThat(simulator.instructionPointer, equalTo(8))
+        assertThat(simulator.memory.program[0], equalTo(3500))
+        assertThat(simulator.memory.instructionPointer, equalTo(8))
     }
 
 

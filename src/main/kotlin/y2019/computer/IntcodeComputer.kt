@@ -2,16 +2,26 @@ package y2019.computer
 
 import y2019.computer.ParameterMode.*
 
-data class IntcodeComputer(
-        val input: Input = AlwaysZeroInput(),
-        val output : Output = WriteToSystemOutOutput(),
-        val program: List<Int>,
-        val instructionPointer: Int = 0) {
+data class Memory(val program: List<Int>, val instructionPointer: Int = 0)
 
-    constructor(intCode: String) : this(program = parseIntCode(intCode))
-    constructor(intCode: String, cursor: Int) : this(program = parseIntCode(intCode), instructionPointer = cursor)
+class IntcodeComputer(
+        private val input: Input = AlwaysZeroInput(),
+        private val output : Output = WriteToSystemOutOutput(),
+        internal var memory : Memory) {
 
-    fun tick(): IntcodeComputer {
+    constructor(
+            input: Input = AlwaysZeroInput(),
+            output : Output = WriteToSystemOutOutput(),
+            sourceCode: List<Int>,
+            instructionPointer: Int = 0) : this(input, output, Memory(sourceCode, instructionPointer))
+
+    constructor(intCode: String) : this(memory = Memory(parseIntCode(intCode)))
+    constructor(input: Input, output: Output, sourceCode: List<Int>) : this(input, output, Memory(sourceCode))
+    constructor(sourceCode: String, instructionPointer: Int) : this(memory = Memory(parseIntCode(sourceCode), instructionPointer))
+
+
+
+    fun tick() {
 
         val currentInstruction = currentInstruction()
         val opcode = currentOpcode(currentInstruction)
@@ -22,10 +32,10 @@ data class IntcodeComputer(
         val parameters = fetchParameters(opcode, parameterModeFlags)
 
         val effect: Effect = instruction.handle(parameters)
-        val newIntCode = effect.apply(program)
-        val newInstructionPointer = effect.goto(instructionPointer, instruction.numberOfParameters())
+        val newIntCode = effect.apply(memory.program)
+        val newInstructionPointer = effect.goto(memory.instructionPointer, instruction.numberOfParameters())
 
-        return this.copy(program = newIntCode, instructionPointer = newInstructionPointer)
+        memory = Memory(newIntCode, newInstructionPointer)
     }
 
 
@@ -37,7 +47,7 @@ data class IntcodeComputer(
             1 -> AddInstruction()
             2 -> MultiplyInstruction()
             3 -> ReadInputInstruction(input)
-            4 -> WriteToOutputInstruction(program, output)
+            4 -> WriteToOutputInstruction(memory.program, output)
             5 -> JumpIfTrueInstruction()
             6 -> JumpIfFalseInstruction()
             7 -> LessThanInstruction()
@@ -50,21 +60,23 @@ data class IntcodeComputer(
 
     private fun fetchParameters(opcode: Int, parameterModes: List<ParameterMode>): List<Int> {
 
-        return when {
-            opcode == 1 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            opcode == 2 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            opcode == 3 -> listOf(readParameterImmediatly(instructionPointer + 1))
-            opcode == 4 -> listOf(fetchParameter(0, parameterModes))
-            opcode == 5 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
-            opcode == 6 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
-            opcode == 7 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            opcode == 8 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            else -> emptyList()
+        val instructionPointer = memory.instructionPointer
 
+        return when (opcode) {
+            1 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
+            2 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
+            3 -> listOf(readParameterImmediatly(instructionPointer + 1))
+            4 -> listOf(fetchParameter(0, parameterModes))
+            5 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
+            6 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
+            7 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
+            8 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
+            else -> emptyList()
         }
     }
 
     private fun fetchParameter(index: Int, parameterModes: List<ParameterMode>): Int {
+        val instructionPointer = memory.instructionPointer
         return when (determineParameterMode(index, parameterModes)) {
             POSITION -> readParameterByPosition(instructionPointer + 1 + index)
             IMMEDIATE -> readParameterImmediatly(instructionPointer + 1 + index)
@@ -72,10 +84,10 @@ data class IntcodeComputer(
 
     }
 
-    private fun readParameterByPosition(index: Int) = readParameterImmediatly(program[index])
+    private fun readParameterByPosition(index: Int) = readParameterImmediatly(memory.program[index])
 
 
-    private fun readParameterImmediatly(index: Int) = program[index]
+    private fun readParameterImmediatly(index: Int) = memory.program[index]
 
 
 
@@ -97,7 +109,7 @@ data class IntcodeComputer(
 
     fun isProgramFinished() = currentInstruction() == 99
 
-    private fun currentInstruction() = program[instructionPointer]
+    private fun currentInstruction() = memory.program[memory.instructionPointer]
 }
 
 interface Effect {
