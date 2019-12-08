@@ -61,7 +61,7 @@ class UniversalOrbitMap(orbitMap: String) {
 fun main() {
     val (_, duration) = measureTimedValue {
         val universalOrbitMap = UniversalOrbitMap(Y2019D06)
-        // println(universalOrbitMap.sumOfAllNumberOfOrbits())
+        println(universalOrbitMap.sumOfAllNumberOfOrbits())
         println(universalOrbitMap.minimumNumberOfRequiredOrbitTransfersToReachSanta())
     }
     println("Took: $duration")

@@ -21,6 +21,15 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
+        <dependency>
+            <groupId>org.funktionale</groupId>
+            <artifactId>funktionale-memoization</artifactId>
+            <version>1.2</version>
+        </dependency>
+        -->
+
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

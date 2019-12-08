@@ -95,7 +95,7 @@ class CircularAmplificationCircuit(
             amplifiersE.tick()
         }
 
-        println()
+
 
         return bufferEA.lastPrintedValue
     }
