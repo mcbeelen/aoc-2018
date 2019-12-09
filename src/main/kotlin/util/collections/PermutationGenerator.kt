@@ -1,4 +1,4 @@
-package y2019.day07_amplifiers
+package util.collections
 
 
 fun generatePermutations(elements: List<Int>): Sequence<List<Int>> = sequence {

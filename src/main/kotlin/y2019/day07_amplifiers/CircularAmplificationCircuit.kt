@@ -1,5 +1,6 @@
 package y2019.day07_amplifiers
 
+import util.collections.generatePermutations
 import y2019.computer.Buffer
 import y2019.computer.BufferWithMemory
 import y2019.computer.IntcodeComputer

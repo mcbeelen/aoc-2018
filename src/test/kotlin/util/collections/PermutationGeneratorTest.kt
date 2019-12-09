@@ -1,4 +1,4 @@
-package y2019.day07_amplifiers
+package util.collections
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo

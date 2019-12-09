@@ -4,35 +4,6 @@ import y2019.computer.ParameterMode.IMMEDIATE
 import y2019.computer.ParameterMode.POSITION
 import kotlin.Int.Companion.MIN_VALUE
 
-data class State(val memory: Memory, val instructionPointer: Int = 0, val relativeBase: Int = 0) {
-
-    constructor(sourceCode: String) : this(memory = Memory(sourceCode))
-    constructor(sourceCode: String, instructionPointer: Int) : this(memory = Memory(sourceCode), instructionPointer = instructionPointer)
-
-    fun updateMemory(effect: Effect): State = this.copy(
-            memory = memory.updateMemory(effect)
-    )
-
-    fun jump(effect: Effect, instruction: Instruction) = this.copy(
-            instructionPointer = effect.goto(instructionPointer, instruction.numberOfParameters())
-    )
-
-    fun readFromMemory(address: Int) = memory.read(address)
-
-    fun fetch() = readFromMemory(instructionPointer)
-
-}
-
-data class Memory(private val program: List<Int>) {
-    constructor(sourceCode: String) : this(program = compile(sourceCode))
-
-    fun updateMemory(effect: Effect): Memory = this.copy(
-            program = effect.apply(program)
-    )
-
-    fun read(address: Int): Int = program[address]
-}
-
 class IntcodeComputer(
         private val input: Input = AlwaysZeroInput(),
         private val output: Output = WriteToSystemOutOutput(),
@@ -64,9 +35,7 @@ class IntcodeComputer(
 
         val effect: Effect = instruction.handle(parameters)
 
-        state = state
-                .updateMemory(effect)
-                .jump(effect, instruction)
+        state = state.applyEffects(effect, instruction)
     }
 
 
@@ -139,10 +108,21 @@ class IntcodeComputer(
     fun isProgramFinished() = state.instructionPointer == MIN_VALUE
 
     private fun currentInstruction() = state.fetch()
+
+    fun runProgram() {
+        while (!isProgramFinished()) {
+            tick()
+        }
+    }
 }
 
+typealias Address = Int
+typealias Value = Int
+
+typealias Modification = Pair<Address, Value>
 
 interface Update {
+    fun getModification(): Modification
 
 }
 
@@ -154,12 +134,15 @@ interface Effect {
     fun goto(instructionPointer: Int, numberOfParameters: Int) = instructionPointer + 1 + numberOfParameters
 }
 
-data class WriteToMemoryEffect(val address: Int, val value: Int) : Effect, Update {
+
+data class WriteToMemoryEffect(val address: Address, val value: Value) : Effect, Update {
     override fun apply(intCode: List<Int>): List<Int> {
         val newIntCode = intCode.toMutableList()
         newIntCode[address] = value
         return newIntCode
     }
+
+    override fun getModification(): Pair<Address, Value> = Pair(address, value)
 
 }
 
