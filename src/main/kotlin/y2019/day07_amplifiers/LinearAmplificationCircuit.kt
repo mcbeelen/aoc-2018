@@ -2,10 +2,10 @@ package y2019.day07_amplifiers
 
 import y2019.computer.Buffer
 import y2019.computer.IntcodeComputer
-import y2019.computer.parseIntCode
+import y2019.computer.compile
 
 class LinearAmplificationCircuit(
-        val program: List<Int> = parseIntCode(AMPLIFIER_CONTROLLER_SOFTWARE),
+        val byteCode: List<Int> = compile(AMPLIFIER_CONTROLLER_SOFTWARE),
         private val phaseSetting: List<Int>) {
 
     private val DEFAULT_INPUT: Int = 0
@@ -20,28 +20,28 @@ class LinearAmplificationCircuit(
     private var amplifiersA = IntcodeComputer(
             input = initialInput,
             output = bufferAB,
-            sourceCode = program)
+            byteCode = byteCode)
 
     private var amplifiersB = IntcodeComputer(
             input = bufferAB,
             output = bufferBC,
-            sourceCode = program)
+            byteCode = byteCode)
 
     private var amplifiersC = IntcodeComputer(
             input = bufferBC,
             output = bufferCD,
-            sourceCode = program)
+            byteCode = byteCode)
 
     private var amplifiersD = IntcodeComputer(
             input = bufferCD,
             output = bufferDE,
-            sourceCode = program)
+            byteCode = byteCode)
 
 
     private var amplifiersE = IntcodeComputer(
             input = bufferDE,
             output = output,
-            sourceCode = program)
+            byteCode = byteCode)
 
 
     init {
@@ -103,7 +103,7 @@ fun calculateThrustSignalInLinearConfiguration(program: List<Int>, phaseSetting:
 
 
 fun main() {
-    println(findMaxThrustSignalInLinearConfiguration(parseIntCode(AMPLIFIER_CONTROLLER_SOFTWARE)))
+    println(findMaxThrustSignalInLinearConfiguration(compile(AMPLIFIER_CONTROLLER_SOFTWARE)))
 }
 
 internal const val AMPLIFIER_CONTROLLER_SOFTWARE = "3,8,1001,8,10,8,105,1,0,0,21,34,59,68,89,102,183,264,345,426,99999,3,9,102,5,9,9,1001,9,5,9,4,9,99,3,9,101,3,9,9,1002,9,5,9,101,5,9,9,1002,9,3,9,1001,9,5,9,4,9,99,3,9,101,5,9,9,4,9,99,3,9,102,4,9,9,101,3,9,9,102,5,9,9,101,4,9,9,4,9,99,3,9,1002,9,5,9,1001,9,2,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,99,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,99,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,99,3,9,1001,9,1,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,1001,9,2,9,4,9,3,9,1002,9,2,9,4,9,99"

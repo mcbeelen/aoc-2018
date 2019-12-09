@@ -3,7 +3,7 @@ package y2019.day05
 import y2019.computer.ConstantInput
 import y2019.computer.IntcodeComputer
 import y2019.computer.Memory
-import y2019.computer.parseIntCode
+import y2019.computer.compile
 
 // Part one: 9654885
 fun main() {
@@ -12,10 +12,9 @@ fun main() {
 }
 
 private fun simulate(input: ConstantInput) {
-    val intCode = parseIntCode(INPUT).toMutableList()
     val simulator = IntcodeComputer(
             input = input,
-            memory = Memory(intCode))
+            sourceCode = INPUT)
 
     while (!simulator.isProgramFinished()) {
         simulator.tick()

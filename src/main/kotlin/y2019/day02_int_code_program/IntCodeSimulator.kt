@@ -2,7 +2,7 @@ package y2019.day02_int_code_program
 
 import y2019.computer.IntcodeComputer
 import y2019.computer.Memory
-import y2019.computer.parseIntCode
+import y2019.computer.compile
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
@@ -33,17 +33,17 @@ private fun partOne() {
 }
 
 private fun runSimulator(noun: Int, verb: Int): Int {
-    val intCode = parseIntCode(INPUT).toMutableList()
-    intCode[1] = noun
-    intCode[2] = verb
+    val byteCode = compile(INPUT).toMutableList()
+    byteCode[1] = noun
+    byteCode[2] = verb
 
-    val simulator = IntcodeComputer(memory = Memory(intCode))
+    val simulator = IntcodeComputer(byteCode = byteCode)
 
     while (!simulator.isProgramFinished()) {
         simulator.tick()
     }
 
-    return simulator.memory.program[0]
+    return simulator.state.readFromMemory(0)
 }
 
 

@@ -1,25 +1,55 @@
 package y2019.computer
 
-import y2019.computer.ParameterMode.*
+import y2019.computer.ParameterMode.IMMEDIATE
+import y2019.computer.ParameterMode.POSITION
 import kotlin.Int.Companion.MIN_VALUE
 
-data class Memory(val program: List<Int>, val instructionPointer: Int = 0)
+data class State(val memory: Memory, val instructionPointer: Int = 0, val relativeBase: Int = 0) {
+
+    constructor(sourceCode: String) : this(memory = Memory(sourceCode))
+    constructor(sourceCode: String, instructionPointer: Int) : this(memory = Memory(sourceCode), instructionPointer = instructionPointer)
+
+    fun updateMemory(effect: Effect): State = this.copy(
+            memory = memory.updateMemory(effect)
+    )
+
+    fun jump(effect: Effect, instruction: Instruction) = this.copy(
+            instructionPointer = effect.goto(instructionPointer, instruction.numberOfParameters())
+    )
+
+    fun readFromMemory(address: Int) = memory.read(address)
+
+    fun fetch() = readFromMemory(instructionPointer)
+
+}
+
+data class Memory(private val program: List<Int>) {
+    constructor(sourceCode: String) : this(program = compile(sourceCode))
+
+    fun updateMemory(effect: Effect): Memory = this.copy(
+            program = effect.apply(program)
+    )
+
+    fun read(address: Int): Int = program[address]
+}
 
 class IntcodeComputer(
         private val input: Input = AlwaysZeroInput(),
-        private val output : Output = WriteToSystemOutOutput(),
-        internal var memory : Memory) {
+        private val output: Output = WriteToSystemOutOutput(),
+        internal var state: State) {
 
     constructor(
             input: Input = AlwaysZeroInput(),
-            output : Output = WriteToSystemOutOutput(),
-            sourceCode: List<Int>,
-            instructionPointer: Int = 0) : this(input, output, Memory(sourceCode, instructionPointer))
+            output: Output = WriteToSystemOutOutput(),
+            sourceCode: String,
+            instructionPointer: Int = 0) : this(input, output, State(sourceCode, instructionPointer))
 
-    constructor(intCode: String) : this(memory = Memory(parseIntCode(intCode)))
-    constructor(input: Input, output: Output, sourceCode: List<Int>) : this(input, output, Memory(sourceCode))
-    constructor(sourceCode: String, instructionPointer: Int) : this(memory = Memory(parseIntCode(sourceCode), instructionPointer))
+    constructor(sourceCode: String) : this(state = State(sourceCode))
+    constructor(input: Input, output: Output, sourceCode: String) : this(input = input, output = output, state = State(sourceCode))
+    constructor(input: Input, output: Output, byteCode: List<Int>) : this(input = input, output = output, state = State(memory = Memory(byteCode)))
 
+    constructor(sourceCode: String, instructionPointer: Int) : this(state = State(sourceCode, instructionPointer))
+    constructor(byteCode: List<Int>) : this(state = State(memory = Memory(byteCode)))
 
 
     fun tick() {
@@ -33,10 +63,10 @@ class IntcodeComputer(
         val parameters = fetchParameters(opcode, parameterModeFlags)
 
         val effect: Effect = instruction.handle(parameters)
-        val newIntCode = effect.apply(memory.program)
-        val newInstructionPointer = effect.goto(memory.instructionPointer, instruction.numberOfParameters())
 
-        memory = Memory(newIntCode, newInstructionPointer)
+        state = state
+                .updateMemory(effect)
+                .jump(effect, instruction)
     }
 
 
@@ -48,12 +78,12 @@ class IntcodeComputer(
             1 -> AddInstruction()
             2 -> MultiplyInstruction()
             3 -> ReadInputInstruction(input)
-            4 -> WriteToOutputInstruction(memory.program, output)
+            4 -> WriteToOutputInstruction(output)
             5 -> JumpIfTrueInstruction()
             6 -> JumpIfFalseInstruction()
             7 -> LessThanInstruction()
             8 -> EqualsInstruction()
-            99 -> ExitInstruction(memory.instructionPointer)
+            99 -> ExitInstruction(state.instructionPointer)
             else -> UnknownOpcodeInstruction(currentInstruction(), opcode)
         }
 
@@ -61,7 +91,7 @@ class IntcodeComputer(
 
     private fun fetchParameters(opcode: Int, parameterModes: List<ParameterMode>): List<Int> {
 
-        val instructionPointer = memory.instructionPointer
+        val instructionPointer = state.instructionPointer
 
         return when (opcode) {
             1 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
@@ -77,7 +107,7 @@ class IntcodeComputer(
     }
 
     private fun fetchParameter(index: Int, parameterModes: List<ParameterMode>): Int {
-        val instructionPointer = memory.instructionPointer
+        val instructionPointer = state.instructionPointer
         return when (determineParameterMode(index, parameterModes)) {
             POSITION -> readParameterByPosition(instructionPointer + 1 + index)
             IMMEDIATE -> readParameterImmediatly(instructionPointer + 1 + index)
@@ -85,12 +115,10 @@ class IntcodeComputer(
 
     }
 
-    private fun readParameterByPosition(index: Int) = readParameterImmediatly(memory.program[index])
+    private fun readParameterByPosition(address: Int) = readParameterImmediatly(state.readFromMemory(address))
 
 
-    private fun readParameterImmediatly(index: Int) = memory.program[index]
-
-
+    private fun readParameterImmediatly(address: Int) = state.readFromMemory(address)
 
 
     private fun determineParameterMode(index: Int, parameterModeFlags: List<ParameterMode>) =
@@ -108,9 +136,14 @@ class IntcodeComputer(
     }
 
 
-    fun isProgramFinished() = memory.instructionPointer == MIN_VALUE
+    fun isProgramFinished() = state.instructionPointer == MIN_VALUE
 
-    private fun currentInstruction() = memory.program[memory.instructionPointer]
+    private fun currentInstruction() = state.fetch()
+}
+
+
+interface Update {
+
 }
 
 interface Effect {
@@ -121,7 +154,7 @@ interface Effect {
     fun goto(instructionPointer: Int, numberOfParameters: Int) = instructionPointer + 1 + numberOfParameters
 }
 
-data class WriteToMemoryEffect(val address: Int, val value: Int) : Effect {
+data class WriteToMemoryEffect(val address: Int, val value: Int) : Effect, Update {
     override fun apply(intCode: List<Int>): List<Int> {
         val newIntCode = intCode.toMutableList()
         newIntCode[address] = value
@@ -141,5 +174,5 @@ class StopEffect() : Effect {
     override fun goto(instructionPointer: Int, numberOfParameters: Int) = MIN_VALUE
 }
 
-fun parseIntCode(intCode: String) = intCode.split(',').map { it.toInt() }
+fun compile(sourceCode: String) = sourceCode.split(',').map { it.toInt() }
 

@@ -16,8 +16,8 @@ class IntcodeComputerTest {
 
         simulator.tick()
 
-        assertThat(simulator.memory.program[3], equalTo(70))
-        assertThat(simulator.memory.instructionPointer, equalTo(4))
+        assertThat(simulator.state.readFromMemory(3), equalTo(70))
+        assertThat(simulator.state.instructionPointer, equalTo(4))
     }
 
     @Test
@@ -25,18 +25,22 @@ class IntcodeComputerTest {
         val intCode = "1,9,10,70,2,3,11,0,99,30,40,50"
         val simulator = IntcodeComputer(intCode, 4)
 
-        assertThat(simulator.memory.program[0], equalTo(3500))
-        assertThat(simulator.memory.instructionPointer, equalTo(8))
+        simulator.tick()
+
+        assertThat(simulator.state.readFromMemory(0), equalTo(3500))
+        assertThat(simulator.state.instructionPointer, equalTo(8))
     }
 
 
     @Test
     fun `cursor points to 99 means program is finished`() {
-        val intCode = "1,9,10,70,2,3,11,0,99,30,40,50"
+        val sourceCode = "1,9,10,70,2,3,11,0,99,30,40,50"
 
-        assertFalse(IntcodeComputer(intCode, 0).isProgramFinished())
-        assertFalse(IntcodeComputer(intCode, 4).isProgramFinished())
-        assertTrue(IntcodeComputer(intCode, 8).isProgramFinished())
+        assertFalse(IntcodeComputer(sourceCode, 0).isProgramFinished())
+        assertFalse(IntcodeComputer(sourceCode, 4).isProgramFinished())
+        val intcodeComputer = IntcodeComputer(sourceCode, 8)
+        intcodeComputer.tick()
+        assertTrue(intcodeComputer.isProgramFinished())
 
     }
 }

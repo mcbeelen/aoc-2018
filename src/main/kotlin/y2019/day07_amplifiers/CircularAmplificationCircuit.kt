@@ -3,11 +3,11 @@ package y2019.day07_amplifiers
 import y2019.computer.Buffer
 import y2019.computer.BufferWithMemory
 import y2019.computer.IntcodeComputer
-import y2019.computer.parseIntCode
+import y2019.computer.compile
 
-class CircularAmplificationCircuit(
-        val program: List<Int> = parseIntCode(AMPLIFIER_CONTROLLER_SOFTWARE),
-        phaseSetting: List<Int>) {
+class CircularAmplificationCircuit(byteCode: List<Int>, phaseSetting: List<Int>) {
+
+    // constructor(phaseSetting) : this(byteCode = compile(AMPLIFIER_CONTROLLER_SOFTWARE), phaseSetting = phaseSetting)
 
     private val DEFAULT_INPUT: Int = 0
     private val bufferEA = BufferWithMemory()
@@ -20,28 +20,28 @@ class CircularAmplificationCircuit(
     private var amplifiersA = IntcodeComputer(
             input = bufferEA,
             output = bufferAB,
-            sourceCode = program)
+            byteCode = byteCode)
 
     private var amplifiersB = IntcodeComputer(
             input = bufferAB,
             output = bufferBC,
-            sourceCode = program)
+            byteCode = byteCode)
 
     private var amplifiersC = IntcodeComputer(
             input = bufferBC,
             output = bufferCD,
-            sourceCode = program)
+            byteCode = byteCode)
 
     private var amplifiersD = IntcodeComputer(
             input = bufferCD,
             output = bufferDE,
-            sourceCode = program)
+            byteCode = byteCode)
 
 
     private var amplifiersE = IntcodeComputer(
             input = bufferDE,
             output = bufferEA,
-            sourceCode = program)
+            byteCode = byteCode)
 
 
     init {
@@ -105,7 +105,7 @@ class CircularAmplificationCircuit(
 
 fun findMaxThrusterSignalInCircularConfiguration(sourceCode: String): Int {
 
-    val byteCode = parseIntCode(sourceCode)
+    val byteCode = compile(sourceCode)
 
     val phaseSettings = listOf(5, 6, 7, 8, 9)
     return generatePermutations(phaseSettings)
