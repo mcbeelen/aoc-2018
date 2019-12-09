@@ -11,13 +11,22 @@ class ParameterModeRelativeTest {
     @Test
     fun `it should support relative mode`() {
 
-        val sourceCode = "204,4,99,0,1"
+        verifyRelativeBaseWithShift("204,4,99,0,1", 1)
 
+    }
+
+    @Test
+    fun `Opcode 9 should change the relativeBase`() {
+        verifyRelativeBaseWithShift("9,1,204,4,99,1", 1)
+        verifyRelativeBaseWithShift("109,7,204,3,99,5,6,7,8,9,10,11", 10)
+
+    }
+
+    private fun verifyRelativeBaseWithShift(sourceCode: String, expected: Int) {
         val output = Buffer()
         val boardComputer = IntcodeComputer(sourceCode = sourceCode, output = output)
         boardComputer.runProgram()
 
-        assertThat(output.read(), equalTo(1))
-
+        assertThat(output.read(), equalTo(expected))
     }
 }

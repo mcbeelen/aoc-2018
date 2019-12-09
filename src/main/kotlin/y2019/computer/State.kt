@@ -17,8 +17,9 @@ data class State(val memory: Memory, val instructionPointer: Int = 0, val relati
     fun fetch() = readFromMemory(instructionPointer)
 
     fun applyEffects(effect: Effect, instruction: Instruction): State {
-        return update(effect).jump(effect, instruction)
+        return update(effect).jump(effect, instruction).shift(effect)
     }
+
 
     private fun update(effect: Effect) = if (effect is Update) applyUpdate(effect) else this
 
@@ -31,6 +32,12 @@ data class State(val memory: Memory, val instructionPointer: Int = 0, val relati
     private fun jump(effect: Effect, instruction: Instruction) = this.copy(
             instructionPointer = effect.goto(instructionPointer, instruction.numberOfParameters())
     )
+
+    private fun shift(effect: Effect) = if (effect is RelativeBaseAdjustment) applyAdjustment(effect) else this
+
+    private fun applyAdjustment(relativeBaseAdjustment: RelativeBaseAdjustment) = this.copy(
+            relativeBase = relativeBase + relativeBaseAdjustment.getAdjustment())
+
 
     fun readRelativeParam(index: Int): Int {
         val offset = readFromMemory(instructionPointer + 1 + index)

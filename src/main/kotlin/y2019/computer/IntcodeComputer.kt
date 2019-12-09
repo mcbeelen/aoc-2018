@@ -53,6 +53,7 @@ class IntcodeComputer(
             6 -> JumpIfFalseInstruction()
             7 -> LessThanInstruction()
             8 -> EqualsInstruction()
+            9 -> AdjustRelativeBaseInstruction()
             99 -> ExitInstruction(state.instructionPointer)
             else -> UnknownOpcodeInstruction(currentInstruction(), opcode)
         }
@@ -72,6 +73,7 @@ class IntcodeComputer(
             6 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
             7 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
             8 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
+            9 -> listOf(fetchParameter(0, parameterModes))
             else -> emptyList()
         }
     }
@@ -125,7 +127,10 @@ typealias Modification = Pair<Address, Value>
 
 interface Update {
     fun getModification(): Modification
+}
 
+interface RelativeBaseAdjustment {
+    fun getAdjustment() : Int
 }
 
 interface Effect {
@@ -135,6 +140,8 @@ interface Effect {
 
     fun goto(instructionPointer: Int, numberOfParameters: Int) = instructionPointer + 1 + numberOfParameters
 }
+
+
 
 
 data class WriteToMemoryEffect(val address: Address, val value: Value) : Effect, Update {
@@ -157,6 +164,12 @@ class JumpToEffect(val position: Int) : Effect {
 
 class StopEffect() : Effect {
     override fun goto(instructionPointer: Int, numberOfParameters: Int) = MIN_VALUE
+}
+
+
+class AdjustRelativeBaseEffect(private val value: Int) : Effect, RelativeBaseAdjustment {
+    override fun getAdjustment() = value
+
 }
 
 fun compile(sourceCode: String) = sourceCode.split(',').map { it.toInt() }

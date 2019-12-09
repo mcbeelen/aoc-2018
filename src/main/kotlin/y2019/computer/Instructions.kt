@@ -92,6 +92,13 @@ class EqualsInstruction : Instruction {
         WriteToMemoryEffect(parameters[2], 0)
 }
 
+class AdjustRelativeBaseInstruction : Instruction {
+    override fun numberOfParameters() = 1
+
+    override fun handle(parameters: List<Int>) = AdjustRelativeBaseEffect(parameters[0])
+}
+
+
 class ExitInstruction(val instructionPointer: Int) : Instruction {
     override fun handle(parameters: List<Int>): StopEffect {
         return StopEffect()
