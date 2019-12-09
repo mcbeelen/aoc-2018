@@ -32,6 +32,11 @@ data class State(val memory: Memory, val instructionPointer: Int = 0, val relati
             instructionPointer = effect.goto(instructionPointer, instruction.numberOfParameters())
     )
 
+    fun readRelativeParam(index: Int): Int {
+        val offset = readFromMemory(instructionPointer + 1 + index)
+        return readFromMemory(relativeBase + offset)
+    }
+
 }
 
 fun convertToMemoryMap(byteCode: List<Int>): Map<Int, Int> {

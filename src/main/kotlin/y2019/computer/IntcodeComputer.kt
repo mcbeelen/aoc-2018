@@ -2,6 +2,7 @@ package y2019.computer
 
 import y2019.computer.ParameterMode.IMMEDIATE
 import y2019.computer.ParameterMode.POSITION
+import y2019.computer.ParameterMode.RELATIVE
 import kotlin.Int.Companion.MIN_VALUE
 
 class IntcodeComputer(
@@ -80,6 +81,7 @@ class IntcodeComputer(
         return when (determineParameterMode(index, parameterModes)) {
             POSITION -> readParameterByPosition(instructionPointer + 1 + index)
             IMMEDIATE -> readParameterImmediatly(instructionPointer + 1 + index)
+            RELATIVE -> state.readRelativeParam(index)
         }
 
     }
