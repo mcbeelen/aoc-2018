@@ -1,13 +1,16 @@
 package y2019.computer
 
+import java.math.BigInteger
+import java.math.BigInteger.ZERO
 
-data class State(val memory: Memory, val instructionPointer: Int = 0, val relativeBase: Int = 0) {
+
+data class State(val memory: Memory, val instructionPointer: Int = 0, val relativeBase: Long = 0) {
 
     constructor(sourceCode: String) : this(memory = Memory(sourceCode))
     constructor(sourceCode: String, instructionPointer: Int) : this(memory = Memory(sourceCode), instructionPointer = instructionPointer)
 
 
-    fun readFromMemory(address: Int): Int {
+    fun readFromMemory(address: Int): Value {
         if (address < 0) {
             throw IllegalArgumentException("Address $address can NOT be read from")
         }
@@ -39,15 +42,15 @@ data class State(val memory: Memory, val instructionPointer: Int = 0, val relati
             relativeBase = relativeBase + relativeBaseAdjustment.getAdjustment())
 
 
-    fun readRelativeParam(index: Int): Int {
+    fun readRelativeParam(index: Int): Value {
         val offset = readFromMemory(instructionPointer + 1 + index)
-        return readFromMemory(relativeBase + offset)
+        return readFromMemory((offset + BigInteger.valueOf(relativeBase)).toAddress())
     }
 
 }
 
-fun convertToMemoryMap(byteCode: List<Int>): Map<Int, Int> {
-    val map: MutableMap<Int, Int> = HashMap()
+fun convertToMemoryMap(byteCode: List<Value>): Map<Address, Value> {
+    val map: MutableMap<Address, Value> = HashMap()
     byteCode.forEachIndexed { index, it -> map.put(index, it) }
     return map
 }
@@ -62,5 +65,5 @@ data class Memory(private val program: Map<Address, Value>) {
 
     fun updateMemory(modification: Modification) = Memory(program + modification)
 
-    fun read(address: Int): Int = program.getValue(address)
+    fun read(address: Address): Value = program.getOrDefault(address, ZERO)
 }

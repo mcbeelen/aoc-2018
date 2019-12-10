@@ -4,13 +4,15 @@ import util.collections.generatePermutations
 import y2019.computer.Buffer
 import y2019.computer.BufferWithMemory
 import y2019.computer.IntcodeComputer
+import y2019.computer.Value
 import y2019.computer.compile
+import java.math.BigInteger.ZERO
 
-class CircularAmplificationCircuit(byteCode: List<Int>, phaseSetting: List<Int>) {
+class CircularAmplificationCircuit(byteCode: List<Value>, phaseSetting: List<Int>) {
 
     // constructor(phaseSetting) : this(byteCode = compile(AMPLIFIER_CONTROLLER_SOFTWARE), phaseSetting = phaseSetting)
 
-    private val DEFAULT_INPUT: Int = 0
+    private val DEFAULT_INPUT = ZERO
     private val bufferEA = BufferWithMemory()
     private val bufferAB = Buffer()
     private val bufferBC = Buffer()
@@ -53,11 +55,11 @@ class CircularAmplificationCircuit(byteCode: List<Int>, phaseSetting: List<Int>)
     }
 
     private fun configureInitialPhaseSettingsInAmplifiers(phaseSetting: List<Int>) {
-        bufferEA.write(phaseSetting[0])
-        bufferAB.write(phaseSetting[1])
-        bufferBC.write(phaseSetting[2])
-        bufferCD.write(phaseSetting[3])
-        bufferDE.write(phaseSetting[4])
+        bufferEA.write(phaseSetting[0].toBigInteger())
+        bufferAB.write(phaseSetting[1].toBigInteger())
+        bufferBC.write(phaseSetting[2].toBigInteger())
+        bufferCD.write(phaseSetting[3].toBigInteger())
+        bufferDE.write(phaseSetting[4].toBigInteger())
 
         amplifiersA.tick()
         amplifiersB.tick()
@@ -67,7 +69,7 @@ class CircularAmplificationCircuit(byteCode: List<Int>, phaseSetting: List<Int>)
     }
 
 
-    fun calculateAmplification(): Int {
+    fun calculateAmplification(): Value {
 
         println()
         while (!amplifiersD.isProgramFinished()) {
@@ -104,7 +106,7 @@ class CircularAmplificationCircuit(byteCode: List<Int>, phaseSetting: List<Int>)
 }
 
 
-fun findMaxThrusterSignalInCircularConfiguration(sourceCode: String): Int {
+fun findMaxThrusterSignalInCircularConfiguration(sourceCode: String): Value {
 
     val byteCode = compile(sourceCode)
 
@@ -115,7 +117,7 @@ fun findMaxThrusterSignalInCircularConfiguration(sourceCode: String): Int {
 
 }
 
-fun calculateThrustSignalInCircularConfiguration(byteCode: List<Int>, phaseSetting: List<Int>): Int {
+fun calculateThrustSignalInCircularConfiguration(byteCode: List<Value>, phaseSetting: List<Int>): Value {
     return CircularAmplificationCircuit(byteCode, phaseSetting).calculateAmplification()
 
 }

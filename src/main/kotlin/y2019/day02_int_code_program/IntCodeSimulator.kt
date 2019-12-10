@@ -2,7 +2,9 @@ package y2019.day02_int_code_program
 
 import y2019.computer.IntcodeComputer
 import y2019.computer.Memory
+import y2019.computer.Value
 import y2019.computer.compile
+import java.math.BigInteger
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
@@ -15,10 +17,11 @@ fun main() {
 }
 
 private fun partTwo() {
-    for (noun in 0..99) {
-        for (verb in 0..99) {
+    val neededAnswer = BigInteger.valueOf(19690720L)
+    for (noun in 0..99L) {
+        for (verb in 0..99L) {
             val output = runSimulator(noun, verb)
-            if (output == 19690720) {
+            if (output == neededAnswer) {
                 println(noun * 100 + verb)
             }
         }
@@ -26,16 +29,16 @@ private fun partTwo() {
 }
 
 private fun partOne() {
-    val noun = 12
-    val verb = 2
+    val noun = 12L
+    val verb = 2L
     val output = runSimulator(noun, verb)
     println(output)
 }
 
-private fun runSimulator(noun: Int, verb: Int): Int {
+private fun runSimulator(noun: Long, verb: Long): Value {
     val byteCode = compile(INPUT).toMutableList()
-    byteCode[1] = noun
-    byteCode[2] = verb
+    byteCode[1] = noun.toBigInteger()
+    byteCode[2] = verb.toBigInteger()
 
     val simulator = IntcodeComputer(byteCode = byteCode)
 

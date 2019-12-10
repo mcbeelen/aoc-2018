@@ -2,14 +2,17 @@ package y2019.day07_amplifiers
 
 import util.collections.generatePermutations
 import y2019.computer.Buffer
+import y2019.computer.ByteCode
 import y2019.computer.IntcodeComputer
+import y2019.computer.Value
 import y2019.computer.compile
+import java.math.BigInteger.ZERO
 
 class LinearAmplificationCircuit(
-        val byteCode: List<Int> = compile(AMPLIFIER_CONTROLLER_SOFTWARE),
+        byteCode: ByteCode = compile(AMPLIFIER_CONTROLLER_SOFTWARE),
         private val phaseSetting: List<Int>) {
 
-    private val DEFAULT_INPUT: Int = 0
+    private val DEFAULT_INPUT = ZERO
     private val initialInput = Buffer()
     private val bufferAB = Buffer()
     private val bufferBC = Buffer()
@@ -46,11 +49,11 @@ class LinearAmplificationCircuit(
 
 
     init {
-        initialInput.write(phaseSetting[0])
-        bufferAB.write(phaseSetting[1])
-        bufferBC.write(phaseSetting[2])
-        bufferCD.write(phaseSetting[3])
-        bufferDE.write(phaseSetting[4])
+        initialInput.write(phaseSetting[0].toBigInteger())
+        bufferAB.write(phaseSetting[1].toBigInteger())
+        bufferBC.write(phaseSetting[2].toBigInteger())
+        bufferCD.write(phaseSetting[3].toBigInteger())
+        bufferDE.write(phaseSetting[4].toBigInteger())
         initialInput.write(DEFAULT_INPUT)
 
         amplifiersA.tick()
@@ -62,7 +65,7 @@ class LinearAmplificationCircuit(
     }
 
 
-    fun calculateAmplification(): Int {
+    fun calculateAmplification(): Value {
 
         while (bufferAB.isEmpty()) {
             amplifiersA.tick()
@@ -88,14 +91,14 @@ class LinearAmplificationCircuit(
 }
 
 
-fun findMaxThrustSignalInLinearConfiguration(program: List<Int>): Int {
+fun findMaxThrustSignalInLinearConfiguration(program: ByteCode): Value {
     val phaseSettings = listOf(0, 1, 2, 3, 4)
     return generatePermutations(phaseSettings)
             .map { phaseSetting -> calculateThrustSignalInLinearConfiguration(program, phaseSetting) }
             .max()!!
 }
 
-fun calculateThrustSignalInLinearConfiguration(program: List<Int>, phaseSetting: List<Int>): Int {
+fun calculateThrustSignalInLinearConfiguration(program: ByteCode, phaseSetting: List<Int>): Value {
 
     val circuit = LinearAmplificationCircuit(program, phaseSetting)
     return circuit.calculateAmplification()

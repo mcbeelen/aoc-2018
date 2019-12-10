@@ -61,7 +61,7 @@ class PartTwoTest  {
             simulator.tick()
         }
 
-        assertThat(output.lastPrintedValue, equalTo(expected))
+        assertThat(output.lastPrintedValue.intValueExact(), equalTo(expected))
     }
 
 

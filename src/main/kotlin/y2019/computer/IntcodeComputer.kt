@@ -3,7 +3,20 @@ package y2019.computer
 import y2019.computer.ParameterMode.IMMEDIATE
 import y2019.computer.ParameterMode.POSITION
 import y2019.computer.ParameterMode.RELATIVE
+import java.math.BigInteger
 import kotlin.Int.Companion.MIN_VALUE
+
+
+typealias Address = Int
+typealias Value = BigInteger
+typealias Opcode = Int
+typealias Modification = Pair<Address, Value>
+
+typealias ByteCode = List<Value>
+
+internal fun BigInteger.toAddress() = this.intValueExact()
+internal fun bigInt(int: Int) = int.toBigInteger()
+internal fun bigInt(value: Long) = value.toBigInteger()
 
 class IntcodeComputer(
         private val input: Input = AlwaysZeroInput(),
@@ -17,11 +30,10 @@ class IntcodeComputer(
             instructionPointer: Int = 0) : this(input, output, State(sourceCode, instructionPointer))
 
     constructor(sourceCode: String) : this(state = State(sourceCode))
-    constructor(input: Input, output: Output, sourceCode: String) : this(input = input, output = output, state = State(sourceCode))
-    constructor(input: Input, output: Output, byteCode: List<Int>) : this(input = input, output = output, state = State(memory = Memory(byteCode)))
+    constructor(input: Input, output: Output, byteCode: List<Value>) : this(input = input, output = output, state = State(memory = Memory(byteCode)))
 
     constructor(sourceCode: String, instructionPointer: Int) : this(state = State(sourceCode, instructionPointer))
-    constructor(byteCode: List<Int>) : this(state = State(memory = Memory(byteCode)))
+    constructor(byteCode: List<Value>) : this(state = State(memory = Memory(byteCode)))
 
 
     fun tick() {
@@ -40,9 +52,9 @@ class IntcodeComputer(
     }
 
 
-    private fun currentOpcode(currentInstruction: Int) = currentInstruction % 100
+    private fun currentOpcode(currentInstruction: BigInteger): Opcode = currentInstruction.mod(BigInteger.valueOf(100)).intValueExact()
 
-    private fun fetchInstruction(opcode: Int): Instruction {
+    private fun fetchInstruction(opcode: Opcode): Instruction {
 
         return when (opcode) {
             1 -> AddInstruction()
@@ -60,25 +72,36 @@ class IntcodeComputer(
 
     }
 
-    private fun fetchParameters(opcode: Int, parameterModes: List<ParameterMode>): List<Int> {
+    private fun fetchParameters(opcode: Opcode, parameterModes: List<ParameterMode>): List<Value> {
 
         val instructionPointer = state.instructionPointer
 
         return when (opcode) {
-            1 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            2 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            3 -> listOf(readParameterImmediatly(instructionPointer + 1))
-            4 -> listOf(fetchParameter(0, parameterModes))
-            5 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
-            6 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes))
-            7 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            8 -> listOf(fetchParameter(0, parameterModes), fetchParameter(1, parameterModes), readParameterImmediatly(instructionPointer + 3))
-            9 -> listOf(fetchParameter(0, parameterModes))
+            1 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes), fetchWriteParameter(2, parameterModes))
+            2 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes), fetchWriteParameter(2, parameterModes))
+            3 -> listOf(fetchWriteParameter(0, parameterModes))
+            4 -> listOf(fetchInputParameter(0, parameterModes))
+            5 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes))
+            6 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes))
+            7 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes), fetchWriteParameter(2, parameterModes))
+            8 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes), fetchWriteParameter(2, parameterModes))
+            9 -> listOf(fetchInputParameter(0, parameterModes))
             else -> emptyList()
         }
     }
 
-    private fun fetchParameter(index: Int, parameterModes: List<ParameterMode>): Int {
+    private fun fetchWriteParameter(index: Int, parameterModes: List<ParameterMode>): Value {
+        val instructionPointer = state.instructionPointer
+        return when (determineParameterMode(index, parameterModes)) {
+            RELATIVE -> {
+                val offset = readParameterImmediatly(instructionPointer + 1 + index)
+                return state.relativeBase.toBigInteger() + offset
+            }
+            else -> readParameterImmediatly(instructionPointer + 1 + index)
+        }
+    }
+
+    private fun fetchInputParameter(index: Address, parameterModes: List<ParameterMode>): Value {
         val instructionPointer = state.instructionPointer
         return when (determineParameterMode(index, parameterModes)) {
             POSITION -> readParameterByPosition(instructionPointer + 1 + index)
@@ -88,10 +111,10 @@ class IntcodeComputer(
 
     }
 
-    private fun readParameterByPosition(address: Int) = readParameterImmediatly(state.readFromMemory(address))
+    private fun readParameterByPosition(address: Address) : Value = readParameterImmediatly(state.readFromMemory(address).toAddress())
 
 
-    private fun readParameterImmediatly(address: Int) = state.readFromMemory(address)
+    private fun readParameterImmediatly(address: Address): Value = state.readFromMemory(address)
 
 
     private fun determineParameterMode(index: Int, parameterModeFlags: List<ParameterMode>) =
@@ -100,8 +123,8 @@ class IntcodeComputer(
             else
                 POSITION
 
-    private fun fetchParameterModeFlags(currentInstruction: Int): List<ParameterMode> {
-        if (currentInstruction <= 99) return emptyList()
+    private fun fetchParameterModeFlags(currentInstruction: Value): List<ParameterMode> {
+        if (currentInstruction.intValueExact() <= 99) return emptyList()
         val instructionCode = currentInstruction.toString()
         return instructionCode.take(instructionCode.length - 2).reversed()
                 .map { toParameterMode(it) }
@@ -120,10 +143,7 @@ class IntcodeComputer(
     }
 }
 
-typealias Address = Int
-typealias Value = Int
 
-typealias Modification = Pair<Address, Value>
 
 interface Update {
     fun getModification(): Modification
@@ -134,10 +154,6 @@ interface RelativeBaseAdjustment {
 }
 
 interface Effect {
-    fun apply(intCode: List<Int>): List<Int> {
-        return intCode
-    }
-
     fun goto(instructionPointer: Int, numberOfParameters: Int) = instructionPointer + 1 + numberOfParameters
 }
 
@@ -145,21 +161,14 @@ interface Effect {
 
 
 data class WriteToMemoryEffect(val address: Address, val value: Value) : Effect, Update {
-    override fun apply(intCode: List<Int>): List<Int> {
-        val newIntCode = intCode.toMutableList()
-        newIntCode[address] = value
-        return newIntCode
-    }
-
     override fun getModification(): Pair<Address, Value> = Pair(address, value)
-
 }
 
 class NoOpEffect : Effect {
 }
 
-class JumpToEffect(val position: Int) : Effect {
-    override fun goto(instructionPointer: Int, numberOfParameters: Int) = position
+class JumpToEffect(val address: Address) : Effect {
+    override fun goto(instructionPointer: Int, numberOfParameters: Int) = address
 }
 
 class StopEffect() : Effect {
@@ -167,10 +176,10 @@ class StopEffect() : Effect {
 }
 
 
-class AdjustRelativeBaseEffect(private val value: Int) : Effect, RelativeBaseAdjustment {
-    override fun getAdjustment() = value
+class AdjustRelativeBaseEffect(private val offset: Int) : Effect, RelativeBaseAdjustment {
+    override fun getAdjustment() = offset
 
 }
 
-fun compile(sourceCode: String) = sourceCode.split(',').map { it.toInt() }
+fun compile(sourceCode: String) : List<Value> = sourceCode.split(',').map { it.toInt().toBigInteger() }
 

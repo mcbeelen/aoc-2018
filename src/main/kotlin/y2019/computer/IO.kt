@@ -1,37 +1,42 @@
 package y2019.computer
 
+import java.math.BigInteger
+import java.math.BigInteger.ZERO
+import java.math.BigInteger.valueOf
 import java.util.LinkedList
 import java.util.Queue
+import kotlin.Long.Companion.MIN_VALUE
 
 interface Input {
-    fun read() : Int
+    fun read() : Value
 }
 
-open class ConstantInput(private val value : Int) : Input {
+open class ConstantInput(private val value : Value) : Input {
+    constructor(int: Int) : this(int.toBigInteger())
     override fun read() = value
 
     override fun toString() = "-> $value"
 
 }
 
-class AlwaysZeroInput : ConstantInput(0)
+class AlwaysZeroInput : ConstantInput(ZERO)
 
 
 
 
 interface Output {
-    fun write(value: Int)
+    fun write(value: Value)
 }
 
 class WriteToSystemOutOutput : Output {
-    override fun write(value: Int) {
+    override fun write(value: Value) {
         println(value)
     }
 }
 
 class LastPrintedReadableOutput : Output {
-    var lastPrintedValue : Int = Int.MIN_VALUE
-    override fun write(value: Int) {
+    var lastPrintedValue : Value = valueOf(MIN_VALUE)
+    override fun write(value: Value) {
         lastPrintedValue = value
     }
 }
@@ -39,11 +44,11 @@ class LastPrintedReadableOutput : Output {
 
 open class Buffer : Input, Output {
 
-    private val storage : Queue<Int> = LinkedList()
+    private val storage : Queue<Value> = LinkedList()
 
     override fun read() = storage.poll()
 
-    override fun write(value: Int) {
+    override fun write(value: Value) {
         storage.offer(value)
     }
 
@@ -52,8 +57,8 @@ open class Buffer : Input, Output {
 }
 
 class BufferWithMemory : Buffer() {
-    var lastPrintedValue : Int = Int.MIN_VALUE
-    override fun write(value: Int) {
+    var lastPrintedValue : Value = MIN_VALUE.toBigInteger()
+    override fun write(value: Value) {
         lastPrintedValue = value
         super.write(value)
     }

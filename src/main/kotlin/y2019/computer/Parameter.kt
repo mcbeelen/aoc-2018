@@ -14,4 +14,4 @@ enum class ParameterMode {
 
 fun toParameterMode(code: Char) = if ('0' == code) POSITION else if ('1' == code) IMMEDIATE else RELATIVE
 
-data class Parameter(val value: Int, val mode: ParameterMode = POSITION)
+data class Parameter(val value: Value, val mode: ParameterMode = POSITION)
