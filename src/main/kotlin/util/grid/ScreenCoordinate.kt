@@ -1,9 +1,26 @@
 package util.grid
 
+import com.google.common.math.IntMath.gcd
 import util.grid.Direction.*
 import kotlin.math.abs
 
 val ORIGIN = ScreenCoordinate(0, 0)
+
+fun at(left: Int, top: Int) = ScreenCoordinate(left, top)
+
+data class Vector(val left: Int = 0, val top: Int = 0)
+
+tailrec fun simplify(vector: Vector) : Vector {
+    val left = vector.left
+    val top = vector.top
+    val absLeft = abs(left)
+    val absTop = abs(top)
+    return when (gcd(absLeft, absTop)) {
+        0 -> vector
+        1 -> vector
+        else -> simplify(Vector(left / gcd(absLeft, absTop), top / gcd(absLeft, absTop)))
+    }
+}
 
 data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<ScreenCoordinate> {
 
@@ -39,6 +56,9 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
     fun isAbove(other: ScreenCoordinate) = this.left == other.left && this.top == other.top - 1
     fun isToTheRightOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left + 1
     fun isToTheLeftOf(other: ScreenCoordinate) = this.top == other.top && this.left == other.left - 1
+
+    fun vectorTo(other: ScreenCoordinate): Vector = Vector(other.left - this.left, other.top - this.top)
+    fun transpose(vector: Vector, steps: Int) = at(this.left + vector.left * steps, this.top + vector.top * steps )
 
 
 }

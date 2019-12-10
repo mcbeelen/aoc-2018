@@ -43,7 +43,14 @@ class ScreenCoordinateTest {
 
     }
 
+    @Test
+    fun `should support transpose`() {
+        val coordinate = at(2, 2)
+        val vector = Vector(3, -1)
+        val transpose = coordinate.transpose(vector, 3)
 
+        assertThat(transpose, isAt(11, -1))
+    }
 }
 
 
