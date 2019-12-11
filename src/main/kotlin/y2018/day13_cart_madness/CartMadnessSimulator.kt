@@ -4,6 +4,7 @@ import y2018.day13_cart_madness.Section.*
 import util.grid.Direction
 import util.grid.Direction.*
 import util.grid.ScreenCoordinate
+import util.grid.Turn
 import java.util.concurrent.atomic.AtomicInteger
 
 class CartMadnessSimulator(input: String) {

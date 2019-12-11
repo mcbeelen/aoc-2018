@@ -52,6 +52,20 @@ class BestMonitoringStationLocationFinderTest {
         assertThat(findNumberOfVisibleAsteroids(at(3, 4), asteroidMap), equalTo(8))
     }
 
+    @Test
+    fun largeExample() {
+        val bestMonitoringStationLocation = findBestMonitoringStationLocation(LARGEST_EXAMPLE)
+        assertThat(bestMonitoringStationLocation.second, equalTo(210))
+        assertThat(bestMonitoringStationLocation.first, equalTo(ScreenCoordinate(11, 13)))
+    }
+
+    @Test
+    fun `200th asteroid blast`() {
+
+        assertThat(asteroidBlastedAs200th(LARGEST_EXAMPLE), equalTo(at(8, 2)))
+        assertThat(asteroidBlastedAs200th(ASTEROID_FIELD), equalTo(at(4, 16)))
+
+    }
 }
 
 
@@ -74,3 +88,26 @@ private const val FIRST_LARGE_EXAMPLE = """
 .##.#..###
 ##...#..#.
 .#....####"""
+
+private const val LARGEST_EXAMPLE = """
+.#..##.###...#######
+##.############..##.
+.#.######.########.#
+.###.#######.####.#.
+#####.##.#.##.###.##
+..#####..#.#########
+####################
+#.####....###.#.#.##
+##.#################
+#####.##.###..####..
+..######..##.#######
+####.##.####...##..#
+.#####..#.######.###
+##...#.##########...
+#.##########.#######
+.####.#.###.###.#.##
+....##.##.###..#####
+.#.#.###########.###
+#.#.#.#####.####.###
+###.##.####.##.#..##    
+"""

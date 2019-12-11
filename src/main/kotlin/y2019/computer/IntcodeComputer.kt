@@ -181,5 +181,5 @@ class AdjustRelativeBaseEffect(private val offset: Int) : Effect, RelativeBaseAd
 
 }
 
-fun compile(sourceCode: String) : List<Value> = sourceCode.split(',').map { it.toInt().toBigInteger() }
+fun compile(sourceCode: String) : List<Value> = sourceCode.split(',').map { it.toLong().toBigInteger() }
 

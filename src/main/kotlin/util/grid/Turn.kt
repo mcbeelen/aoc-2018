@@ -1,4 +1,4 @@
-package y2018.day13_cart_madness
+package util.grid
 
 enum class Turn {
     LEFT,

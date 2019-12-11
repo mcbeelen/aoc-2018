@@ -27,8 +27,12 @@
             <artifactId>funktionale-memoization</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.lanterna</groupId>
+            <artifactId>lanterna</artifactId>
+            <version>3.0.1</version>
+        </dependency>
         -->
-
 
         <dependency>
             <groupId>com.google.guava</groupId>
