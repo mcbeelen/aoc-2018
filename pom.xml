@@ -21,18 +21,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!--
-        <dependency>
-            <groupId>org.funktionale</groupId>
-            <artifactId>funktionale-memoization</artifactId>
-            <version>1.2</version>
-        </dependency>
         <dependency>
             <groupId>com.googlecode.lanterna</groupId>
             <artifactId>lanterna</artifactId>
             <version>3.0.1</version>
         </dependency>
-        -->
 
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -53,6 +46,14 @@
             <version>1.6.22</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.funktionale</groupId>
+            <artifactId>funktionale-memoization</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
@@ -64,6 +65,7 @@
             <artifactId>kotlinx-coroutines-core</artifactId>
             <version>1.1.0</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.slf4j</groupId>

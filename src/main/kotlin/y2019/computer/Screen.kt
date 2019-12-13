@@ -2,11 +2,23 @@ package y2019.computer
 
 import util.grid.ScreenCoordinate
 
-class Screen {
+interface ScreenOutputStream {
+    fun paint(coordinate: ScreenCoordinate, char: Char)
+    fun stopScreen() {}
+}
+
+class NoOpScreenOutputScreen : ScreenOutputStream {
+    override fun paint(coordinate: ScreenCoordinate, char: Char) {
+        // Do nothing
+    }
+
+}
+
+class InmemoryScreenOutputStream : ScreenOutputStream {
 
     private val buffer: MutableMap<ScreenCoordinate, Char> = HashMap()
 
-    fun paint(coordinate: ScreenCoordinate, char: Char) {
+    override fun paint(coordinate: ScreenCoordinate, char: Char) {
         buffer[coordinate] = char
     }
 
