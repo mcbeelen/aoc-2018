@@ -68,8 +68,8 @@ class ArcadeAdapter(private val screen: ScreenOutputStream, val controller: Scre
 const val EMPTY = ' '
 const val WALL = '#'
 const val BLOCK = '='
-const val PADDLE = '_'
-const val BALL = 'O'
+const val PADDLE = '—'
+const val BALL = '•'
 
 
 fun asChar(intValue: Int): Char {
