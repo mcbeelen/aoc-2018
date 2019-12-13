@@ -10,6 +10,7 @@ val ORIGIN = ScreenCoordinate(0, 0)
 
 fun at(left: Int, top: Int) = ScreenCoordinate(left, top)
 
+
 data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<ScreenCoordinate> {
 
     override fun compareTo(other: ScreenCoordinate): Int {

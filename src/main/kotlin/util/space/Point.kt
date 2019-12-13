@@ -12,6 +12,8 @@ data class Point(val x: Int, val y: Int, val z: Int) {
     override fun toString(): String {
         return "<$x, $y, $z>"
     }
+
+    fun isAt(x: Int, y: Int, z: Int): Boolean = this.x == x && this.y == y && this.z == z
 }
 
 
