@@ -18,10 +18,11 @@ import y2019.computer.Output
 import y2019.computer.Value
 import y2019.day11_emergency_hull_painting_robot.PanelColor.BLACK
 import y2019.day11_emergency_hull_painting_robot.PanelColor.WHITE
-import y2019.day11_emergency_hull_painting_robot.RobotComputerConnector.State.*
-import java.math.BigInteger.ONE
-import java.math.BigInteger.ZERO
-import java.text.FieldPosition
+import y2019.day11_emergency_hull_painting_robot.RobotComputerConnector.State.MOVE
+import y2019.day11_emergency_hull_painting_robot.RobotComputerConnector.State.PAINT
+
+private const val ZERO = 0L
+private const val ONE = 1L
 
 enum class PanelColor {
     BLACK,
@@ -45,13 +46,6 @@ class EmergencyHullPaintingRobot(colorOfFirstPanelColor: PanelColor = BLACK) : G
 
     fun turnRight() = turnAndMove(RIGHT)
 
-    private fun paintIt() {
-        when (scanPanel()) {
-            BLACK -> paintIt(WHITE)
-            WHITE -> paintIt(BLACK)
-        }
-    }
-
     fun paintIt(color: PanelColor) {
         panels[currentPosition] = color
     }
@@ -63,8 +57,8 @@ class EmergencyHullPaintingRobot(colorOfFirstPanelColor: PanelColor = BLACK) : G
     fun plot() {
         val findMinY = findMinY(panels.keys)
         val findMaxY = findMaxY(panels.keys)
-            val findMinX = findMinX(panels.keys)
-            val findMaxX = findMaxX(panels.keys)
+        val findMinX = findMinX(panels.keys)
+        val findMaxX = findMaxX(panels.keys)
         println("Y: $findMinY -- $findMaxY")
         println("X: $findMinX -- $findMaxX")
         for (y in findMinY..findMaxY) {
@@ -119,7 +113,7 @@ class RobotComputerConnector(private val hullPaintingRobot: EmergencyHullPaintin
 }
 
 fun main() {
-  //  y2019d11p1()
+    y2019d11p1()
     y2019d11p2()
 }
 

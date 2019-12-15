@@ -1,8 +1,5 @@
 package y2019.computer
 
-import java.math.BigInteger
-import java.math.BigInteger.ZERO
-
 
 data class State(val memory: Memory, val instructionPointer: Int = 0, val relativeBase: Long = 0) {
 
@@ -44,7 +41,7 @@ data class State(val memory: Memory, val instructionPointer: Int = 0, val relati
 
     fun readRelativeParam(index: Int): Value {
         val offset = readFromMemory(instructionPointer + 1 + index)
-        return readFromMemory((offset + BigInteger.valueOf(relativeBase)).toAddress())
+        return readFromMemory((offset + relativeBase).toInt())
     }
 
 }
@@ -65,5 +62,5 @@ data class Memory(private val program: Map<Address, Value>) {
 
     fun updateMemory(modification: Modification) = Memory(program + modification)
 
-    fun read(address: Address): Value = program.getOrDefault(address, ZERO)
+    fun read(address: Address): Value = program.getOrDefault(address, 0L)
 }

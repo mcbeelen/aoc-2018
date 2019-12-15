@@ -16,7 +16,7 @@ class IntcodeComputerTest {
 
         simulator.tick()
 
-        assertThat(simulator.state.readFromMemory(3).intValueExact(), equalTo(70))
+        assertThat(simulator.state.readFromMemory(3), equalTo(70L))
         assertThat(simulator.state.instructionPointer, equalTo(4))
     }
 
@@ -27,7 +27,7 @@ class IntcodeComputerTest {
 
         simulator.tick()
 
-        assertThat(simulator.state.readFromMemory(0).intValueExact(), equalTo(3500))
+        assertThat(simulator.state.readFromMemory(0), equalTo(3500L))
         assertThat(simulator.state.instructionPointer, equalTo(8))
     }
 

@@ -6,13 +6,13 @@ import y2019.computer.ByteCode
 import y2019.computer.IntcodeComputer
 import y2019.computer.Value
 import y2019.computer.compile
-import java.math.BigInteger.ZERO
+
+private const val DEFAULT_INPUT = 0L
 
 class LinearAmplificationCircuit(
         byteCode: ByteCode = compile(AMPLIFIER_CONTROLLER_SOFTWARE),
-        private val phaseSetting: List<Int>) {
+        phaseSetting: List<Value>) {
 
-    private val DEFAULT_INPUT = ZERO
     private val initialInput = Buffer()
     private val bufferAB = Buffer()
     private val bufferBC = Buffer()
@@ -49,11 +49,11 @@ class LinearAmplificationCircuit(
 
 
     init {
-        initialInput.write(phaseSetting[0].toBigInteger())
-        bufferAB.write(phaseSetting[1].toBigInteger())
-        bufferBC.write(phaseSetting[2].toBigInteger())
-        bufferCD.write(phaseSetting[3].toBigInteger())
-        bufferDE.write(phaseSetting[4].toBigInteger())
+        initialInput.write(phaseSetting[0])
+        bufferAB.write(phaseSetting[1])
+        bufferBC.write(phaseSetting[2])
+        bufferCD.write(phaseSetting[3])
+        bufferDE.write(phaseSetting[4])
         initialInput.write(DEFAULT_INPUT)
 
         amplifiersA.tick()
@@ -100,7 +100,7 @@ fun findMaxThrustSignalInLinearConfiguration(program: ByteCode): Value {
 
 fun calculateThrustSignalInLinearConfiguration(program: ByteCode, phaseSetting: List<Int>): Value {
 
-    val circuit = LinearAmplificationCircuit(program, phaseSetting)
+    val circuit = LinearAmplificationCircuit(program, phaseSetting.map { it.toLong() })
     return circuit.calculateAmplification()
 
 }

@@ -27,6 +27,6 @@ class ParameterModeRelativeTest {
         val boardComputer = IntcodeComputer(sourceCode = sourceCode, output = output)
         boardComputer.runProgram()
 
-        assertThat(output.read(), equalTo(expected.toBigInteger()))
+        assertThat(output.read(), equalTo(expected.toLong()))
     }
 }

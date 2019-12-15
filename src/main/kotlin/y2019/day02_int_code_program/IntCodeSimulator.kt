@@ -17,7 +17,7 @@ fun main() {
 }
 
 private fun partTwo() {
-    val neededAnswer = BigInteger.valueOf(19690720L)
+    val neededAnswer = 19690720L
     for (noun in 0..99L) {
         for (verb in 0..99L) {
             val output = runSimulator(noun, verb)
@@ -37,8 +37,8 @@ private fun partOne() {
 
 private fun runSimulator(noun: Long, verb: Long): Value {
     val byteCode = compile(INPUT).toMutableList()
-    byteCode[1] = noun.toBigInteger()
-    byteCode[2] = verb.toBigInteger()
+    byteCode[1] = noun
+    byteCode[2] = verb
 
     val simulator = IntcodeComputer(byteCode = byteCode)
 

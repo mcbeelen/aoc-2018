@@ -8,15 +8,11 @@ import kotlin.Int.Companion.MIN_VALUE
 
 
 typealias Address = Int
-typealias Value = BigInteger
+typealias Value = Long
 typealias Opcode = Int
 typealias Modification = Pair<Address, Value>
 
 typealias ByteCode = List<Value>
-
-internal fun BigInteger.toAddress() = this.intValueExact()
-internal fun bigInt(int: Int) = int.toBigInteger()
-internal fun bigInt(value: Long) = value.toBigInteger()
 
 class IntcodeComputer(
         private val input: Input = AlwaysZeroInput(),
@@ -52,7 +48,7 @@ class IntcodeComputer(
     }
 
 
-    private fun currentOpcode(currentInstruction: BigInteger): Opcode = currentInstruction.mod(BigInteger.valueOf(100)).intValueExact()
+    private fun currentOpcode(currentInstruction: Value): Opcode = (currentInstruction % 100).toInt()
 
     private fun fetchInstruction(opcode: Opcode): Instruction {
 
@@ -74,8 +70,6 @@ class IntcodeComputer(
 
     private fun fetchParameters(opcode: Opcode, parameterModes: List<ParameterMode>): List<Value> {
 
-        val instructionPointer = state.instructionPointer
-
         return when (opcode) {
             1 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes), fetchWriteParameter(2, parameterModes))
             2 -> listOf(fetchInputParameter(0, parameterModes), fetchInputParameter(1, parameterModes), fetchWriteParameter(2, parameterModes))
@@ -95,7 +89,7 @@ class IntcodeComputer(
         return when (determineParameterMode(index, parameterModes)) {
             RELATIVE -> {
                 val offset = readParameterImmediatly(instructionPointer + 1 + index)
-                return state.relativeBase.toBigInteger() + offset
+                return state.relativeBase + offset
             }
             else -> readParameterImmediatly(instructionPointer + 1 + index)
         }
@@ -124,7 +118,7 @@ class IntcodeComputer(
                 POSITION
 
     private fun fetchParameterModeFlags(currentInstruction: Value): List<ParameterMode> {
-        if (currentInstruction.intValueExact() <= 99) return emptyList()
+        if (currentInstruction <= 99) return emptyList()
         val instructionCode = currentInstruction.toString()
         return instructionCode.take(instructionCode.length - 2).reversed()
                 .map { toParameterMode(it) }
@@ -143,6 +137,7 @@ class IntcodeComputer(
     }
 }
 
+fun Long.toAddress(): Address = this.toInt()
 
 
 interface Update {
@@ -181,5 +176,5 @@ class AdjustRelativeBaseEffect(private val offset: Int) : Effect, RelativeBaseAd
 
 }
 
-fun compile(sourceCode: String) : List<Value> = sourceCode.split(',').map { it.toLong().toBigInteger() }
+fun compile(sourceCode: String) : List<Value> = sourceCode.split(',').map { it.toLong() }
 

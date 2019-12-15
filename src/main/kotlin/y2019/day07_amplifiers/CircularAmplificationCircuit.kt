@@ -6,13 +6,11 @@ import y2019.computer.BufferWithMemory
 import y2019.computer.IntcodeComputer
 import y2019.computer.Value
 import y2019.computer.compile
-import java.math.BigInteger.ZERO
 
-class CircularAmplificationCircuit(byteCode: List<Value>, phaseSetting: List<Int>) {
+private const val DEFAULT_INPUT = 0L
 
-    // constructor(phaseSetting) : this(byteCode = compile(AMPLIFIER_CONTROLLER_SOFTWARE), phaseSetting = phaseSetting)
+class CircularAmplificationCircuit(byteCode: List<Value>, phaseSetting: List<Value>) {
 
-    private val DEFAULT_INPUT = ZERO
     private val bufferEA = BufferWithMemory()
     private val bufferAB = Buffer()
     private val bufferBC = Buffer()
@@ -54,12 +52,12 @@ class CircularAmplificationCircuit(byteCode: List<Value>, phaseSetting: List<Int
 
     }
 
-    private fun configureInitialPhaseSettingsInAmplifiers(phaseSetting: List<Int>) {
-        bufferEA.write(phaseSetting[0].toBigInteger())
-        bufferAB.write(phaseSetting[1].toBigInteger())
-        bufferBC.write(phaseSetting[2].toBigInteger())
-        bufferCD.write(phaseSetting[3].toBigInteger())
-        bufferDE.write(phaseSetting[4].toBigInteger())
+    private fun configureInitialPhaseSettingsInAmplifiers(phaseSetting: List<Value>) {
+        bufferEA.write(phaseSetting[0])
+        bufferAB.write(phaseSetting[1])
+        bufferBC.write(phaseSetting[2])
+        bufferCD.write(phaseSetting[3])
+        bufferDE.write(phaseSetting[4])
 
         amplifiersA.tick()
         amplifiersB.tick()
@@ -118,7 +116,7 @@ fun findMaxThrusterSignalInCircularConfiguration(sourceCode: String): Value {
 }
 
 fun calculateThrustSignalInCircularConfiguration(byteCode: List<Value>, phaseSetting: List<Int>): Value {
-    return CircularAmplificationCircuit(byteCode, phaseSetting).calculateAmplification()
+    return CircularAmplificationCircuit(byteCode, phaseSetting.map { it.toLong() }).calculateAmplification()
 
 }
 

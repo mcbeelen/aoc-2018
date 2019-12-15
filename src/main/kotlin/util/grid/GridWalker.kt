@@ -7,6 +7,10 @@ open class GridWalker {
 
     protected fun turnAndMove(turn: Turn, callback: (ScreenCoordinate) -> Unit = {}) {
         direction = direction.turn(turn)
+        move()
+    }
+
+    fun move() {
         currentPosition = currentPosition.next(direction)
     }
 }

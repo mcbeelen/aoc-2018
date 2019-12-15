@@ -2,14 +2,15 @@ package y2019.day09_sensor_boost
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.lessThan
 import org.junit.Test
 import y2019.computer.Buffer
 import y2019.computer.ConstantInput
 import y2019.computer.IntcodeComputer
 import y2019.computer.Value
-import y2019.computer.bigInt
 
+
+
+fun bigInt(int: Int) = int.toLong()
 
 class BoostTest {
 
@@ -18,7 +19,7 @@ class BoostTest {
     fun firstExample() {
         val sourceCode = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99"
         val buffer = inspect(sourceCode)
-        assertThat(buffer.read(), equalTo(bigInt(109)))
+        assertThat(buffer.read(), equalTo(109L))
     }
 
     @Test
@@ -42,6 +43,7 @@ class BoostTest {
         assertThat(buffer.read(), equalTo(bigInt(654_987)))
     }
 
+
     @Test
     fun partOne() {
         val buffer = Buffer()
@@ -50,7 +52,7 @@ class BoostTest {
         computer.runProgram()
 
         val actual = buffer.read()
-        assertThat(actual, equalTo(bigInt(3_512_778_005L)))
+        assertThat(actual, equalTo(3_512_778_005L))
     }
 
     @Test

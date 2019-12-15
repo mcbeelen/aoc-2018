@@ -1,23 +1,20 @@
 package y2019.computer
 
-import java.math.BigInteger
-import java.math.BigInteger.ONE
-import java.math.BigInteger.ZERO
 
+private const val ZERO = 0L
+private const val ONE = 1L
 
 interface Instruction {
     fun handle(parameters: List<Value>): Effect
     fun numberOfParameters(): Int = 0
 }
 
-class AddInstruction() : Instruction {
+class AddInstruction : Instruction {
     override fun handle(parameters: List<Value>): Effect {
 
         val first = parameters[0]
         val second = parameters[1]
         val address = parameters[2].toAddress()
-
-
 
         return WriteToMemoryEffect(address, first + second)
     }
@@ -28,7 +25,7 @@ class AddInstruction() : Instruction {
 
 
 
-class MultiplyInstruction() : Instruction {
+class MultiplyInstruction : Instruction {
     override fun handle(parameters: List<Value>): Effect {
 
         val first = parameters[0]

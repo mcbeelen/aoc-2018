@@ -13,7 +13,6 @@ import y2019.computer.Value
 import y2019.day016_pong.ArcadeAdapter.State.LEFT
 import y2019.day016_pong.ArcadeAdapter.State.TILE
 import y2019.day016_pong.ArcadeAdapter.State.TOP
-import java.math.BigInteger
 import kotlin.Int.Companion.MIN_VALUE
 
 
@@ -34,13 +33,13 @@ class ArcadeAdapter(private val screen: ScreenOutputStream, val controller: Scre
 
     }
 
-    var state = LEFT
+    private var state = LEFT
 
     var left : Int = MIN_VALUE
     var top : Int = MIN_VALUE
 
     override fun write(value: Value) {
-        val intValue = value.intValueExact()
+        val intValue = value.toInt()
         when (state) {
             LEFT -> left = intValue
             TOP -> top = intValue
@@ -112,7 +111,7 @@ class Joystick : Input, ScreenOutputStream {
 
     var columnOfBall = MIN_VALUE
     var columnOfPaddle = MIN_VALUE
-    override fun read(): Value = BigInteger.valueOf(columnOfBall.compareTo(columnOfPaddle).toLong())
+    override fun read(): Value = columnOfBall.compareTo(columnOfPaddle).toLong()
 
     override fun paint(coordinate: ScreenCoordinate, char: Char) {
         when (char) {
