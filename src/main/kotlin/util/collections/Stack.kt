@@ -4,7 +4,7 @@ import java.util.*
 
 class Stack<E> : Collection<E> {
 
-    val elements: MutableList<E> = mutableListOf()
+    private val elements: MutableList<E> = mutableListOf()
 
     override fun contains(element: E) = elements.contains(element)
 

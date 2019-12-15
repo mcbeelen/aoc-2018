@@ -1,35 +1,171 @@
 package y2019.day14
 
+import java.util.Deque
+import java.util.LinkedList
+
+data class Batch(val reaction: Reaction, val size: Quantity)
+typealias Backlog = Deque<Batch>
+
+fun emptyBacklog(): Deque<Pair<Reaction, Quantity>> = LinkedList()
+typealias Ingredients = MutableMap<Chemical, Quantity>
+
+const val INITIAL_AMOUNT_OF_ORE = 1_000_000_000_000
+
+class Recipe() {
+
+    val steps: Backlog = LinkedList()
+    val ingredients : Ingredients = HashMap()
+
+    fun addStep(batchSize: Long, reaction: Reaction) {
+        steps.push(Batch(reaction, batchSize))
+    }
+
+    fun increaseNeededQuantity(quantity: Long, chemical: Chemical) {
+        ingredients.computeIfPresent(chemical) { _, v -> v + quantity }
+        ingredients.computeIfAbsent(chemical) { quantity }
+    }
+
+    fun neededQuantity(chemical: Chemical) = ingredients.getOrDefault(chemical, 0L)
+}
+
+class NanoFactory(private val knownReactions: Map<Chemical, Reaction>) {
+
+    private val orderedChemicals: List<Chemical> = determineOrderInWhichChemicalsShouldBeProduced(knownReactions)
 
 
+    fun canIngredientBeProduced(ingredientToProduce: Ingredient, cargoHold: CargoHold, backlog: Backlog = LinkedList(), ingredients: Ingredients = HashMap()): Pair<Boolean, Recipe> {
+        val recipe = generateRecipe(ingredientToProduce, cargoHold, Recipe())
+        if (cargoHold.hasSufficientOre(recipe.neededQuantity(ORE))) {
+            return Pair(true, recipe)
+        } else {
+            return Pair(false, recipe)
+        }
+    }
 
 
-data class Chemical (val quantity: Int, val chemical: String)
-data class Reaction(val input: List<Chemical>, val output: Chemical)
+    private fun generateRecipe(ingredient: Ingredient, cargoHold: CargoHold, recipe: Recipe): Recipe {
 
+        val additionalNeededQuantity = determineAdditionalNeededQuantity(ingredient, cargoHold)
 
-fun parseReaction(description: String): Reaction {
-    val split = description.split("=>")
-    val inputDescription = split[0]
-    val outputDescription = split[1]
-    val inputs = inputDescription.split(',')
+        if (additionalNeededQuantity > 0) {
+            val reaction = knownReactions.getValue(ingredient.chemical)
+            val batchSize = determineNumberOfNeededBatches(additionalNeededQuantity, reaction.output)
+            recipe.addStep(batchSize, reaction)
 
-    val input = inputs.map { parseChemical(it) }
-    val output = parseChemical(outputDescription)
-    return Reaction(input, output)
+            reaction.input.forEach {
+                val additionalNeedForChemical = batchSize * it.quantity
+                recipe.increaseNeededQuantity(additionalNeedForChemical, it.chemical)
+            }
+        }
+
+        val nextChemicalToProduce = findNextIngredientToProduce(ingredient)
+
+        return if (nextChemicalToProduce == null) {
+            recipe
+        } else {
+            val nextQuantity = recipe.neededQuantity(nextChemicalToProduce)
+            val nextIngredient = Ingredient(nextQuantity, nextChemicalToProduce)
+            generateRecipe(nextIngredient, cargoHold, recipe)
+        }
+
+    }
+
+    private fun determineAdditionalNeededQuantity(ingredient: Ingredient, cargoHold: CargoHold): Long {
+        if (ingredient.chemical == FUEL) return ingredient.quantity
+        val alreadyAvailableQuantity = cargoHold.availableQuantity(ingredient.chemical)
+        val additionalNeededQuantity = ingredient.quantity - alreadyAvailableQuantity
+        return maxOf(additionalNeededQuantity, 0)
+    }
+
+    private fun findNextIngredientToProduce(currentIngredient: Ingredient): Chemical? {
+        val indexOfCurrentChemical = orderedChemicals.indexOf(currentIngredient.chemical)
+        if (indexOfCurrentChemical == orderedChemicals.size - 1) {
+            return null
+        }
+        return orderedChemicals[indexOfCurrentChemical + 1]
+    }
 
 }
 
-fun parseChemical(description: String): Chemical {
-    val split = description.trim().split(" ")
-    return Chemical(split[0].toInt(), split[1])
+fun canQuantityOfFuelBeProduced(quantity: Long, nanoFactory: NanoFactory, initialAmountOfOre: Long): Pair<Boolean, Recipe> {
+    return canQuantityOfFuelBeProduced(quantity, nanoFactory, CargoHold(stock = mapOf(Pair(ORE, initialAmountOfOre))))
 }
 
-fun minimumAmountOfOreNeededForOneFuel(reactions: String): Int {
-    return 31 // TODO: Refactor magic number
+internal fun canQuantityOfFuelBeProduced(quantity: Long, nanoFactory: NanoFactory, cargoHold: CargoHold): Pair<Boolean, Recipe> {
+    val ingredient = Ingredient(quantity, FUEL)
+    return nanoFactory.canIngredientBeProduced(ingredient, cargoHold)
 }
 
 
+fun minimumAmountOfOreNeededForOneFuel(reactionDescriptions: String): Long {
+    val reactions = reactionDescriptions.trimIndent().lines().map { parseReaction(it) }.toMutableList()
+
+    val neededAmountOfChemicals: MutableMap<String, Long> = hashMapOf(Pair(FUEL, 1L))
+    val reactionsPerOutputChemical: MutableMap<String, Reaction> = reactions.map { Pair(it.output.chemical, it) }.toMap().toMutableMap()
+
+    while (reactionsPerOutputChemical.isNotEmpty()) {
+        val chemical = findChemicalToProduce(reactionsPerOutputChemical)
+
+        val (inputChemicals, output) = reactionsPerOutputChemical.getValue(chemical)
+        val quantityToProduce = neededAmountOfChemicals.getValue(chemical)
+        val numberOFBatchesToProduce = determineNumberOfNeededBatches(quantityToProduce, output)
+
+        inputChemicals.forEach {
+            val additionalNeedForChemical = numberOFBatchesToProduce * it.quantity
+            neededAmountOfChemicals.computeIfPresent(it.chemical) { _, v -> v + additionalNeedForChemical }
+            neededAmountOfChemicals.computeIfAbsent(it.chemical) {
+                additionalNeedForChemical
+            }
+        }
+
+        reactionsPerOutputChemical.remove(chemical)
+
+    }
+
+    return neededAmountOfChemicals.getValue(ORE)
+}
+
+
+fun maximumAmountOfFuelToProduce(reactionDescriptions: String): Long {
+    val reactions = parseReactions(reactionDescriptions)
+    val nanoFactory = NanoFactory(reactions)
+    var cargoHold = defaultCargoHold()
+    val amountOfOreNeededForOneFuel = minimumAmountOfOreNeededForOneFuel(reactionDescriptions)
+    var stepSize = INITIAL_AMOUNT_OF_ORE / amountOfOreNeededForOneFuel
+
+    while (stepSize > 0) {
+        val (success, recipe) = canQuantityOfFuelBeProduced(stepSize, nanoFactory, cargoHold)
+        if (success) {
+            cargoHold = cargoHold.performAllProcesses(recipe.steps)
+        } else {
+            stepSize = reduceStepSize(stepSize)
+        }
+    }
+    return cargoHold.availableQuantity(FUEL)
+}
+
+
+fun reduceStepSize(stepSize: Long) = if (stepSize == 1L) 0 else stepSize / 2
+private fun determineNumberOfNeededBatches(quantityToProduce: Long, output: Ingredient): Long {
+    var numberOFBatchesToProduce = quantityToProduce / output.quantity
+    if (quantityToProduce % output.quantity > 0) {
+        numberOFBatchesToProduce += 1
+    }
+    return numberOFBatchesToProduce
+}
+
+
+fun findChemicalToProduce(reactionsPerOutputChemical: Map<String, Reaction>): String {
+    return reactionsPerOutputChemical.keys.first {
+        isNoInputForAnotherChemical(it, reactionsPerOutputChemical)
+    }
+}
+
+
+fun main() {
+    println(minimumAmountOfOreNeededForOneFuel(NANO_REACTIONS))
+    println(maximumAmountOfFuelToProduce(NANO_REACTIONS))
+}
 
 
 internal const val NANO_REACTIONS = """
@@ -95,3 +231,4 @@ internal const val NANO_REACTIONS = """
 3 RBDP => 6 TCTBL
 1 DLPMH, 1 GFVG, 3 MBVL => 2 DSTHJ
 21 VMZFB, 2 LJWM => 1 PBFZ"""
+
