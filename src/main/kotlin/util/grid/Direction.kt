@@ -39,6 +39,13 @@ enum class Direction {
         }
     }
 
+    fun reverse(): Direction = when (this) {
+        UP -> DOWN
+        RIGHT -> LEFT
+        DOWN -> UP
+        LEFT -> RIGHT
+    }
+
 }
 
 fun parseDirection(c: Char): Direction {

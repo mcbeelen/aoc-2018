@@ -1,17 +1,10 @@
 package y2019.day11_emergency_hull_painting_robot
 
-import util.console.ANSI_BLACK_BACKGROUND
-import util.console.ANSI_WHITE_BACKGROUND
-import util.grid.GridWalker
+import util.grid.GridTracker
 import util.grid.ORIGIN
 import util.grid.ScreenCoordinate
 import util.grid.Turn.LEFT
 import util.grid.Turn.RIGHT
-import util.grid.at
-import util.grid.findMaxX
-import util.grid.findMaxY
-import util.grid.findMinX
-import util.grid.findMinY
 import y2019.computer.Input
 import y2019.computer.IntcodeComputer
 import y2019.computer.Output
@@ -30,48 +23,35 @@ enum class PanelColor {
 }
 
 
-class EmergencyHullPaintingRobot(colorOfFirstPanelColor: PanelColor = BLACK) : GridWalker() {
-
-    private val panels: MutableMap<ScreenCoordinate, PanelColor> = HashMap()
+class EmergencyHullPaintingRobot(colorOfFirstPanelColor: PanelColor = BLACK) : GridTracker<PanelColor>() {
 
     init {
-        panels[ORIGIN] = colorOfFirstPanelColor
+        grid[ORIGIN] = colorOfFirstPanelColor
     }
 
     fun scanPanel() = colorAt(currentPosition)
 
-    private fun colorAt(position: ScreenCoordinate) = panels.getOrDefault(position, BLACK)
+    private fun colorAt(position: ScreenCoordinate) = grid.getOrDefault(position, BLACK)
 
     fun turnLeft() = turnAndMove(LEFT)
 
     fun turnRight() = turnAndMove(RIGHT)
 
     fun paintIt(color: PanelColor) {
-        panels[currentPosition] = color
+        grid[currentPosition] = color
     }
 
     fun getNumberOfPiantedPanels(): Int {
-        return panels.keys.size
+        return grid.keys.size
     }
 
-    fun plot() {
-        val findMinY = findMinY(panels.keys)
-        val findMaxY = findMaxY(panels.keys)
-        val findMinX = findMinX(panels.keys)
-        val findMaxX = findMaxX(panels.keys)
-        println("Y: $findMinY -- $findMaxY")
-        println("X: $findMinX -- $findMaxX")
-        for (y in findMinY..findMaxY) {
-            for (x in findMinX..findMaxX) {
-                when (colorAt(at(x, y))) {
-                    BLACK -> print("$ANSI_BLACK_BACKGROUND ")
-                    WHITE -> print("$ANSI_WHITE_BACKGROUND ")
-                }
-            }
-            println()
+    override fun charFor(panelColor: PanelColor): Char {
+        return when (panelColor) {
+            BLACK -> ' '
+            WHITE -> '#'
         }
-
     }
+
 }
 
 class RobotComputerConnector(private val hullPaintingRobot: EmergencyHullPaintingRobot) : Input, Output {

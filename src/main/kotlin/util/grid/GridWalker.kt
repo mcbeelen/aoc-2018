@@ -6,11 +6,16 @@ open class GridWalker {
     var direction: Direction = Direction.UP
 
     protected fun turnAndMove(turn: Turn, callback: (ScreenCoordinate) -> Unit = {}) {
-        direction = direction.turn(turn)
-        move()
+        turn(turn)
+        move(callback)
     }
 
-    fun move() {
-        currentPosition = currentPosition.next(direction)
+    fun turn(turn: Turn) {
+        direction = direction.turn(turn)
     }
+    fun move(callback: (ScreenCoordinate) -> Unit = {}) {
+        currentPosition = currentPosition.next(direction)
+        callback.invoke(currentPosition)
+    }
+
 }
