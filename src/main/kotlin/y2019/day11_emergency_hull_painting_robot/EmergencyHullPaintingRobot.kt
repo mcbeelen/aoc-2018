@@ -100,7 +100,7 @@ fun main() {
 fun y2019d11p2() {
     val paintHull = paintHull(WHITE)
     println(paintHull.getNumberOfPiantedPanels())
-    paintHull.plot()
+    paintHull.plot('?')
 }
 
 private fun y2019d11p1() {

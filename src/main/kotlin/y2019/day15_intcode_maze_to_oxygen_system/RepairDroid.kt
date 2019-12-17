@@ -1,16 +1,23 @@
 package y2019.day15_intcode_maze_to_oxygen_system
 
 import util.grid.Direction
-import util.grid.Direction.*
+import util.grid.Direction.DOWN
+import util.grid.Direction.LEFT
+import util.grid.Direction.RIGHT
+import util.grid.Direction.UP
 import util.grid.GridTracker
+import util.grid.ORIGIN
 import util.grid.ScreenCoordinate
 import util.grid.Turn
-import util.grid.ORIGIN
 import y2019.computer.Input
 import y2019.computer.IntcodeComputer
 import y2019.computer.Output
 import y2019.computer.Value
-import y2019.day15_intcode_maze_to_oxygen_system.Field.*
+import y2019.day15_intcode_maze_to_oxygen_system.Field.OXYGEN_SYSTEM
+import y2019.day15_intcode_maze_to_oxygen_system.Field.SPACE
+import y2019.day15_intcode_maze_to_oxygen_system.Field.STARTING_POSITION
+import y2019.day15_intcode_maze_to_oxygen_system.Field.UNKNOWN
+import y2019.day15_intcode_maze_to_oxygen_system.Field.WALL
 import java.util.Deque
 import java.util.LinkedList
 import kotlin.system.exitProcess
@@ -21,6 +28,15 @@ enum class Field {
     SPACE,
     OXYGEN_SYSTEM,
     UNKNOWN
+}
+
+fun fieldFor(c: Char, coordinate: ScreenCoordinate): Field = when (c) {
+    '#' -> WALL
+    ' ' -> WALL
+    '.' -> SPACE
+    'X' -> SPACE
+    'O' -> OXYGEN_SYSTEM
+    else -> throw IllegalArgumentException("Unsupported character: $c at $coordinate")
 }
 
 data class Step(val from: ScreenCoordinate, val to: ScreenCoordinate, val direction: Direction)
@@ -38,13 +54,11 @@ class RepairDroid : GridTracker<Field>(), Input, Output {
         if (!grid.containsKey(currentPosition.next(RIGHT))) return valueForDirection(RIGHT)
         if (!grid.containsKey(currentPosition.next(LEFT))) return valueForDirection(LEFT)
         if (!grid.containsKey(currentPosition.next(DOWN))) return valueForDirection(DOWN)
-        try {
-            return valueForDirection(path.pop().direction.reverse())
-        } catch (e: Exception) {
-            println("$currentPosition facing $direction")
-            plot()
-            throw e
+        if (path.isEmpty()) {
+            plot('#')
+            exitProcess(0)
         }
+        return valueForDirection(path.pop().direction.reverse())
     }
 
     private fun valueForDirection(direction: Direction): Value {
@@ -70,7 +84,7 @@ class RepairDroid : GridTracker<Field>(), Input, Output {
     private fun foundOxygenSystem() {
         moveToLocation()
         grid[currentPosition] = OXYGEN_SYSTEM
-        plot()
+        plot('#')
         println(path.size)
 
     }
@@ -92,15 +106,20 @@ class RepairDroid : GridTracker<Field>(), Input, Output {
 
     }
 
-    override fun charFor(t: Field) = when (t) {
-        WALL -> '#'
-        SPACE -> '.'
-        OXYGEN_SYSTEM -> 'X'
-        UNKNOWN -> ' '
-        STARTING_POSITION -> 'O'
-    }
+    override fun charFor(t: Field) = convertFieldToSymbol(t)
+
+
 }
 
+fun convertFieldToSymbol(t: Field): Char {
+    return when (t) {
+        WALL -> '#'
+        SPACE -> '.'
+        OXYGEN_SYSTEM -> 'O'
+        UNKNOWN -> ' '
+        STARTING_POSITION -> 'X'
+    }
+}
 
 fun main() {
     letDroidExploreToOxygenSystem()
