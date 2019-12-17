@@ -1,6 +1,7 @@
 package y2019.day15_intcode_maze_to_oxygen_system
 
 import util.grid.Direction
+import util.grid.Grid
 import util.grid.ScreenCoordinate
 import util.grid.at
 import util.grid.plotGrid
@@ -8,7 +9,7 @@ import y2019.day15_intcode_maze_to_oxygen_system.Field.OXYGEN_SYSTEM
 import y2019.day15_intcode_maze_to_oxygen_system.Field.SPACE
 
 class OxygenSimulation(oxygenSystemMap: String) {
-    val grid: MutableMap<ScreenCoordinate, Field> = HashMap()
+    val grid = Grid<Field>()
 
     init {
         oxygenSystemMap.trimIndent().lines().forEachIndexed { topIndex, line ->
