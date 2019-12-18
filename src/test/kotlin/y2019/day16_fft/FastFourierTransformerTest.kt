@@ -41,9 +41,22 @@ class FastFourierTransformerTest() {
     @Test
     fun verifyLargerExampleWithMultiplePasses() {
 
-        assertThat(performTransformation(toDigits("80871224585914546619083218645595"), 100).subList(0, 8), equalTo(toDigits("24176176")))
-        assertThat(performTransformation(toDigits("19617804207202209144916044189917"), 100).subList(0, 8), equalTo(toDigits("73745418")))
-        assertThat(performTransformation(toDigits("69317163492948606335995924319873"), 100).subList(0, 8), equalTo(toDigits("52432133")))
+//        assertThat(performTransformation(toDigits("80871224585914546619083218645595"), 100).subList(0, 8), equalTo(toDigits("24176176")))
+//        assertThat(performTransformation(toDigits("19617804207202209144916044189917"), 100).subList(0, 8), equalTo(toDigits("73745418")))
+        // assertThat(performTransformation(toDigits("69317163492948606335995924319873"), 100).subList(0, 8), equalTo(toDigits("52432133")))
+        assertThat(performTransformation(toDigits("69317163492948606335995924319873693171634929486063359959243198736931716349294860633599592431987369317163492948606335995924319873"), 100).subList(0, 8), equalTo(toDigits("52432133")))
+    }
+
+    @Test
+    fun verifyPartOneOfFastFourierTransformation() {
+
+        assertThat(partOneOfFastFourierTransformation(), equalTo("94960436"))
+
+    }
+
+    @Test
+    fun verifyPartTwo() {
+        assertThat(partTwoOfFastFourierTransformation(), equalTo("12316545"))
     }
 }
 
