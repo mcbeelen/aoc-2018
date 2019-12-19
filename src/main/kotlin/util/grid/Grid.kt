@@ -1,9 +1,5 @@
 package util.grid
 
-import y2019.day15_intcode_maze_to_oxygen_system.Field
-import y2019.day15_intcode_maze_to_oxygen_system.fieldFor
-import java.lang.instrument.ClassDefinition
-
 class Grid<T> : HashMap<ScreenCoordinate, T>()
 
 
@@ -13,7 +9,10 @@ fun <T> plotGrid(grid: Grid<T>, defaultCharForUnknown: Char = '?', charFor: (T) 
     val findMinX = findMinX(grid.keys)
     val findMaxX = findMaxX(grid.keys)
 
+
+
     for (y in findMinY..findMaxY) {
+        print("${y.toString().padStart(8)}: ")
         for (x in findMinX..findMaxX) {
             val objectAtXY = grid[at(x, y)]
 

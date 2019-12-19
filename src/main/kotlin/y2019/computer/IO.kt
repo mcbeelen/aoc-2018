@@ -18,6 +18,19 @@ open class ConstantInput(private val value : Value) : Input {
 
 class AlwaysZeroInput : ConstantInput(0L)
 
+class SequenceInput(private val inputValues: List<Value>) : Input {
+    constructor(vararg inputValues: Int) : this(inputValues.map { it.toLong() })
+
+    private var index = 0
+
+    override fun read(): Value {
+        return inputValues[index++]
+    }
+
+
+}
+
+
 
 
 
