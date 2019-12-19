@@ -58,5 +58,20 @@ class FastFourierTransformerTest() {
     fun verifyPartTwo() {
         assertThat(partTwoOfFastFourierTransformation(), equalTo("12316545"))
     }
+
+    @Test
+    fun exploratoryTesting() {
+
+        val offset = FFT_INPUT.take(7).toLong()
+        val length = 650 * 10_000
+        println("Ignore the first $offset digits of a $length long number")
+        println("Only interested in the final ${length - offset} digits")
+
+
+
+        val input = toDigits("00000000000000000000000000000003")
+        val afterOnePhase = performTransformation(input, 32)
+
+    }
 }
 

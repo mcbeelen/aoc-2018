@@ -1,5 +1,6 @@
 package y2019.day16_fft
 
+import java.util.LinkedList
 import kotlin.math.abs
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
@@ -13,14 +14,25 @@ fun toDigits(input: String): List<Int> {
 
 fun performFastTransformation(input: List<Int>, numberOfPhases : Int): List<Int> {
     if (numberOfPhases == 0) { return input }
-    val transformed = performOnePhaseOfTransformation(input)
-    println("${numberOfPhases.toString().padStart(4, ' ')} " + transformed.subList(0, 16).joinToString("") + " " + transformed.subList(16, transformed.size).joinToString(""))
-    return performTransformation(transformed, numberOfPhases - 1)
+    val transformed = performOneFastTransformation(input)
+    return performFastTransformation(transformed, numberOfPhases - 1)
 }
+
+fun performOneFastTransformation(input: List<Int>): List<Int> {
+    val reversed = input.reversed()
+    val calculated : MutableList<Int> = LinkedList()
+    var sum = 0;
+    reversed.forEach {
+        sum = (sum + it) % 10
+        calculated.add(sum)
+    }
+    return calculated.reversed()
+
+}
+
 fun performTransformation(input: List<Int>, numberOfPhases : Int): List<Int> {
     if (numberOfPhases == 0) { return input }
     val transformed = performOnePhaseOfTransformation(input)
-    println("${numberOfPhases.toString().padStart(4, ' ')} " + transformed.subList(0, 16).joinToString("") + " " + transformed.subList(16, transformed.size).joinToString(""))
     return performTransformation(transformed, numberOfPhases - 1)
 }
 
@@ -53,33 +65,6 @@ fun yieldBasePattern(phaseNumber: Int): Sequence<Int> {
     }
 }
 
-/*
-Now that your FFT is working, you can decode the real signal.
-
-The real signal is your puzzle input repeated 10000 times.
-Treat this new signal as a single input list.
-Patterns are still calculated as before, and 100 phases of FFT are still applied.
-
-
-The first seven digits of your initial input signal also represent the message offset.
-The message offset is the location of the eight-digit message in the final output list.
-
-Specifically, the message offset indicates the number of digits to skip before reading the eight-digit message.
-
-    For example, if the first seven digits of your initial input signal were 1234567,
-    the eight-digit message would be the eight digits after skipping 1,234,567 digits of the final output list.
-    Or, if the message offset were 7 and your final output list were 98765432109876543210, the eight-digit message would be 21098765.
-    (Of course, your real message offset will be a seven-digit number, not a one-digit number like 7.)
-
-Here is the eight-digit message in the final output list after 100 phases.
-The message offset given in each input has been highlighted. (Note that the inputs given below are repeated 10000 times to find the actual starting input lists.)
-
-03036732577212944063491565474664 becomes 84462026.
-02935109699940807407585447034323 becomes 78725270.
-03081770884921959731165446850517 becomes 53553731.
-After repeating your input signal 10000 times and running 100 phases of FFT, what is the eight-digit message embedded in the final output list?
- */
-
 
 fun partOneOfFastFourierTransformation(): String {
     val output = performTransformation(toDigits(FFT_INPUT), 100).subList(0, 8).joinToString(separator = "")
@@ -88,21 +73,35 @@ fun partOneOfFastFourierTransformation(): String {
 }
 
 fun partTwoOfFastFourierTransformation(): String {
-    val toDigits = toDigits(FFT_INPUT)
-    val realSignal : MutableList<Int> = ArrayList();
-    repeat(100) {
+    val realSignal: MutableList<Int> = realSignal(toDigits(FFT_INPUT))
+    val offset = FFT_INPUT.take(7).toInt()
+    val relevantInput = realSignal.subList(offset, realSignal.size)
+
+    println("Do the transformations on last ${relevantInput.size} digits")
+
+    return performFastTransformation(relevantInput, 100).joinToString("")
+}
+
+private fun realSignal(toDigits: List<Int>): MutableList<Int> {
+    val realSignal: MutableList<Int> = ArrayList();
+    repeat(10_000) {
         realSignal.addAll(toDigits)
     }
-    return performTransformation(realSignal, 1).joinToString("")
+    return realSignal
 }
+
+
+
 
 @ExperimentalTime
 fun main() {
-    val (unit, duration) = measureTimedValue { partOneOfFastFourierTransformation() }
-    println(duration)
+    val (_, durationOfPartOne) = measureTimedValue { partOneOfFastFourierTransformation() }
+    println(durationOfPartOne)
 
-    println(FFT_INPUT)
-    println(FFT_INPUT.reversed())
+    val (output, durationOfParTwo) = measureTimedValue { partTwoOfFastFourierTransformation() }
+    println(output.take(8))
+    println(durationOfParTwo)
+
 
 }
 
