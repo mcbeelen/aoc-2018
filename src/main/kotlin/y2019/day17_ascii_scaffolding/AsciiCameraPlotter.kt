@@ -1,6 +1,5 @@
 package y2019.day17_ascii_scaffolding
 
-import com.google.common.base.Ascii
 import y2019.computer.IntcodeComputer
 import y2019.computer.Output
 import y2019.computer.Value

@@ -8,7 +8,7 @@ abstract class BreadthFirstSearchAlgorithm<V, E>(val graph: Graph<V, E>) where V
 
     private val logger = KotlinLogging.logger { }
 
-    protected val unvisitedVertices: Queue<V> = buildQueue()
+    private val unvisitedVertices: Queue<V> = buildQueue()
 
     open fun <V> buildQueue(): Queue<V> = ArrayDeque<V>()
 

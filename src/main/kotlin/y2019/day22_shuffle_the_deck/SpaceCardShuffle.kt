@@ -2,22 +2,22 @@ package y2019.day22_shuffle_the_deck
 
 import kotlin.math.absoluteValue
 
-fun deckOfSize(i: Int) = (0 until i).toList()
+fun deckOfSize(i: Long) = (0 until i).toList()
 
-fun dealIntoNewStack(originalDeck: List<Int>) = originalDeck.reversed()
+fun dealIntoNewStack(originalDeck: List<Long>) = originalDeck.reversed()
 
-fun cutTheDeck(originalDeck: List<Int>, cutOff: Int): List<Int> = if (cutOff > 0) {
+fun cutTheDeck(originalDeck: List<Long>, cutOff: Int): List<Long> = if (cutOff > 0) {
     cutFromTheTop(originalDeck, cutOff)
 } else {
     cutFromTheBottom(originalDeck, cutOff.absoluteValue)
 }
 
-private fun cutFromTheBottom(originalDeck: List<Int>, cutOff: Int) = originalDeck.takeLast(cutOff) + originalDeck.dropLast(cutOff)
+private fun cutFromTheBottom(originalDeck: List<Long>, cutOff: Int) = originalDeck.takeLast(cutOff) + originalDeck.dropLast(cutOff)
 
-private fun cutFromTheTop(originalDeck: List<Int>, cutOff: Int) = originalDeck.drop(cutOff) + originalDeck.take(cutOff)
+private fun cutFromTheTop(originalDeck: List<Long>, cutOff: Int) = originalDeck.drop(cutOff) + originalDeck.take(cutOff)
 
-fun dealWithIncrement(originalDeck: List<Int>, increment: Int): List<Int> {
-    val newDeck: MutableList<Int> = ArrayList(originalDeck)
+fun dealWithIncrement(originalDeck: List<Long>, increment: Int): List<Long> {
+    val newDeck: MutableList<Long> = ArrayList(originalDeck)
     (originalDeck.indices)
             .forEach {
                 val index = it * increment % originalDeck.size
@@ -27,16 +27,24 @@ fun dealWithIncrement(originalDeck: List<Int>, increment: Int): List<Int> {
 
 }
 
-fun shuffleDeck(deckSize: Int, shuffleInstructions: String): List<Int> {
+fun shuffleDeck(deckSize: Long, shuffleInstructions: String): List<Long> {
     val instructions = shuffleInstructions.trimIndent().lines()
-    var deck = deckOfSize(deckSize)
-    instructions.forEach { instruction ->
-        deck = processInstruction(deck, instruction)
-    }
-    return deck
+    return shuffleDeck(deckSize, instructions)
 }
 
-private fun processInstruction(deck: List<Int>, instruction: String) : List<Int> {
+fun shuffleDeck(deckSize: Long, instructions: List<String>): List<Long> {
+    return shuffleDeck(deckOfSize(deckSize), instructions)
+}
+
+fun shuffleDeck(deck: List<Long>, instructions: List<String>): List<Long> {
+    var suffledDeck = deck
+    instructions.forEach { instruction ->
+        suffledDeck = processInstruction(suffledDeck, instruction)
+    }
+    return suffledDeck
+}
+
+private fun processInstruction(deck: List<Long>, instruction: String) : List<Long> {
     return when {
         instruction.startsWith("cut") -> cutTheDeck(deck, extractParameter(instruction))
         instruction.startsWith("deal into new stack") -> dealIntoNewStack(deck)
@@ -53,7 +61,7 @@ fun main() {
 }
 
 
-private const val SHUFFLE_INSTRUCTIONS = """
+const val SHUFFLE_INSTRUCTIONS = """
 cut 9712
 deal with increment 23
 cut 6635
