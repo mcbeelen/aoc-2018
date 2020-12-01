@@ -2,7 +2,7 @@ package y2018.day03_overlapping_fabric
 
 import util.grid.ScreenCoordinate
 
-class Fabric(private val claims: List<Claim>) {
+class Fabric(private val claims: Iterable<Claim>) {
 
 
     val maxX: Int by lazy {

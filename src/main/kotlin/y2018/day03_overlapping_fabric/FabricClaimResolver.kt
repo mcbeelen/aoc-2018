@@ -1,5 +1,6 @@
 package y2018.day03_overlapping_fabric
 
+import util.input.parseInput
 import kotlin.system.measureTimeMillis
 
 class FabricClaimResolver {
@@ -10,7 +11,7 @@ class FabricClaimResolver {
         @JvmStatic
         fun main(args: Array<String>) {
 
-            val claims = DAY_03_INPUT.trimIndent().lines().map { parseClaim(it) }
+            val claims = parseInput(DAY_03_INPUT) { parseClaim(it) }
 
             val fabric = Fabric(claims)
             partOne(fabric)
