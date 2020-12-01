@@ -6,8 +6,10 @@ fun interface InputParser<out T> {
 
 
 fun <T> parseInput(input: String, parser: InputParser<T>) : Iterable<T> {
-    return input.trimIndent().lines().map {
-        parser.parse(it)
+    return input.trimIndent().lines()
+            .filter { it.isNotBlank() }
+            .map {
+        parser.parse(it.trim())
     }
 }
 fun parseInputToInts(input: String) = parseInput(input){ it.toInt() }

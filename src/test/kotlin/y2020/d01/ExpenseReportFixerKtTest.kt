@@ -4,12 +4,6 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
 
-private const val y2020d1t1 = """1721
-979
-366
-299
-675
-1456""";
 
 class ExpenseReportFixerKtTest {
 
@@ -28,12 +22,6 @@ class ExpenseReportFixerKtTest {
         assertThat(high, equalTo(979))
     }
 
-
-
-
-//    144 * 1876 = 270144
-//    512 * 513 * 995 = 261342720
-
     @Test
     fun itShouldFindTwoExpensesThatSumTo2020Additional() {
         val example = """1620
@@ -45,4 +33,21 @@ class ExpenseReportFixerKtTest {
         assertThat(low, equalTo(400))
         assertThat(high, equalTo(1620))
     }
+
+    @Test
+    fun itShouldSolveActualPuzzle() {
+        val (first, last) = findTwoExpensesThatSumTo2020(y2020d1)
+        assertThat(first * last, equalTo(270144))
+
+        val (low, middle, high) = findThreeExpensesThatSumTo2020(y2020d1)
+        assertThat(low * middle * high, equalTo(261342720))
+    }
 }
+
+private const val y2020d1t1 = """
+    1721
+979
+366
+299
+675
+1456""";
