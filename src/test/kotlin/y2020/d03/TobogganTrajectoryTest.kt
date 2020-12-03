@@ -43,15 +43,5 @@ class TobogganTrajectoryTest {
         assertThat(sum, equalTo(3_638_606_400))
     }
 
-    private fun numberOfTreesToEncounterOnSlope(terrain: String, right: Int, down: Int = 1): Int {
-        val lines = parseInput(terrain).toList()
-        val width = lines[0].length
 
-        val linesToHits = if (down == 1) { lines } else { lines.filterIndexed { index, _ -> (index % down) == 0 }.toList() }
-        return linesToHits.mapIndexed { index, line -> isTreeAt(line, index, right, width) }.filter { it }.count()
-    }
-
-    private fun isTreeAt(line: String, index: Int, right: Int, width: Int): Boolean {
-        return '#' == line[(index * right) % width]
-    }
 }
