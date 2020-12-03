@@ -5,6 +5,10 @@ fun interface InputParser<out T> {
 }
 
 
+fun parseInput(input: String) : Iterable<String> {
+    return parseInput(input) { it }
+}
+
 fun <T> parseInput(input: String, parser: InputParser<T>) : Iterable<T> {
     return input.trimIndent().lines()
             .filter { it.isNotBlank() }
