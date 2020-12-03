@@ -3,6 +3,8 @@ package y2020.d01
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
+import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
 
 
 class ExpenseReportFixerKtTest {
@@ -39,8 +41,13 @@ class ExpenseReportFixerKtTest {
         val (first, last) = findTwoExpensesThatSumTo2020(y2020d1)
         assertThat(first * last, equalTo(270144))
 
-        val (low, middle, high) = findThreeExpensesThatSumTo2020(y2020d1)
-        assertThat(low * middle * high, equalTo(261342720))
+
+        val measureNanoTime = measureTimeMillis {
+            val (low, middle, high) = findThreeExpensesThatSumTo2020(y2020d1)
+            assertThat(low * middle * high, equalTo(261342720))
+        }
+
+        println("Did part two in ${measureNanoTime} millis")
     }
 }
 

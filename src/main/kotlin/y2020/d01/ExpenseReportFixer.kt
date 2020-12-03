@@ -2,6 +2,8 @@ package y2020.d01
 
 import util.collections.toDeque
 import util.input.parseInputToInts
+import java.util.*
+import kotlin.collections.ArrayDeque
 
 fun main() {
     val (first, last) = findTwoExpensesThatSumTo2020(y2020d1)
