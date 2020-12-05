@@ -2,29 +2,24 @@ package y2020.d04
 
 
 
-fun solveIt(input: String) : Int {
-    return parse(input)
-            .count { it.isValid() }
-}
+fun solvePartOne(input: String) = parse(input).count { it.isValid() }
+fun solvePartTwo(input: String) = parse(input).count { it.isStrictlyValid() }
 
-fun parsePassport(input: String): Passport {
-    return Passport(input)
-}
 
 fun parse(input: String): List<Passport> {
     val passwords : MutableList<Passport> = ArrayList()
 
-    var passportDataBuilder = StringBuilder()
+    var passportDataBuilder = PassportBuilder()
     input.lines()
             .forEach {
                 if (it.isEmpty()) {
-                    passwords.add(Passport(passportDataBuilder.toString()))
-                    passportDataBuilder = StringBuilder()
+                    passwords.add(passportDataBuilder.buildPassport())
+                    passportDataBuilder = PassportBuilder()
                 } else {
                     passportDataBuilder.append(it)
                 }
             }
-    passwords.add(Passport(passportDataBuilder.toString()))
+    passwords.add(passportDataBuilder.buildPassport())
 
 
     return passwords
