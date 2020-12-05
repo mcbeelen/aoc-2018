@@ -21,6 +21,19 @@ fun parse(input: String): List<Passport> {
             }
     passwords.add(passportDataBuilder.buildPassport())
 
-
     return passwords
 }
+
+
+fun main() {
+    val keyToInspect = "hgt"
+    parse(y2020d04input)
+        .filter { it.isValid() }
+        .filter { it.isStrictlyValid() }
+        .filter { it.data.getValue(keyToInspect) == "150cm"}
+        .sortedBy { it.data.getValue(keyToInspect) }
+        .forEach { println("${it.data.toSortedMap()} ==> ${it.isStrictlyValid()}") }
+}
+
+
+// Is there a valid passport with height: 150cm?
