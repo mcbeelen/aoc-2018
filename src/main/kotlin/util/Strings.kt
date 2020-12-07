@@ -5,3 +5,7 @@ fun countLetters(label: String): Map<Char, Int> {
             .groupingBy { it }
             .eachCount()
 }
+
+fun CharSequence.distinctChars() = this.asIterable().distinct()
+
+fun String.withoutWhitespace() = replace("\\s*".toRegex(), "")
