@@ -4,20 +4,40 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.hasSize
 import org.junit.Test
-import util.collections.Queue
 import util.input.loadLines
-
 
 class AviationLuggageRulesTest {
 
     @Test
     fun examplePartOne() {
-        assertThat(solveIt("/y2020/d07/testInput.txt"), equalTo(4))
+        val input = loadLines("/y2020/d07/testInput.txt")
+        assertThat(countBagColorWhichMayContainShinyGoldBag(input), equalTo(4))
     }
 
     @Test
     fun partOne() {
-        assertThat(solveIt("/y2020/d07/input.txt"), equalTo(238))
+        val input = loadLines("/y2020/d07/input.txt")
+        assertThat(countBagColorWhichMayContainShinyGoldBag(input), equalTo(238))
+    }
+
+
+    @Test
+    fun examplePartTwo() {
+        val input = loadLines("/y2020/d07/testInput.txt")
+        assertThat(countRequiredAmountOfBagsWithin(input, "faded blue"), equalTo(0))
+        assertThat(countRequiredAmountOfBagsWithin(input, "dark olive"), equalTo(7))
+        assertThat(countRequiredAmountOfBagsWithin(input, REQUIRED_TYPE_OF_LUGGAGE), equalTo(32))
+    }
+
+    @Test
+    fun anotherExampleForPartTwo() {
+        assertThat(countRequiredAmountOfBagsWithin(anotherExample.lines(), REQUIRED_TYPE_OF_LUGGAGE), equalTo(126))
+    }
+
+    @Test
+    fun partTwo() {
+        val input = loadLines("/y2020/d07/input.txt")
+        assertThat(countRequiredAmountOfBagsWithin(input, REQUIRED_TYPE_OF_LUGGAGE), equalTo(82930))
     }
 
     @Test
@@ -33,4 +53,11 @@ class AviationLuggageRulesTest {
     }
 }
 
+private const val anotherExample = """shiny gold bags contain 2 dark red bags.
+dark red bags contain 2 dark orange bags.
+dark orange bags contain 2 dark yellow bags.
+dark yellow bags contain 2 dark green bags.
+dark green bags contain 2 dark blue bags.
+dark blue bags contain 2 dark violet bags.
+dark violet bags contain no other bags."""
 

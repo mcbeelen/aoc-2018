@@ -1,7 +1,6 @@
 package y2020.d07
 
 import util.collections.Queue
-import util.input.loadLines
 
 
 typealias Quantity = Long
@@ -32,19 +31,19 @@ fun parseContentDescription(contentDescription: String) : AllowedContent {
 }
 
 
-fun solveIt(fileName: String): Int {
 
-    val bagColorsWhichCanContainRequiredTypeOfLuggage : MutableSet<ColorCodedBag> = HashSet()
-    val luggageRules = loadLines(fileName).map { parseAviationLuggageRule(it) }
+fun countBagColorWhichMayContainShinyGoldBag(input: List<String>): Int {
+    val bagColorsWhichCanContainRequiredTypeOfLuggage: MutableSet<ColorCodedBag> = HashSet()
+    val luggageRules = input.map { parseAviationLuggageRule(it) }
 
     val accommodatingColorCodedBags = Queue<ColorCodedBag>()
     accommodatingColorCodedBags.enqueue(REQUIRED_TYPE_OF_LUGGAGE)
 
-    while (! accommodatingColorCodedBags.isEmpty()) {
-        val suitableContainers = findContainers(luggageRules, accommodatingColorCodedBags.dequeue())
+    while (!accommodatingColorCodedBags.isEmpty()) {
+        val suitableContainers = findContainersWhichMayContainBag(luggageRules, accommodatingColorCodedBags.dequeue())
         suitableContainers
-            .filter { ! bagColorsWhichCanContainRequiredTypeOfLuggage.contains(it) }
-            .filter { ! accommodatingColorCodedBags.contains(it) }
+            .filter { !bagColorsWhichCanContainRequiredTypeOfLuggage.contains(it) }
+            .filter { !accommodatingColorCodedBags.contains(it) }
             .forEach {
                 bagColorsWhichCanContainRequiredTypeOfLuggage.add(it)
                 accommodatingColorCodedBags.enqueue(it)
@@ -54,9 +53,45 @@ fun solveIt(fileName: String): Int {
     return bagColorsWhichCanContainRequiredTypeOfLuggage.size
 }
 
-private fun findContainers(luggageRules: List<AviationLuggageRule>, colorCodedBag: ColorCodedBag): List<ColorCodedBag> {
+private fun findContainersWhichMayContainBag(luggageRules: List<AviationLuggageRule>, colorCodedBag: ColorCodedBag): List<ColorCodedBag> {
     return luggageRules
         .filter { it.allowedContents.any { it.colorCodedBag == colorCodedBag } }
         .map { it.colorCodedBag }
-
 }
+
+fun countRequiredAmountOfBagsWithin(input: List<String>, colorCodedBag: String): Long {
+    val luggageRules = input.map { parseAviationLuggageRule(it) }
+    val countedBagColors: MutableMap<ColorCodedBag, Long> = HashMap()
+
+    return detemineRequiredAmountsOfBagsWith(colorCodedBag, countedBagColors, luggageRules);
+}
+
+fun detemineRequiredAmountsOfBagsWith(
+    colorCodedBag: ColorCodedBag,
+    countedBagColors: MutableMap<ColorCodedBag, Long>,
+    luggageRules: List<AviationLuggageRule>): Long {
+
+    return countedBagColors.computeIfAbsent(colorCodedBag) {
+        calculateRequiredAmountOfBagsWithin(luggageRules, colorCodedBag, countedBagColors)
+
+    }
+}
+
+private fun calculateRequiredAmountOfBagsWithin(
+    luggageRules: List<AviationLuggageRule>,
+    colorOfWantedBag: ColorCodedBag,
+    countedBagColors: MutableMap<ColorCodedBag, Long>
+): Long {
+    val ruleForWantedColor = luggageRules.single { it.colorCodedBag == colorOfWantedBag }
+    return if (ruleForWantedColor.allowedContents.isEmpty()) {
+        0L;
+    } else {
+        val nestedBags = ruleForWantedColor
+            .allowedContents.map {
+                it.quantity * (1 + detemineRequiredAmountsOfBagsWith(it.colorCodedBag, countedBagColors, luggageRules))
+            }
+        nestedBags.reduce { sum, value -> sum + value }
+    }
+}
+
+
