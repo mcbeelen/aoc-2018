@@ -1,5 +1,7 @@
 package y2020.d08
 
+import kotlin.system.measureTimeMillis
+
 class HandheldGamingConsole(instructions: String) {
 
     var instructionPointer: Int = 0
@@ -85,16 +87,17 @@ fun main() {
     var exitedNormally = false
     var counter = 0
 
-    while (!exitedNormally) {
-        counter++
-        val console = HandheldGamingConsole(y2020d08bootstrapCode)
-        console.patchLine(console.bytecode.size - counter)
-        val exitCode = console.executeBootCode()
-        exitedNormally = exitCode == 0
-        if (exitedNormally) {
-            println(console.valueOfTheAccumulator())
-        } else {
-            println("Failed attempt with ${counter}")
+    val millis = measureTimeMillis {
+        while (!exitedNormally) {
+            counter++
+            val console = HandheldGamingConsole(y2020d08bootstrapCode)
+            console.patchLine(console.bytecode.size - counter)
+            val exitCode = console.executeBootCode()
+            exitedNormally = exitCode == 0
+            if (exitedNormally) {
+                println("Accumulator: ${console.valueOfTheAccumulator()}")
+            }
         }
     }
+    println("${millis} ms")
 }
