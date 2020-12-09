@@ -27,7 +27,7 @@ class Queue<E> : Collection<E> {
     }
 
 
-    override val size = items.count()
+    override val size = items.size
 
     override fun contains(element: E) = items.contains(element)
 

@@ -17,3 +17,4 @@ fun <T> parseInput(input: String, parser: InputParser<T>) : Iterable<T> {
     }
 }
 fun parseInputToInts(input: String) = parseInput(input){ it.toInt() }
+fun parseInputToLongs(input: String) = parseInput(input){ it.toLong() }

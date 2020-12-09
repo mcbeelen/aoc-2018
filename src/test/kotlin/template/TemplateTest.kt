@@ -18,5 +18,5 @@ class TemplateTest {
 }
 
 
-const val testInput = """"PASTE_HERE
+const val testInput = """PASTE_HERE
 """
