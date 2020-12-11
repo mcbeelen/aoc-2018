@@ -32,20 +32,21 @@ fun countDistinctWaysToArrangeAdapters(input: String): Long {
     val sortedJolts = parseInputToInts(input).sorted()
     val deltasBetweenJolts = mapToDeltas(sortedJolts)
 
-    val sections = mapToLengthOfSectionsBetweenThrees(deltasBetweenJolts)
-    val adjustableSections = sections.filter { it > 1 }
-    println(adjustableSections.distinct().sorted())
-    val premutationsPerSection = adjustableSections
-        .map { numberOfPossiblePermutations(it) }
-
-    return premutationsPerSection.reduce { acc, d -> acc * d }
+    return mapToLengthOfSectionsBetweenThrees(deltasBetweenJolts)
+        .map { numberOfPossiblePermutationsPerSection(it) }
+        .multiply()
 }
 
-fun numberOfPossiblePermutations(lenght: Int) = when (lenght) {
+private fun List<Long>.multiply() = this.reduce { acc, d -> acc * d }
+
+
+fun numberOfPossiblePermutationsPerSection(lenght: Int) : Long = when(lenght) {
+    0 -> 1L
+    1 -> 1L
     2 -> 2L
     3 -> 4L
     4 -> 7L
-    else -> 1
+    else -> lenght - 1 + numberOfPossiblePermutationsPerSection(lenght - 1)
 }
 
 private fun mapToLengthOfSectionsBetweenThrees(deltasBetweenJolts: List<Int>): List<Int> {

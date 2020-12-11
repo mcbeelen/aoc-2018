@@ -24,6 +24,10 @@ class JoltAdapterArrayTest {
         assertThat(countDistinctWaysToArrangeAdapters(additionalExample), equalTo(19208))
     }
 
+    @Test
+    fun partTwo() {
+        assertThat(countDistinctWaysToArrangeAdapters(y2020d10input), equalTo(42_313_823_813_632))
+    }
 }
 
 const val firstExample = """16

@@ -48,8 +48,19 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
 
     fun vectorTo(other: ScreenCoordinate): Vector = Vector(other.left - this.left, other.top - this.top)
     fun transpose(vector: Vector, steps: Int) = at(this.left + vector.left * steps, this.top + vector.top * steps)
+    fun allAdjacentCoordinates() : List<ScreenCoordinate> = listOf(
+        at(this.left - 1, this.top - 1),
+        at(this.left - 0, this.top - 1),
+        at(this.left + 1, this.top - 1),
+        at(this.left - 1, this.top - 0),
 
+        at(this.left + 1, this.top - 0),
+        at(this.left - 1, this.top + 1),
+        at(this.left - 0, this.top + 1),
+        at(this.left + 1, this.top + 1),
+    )
 
+    fun next(vector: Vector) = copy(this.left + vector.left, this.top + vector.top)
 }
 
 fun findMaxX(locations: Set<ScreenCoordinate>) = locations.map { it.left }.max() ?: Int.MIN_VALUE

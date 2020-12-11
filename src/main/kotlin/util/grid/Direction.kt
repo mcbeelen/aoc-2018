@@ -58,3 +58,16 @@ fun parseDirection(c: Char): Direction {
     }
 
 }
+
+
+val EIGHT_COMPASS_DIRECTIONS = listOf(
+    Vector(-1, -1),
+    Vector(-0, -1),
+    Vector(+1, -1),
+    Vector(-1, -0),
+
+    Vector(+1, -0),
+    Vector(-1, +1),
+    Vector(-0, +1),
+    Vector(+1, +1),
+)
