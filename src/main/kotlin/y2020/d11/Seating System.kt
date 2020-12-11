@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.Option.Companion.empty
 import arrow.core.Option.Companion.just
 import arrow.core.extensions.list.monadFilter.filterMap
+import arrow.core.getOption
 import arrow.syntax.function.memoize
 import util.grid.*
 import y2020.d11.Position.*
@@ -96,9 +97,8 @@ fun nextStatePartTwo(screenCoordinate: ScreenCoordinate, waitingArea: WaitingAre
 
 fun nextStateForEmptySeatInPartTwo(waitingArea: WaitingArea, screenCoordinate: ScreenCoordinate): Position {
     val adjacentSeatsInLineOfSight = findAdjacentSeatsInLineOfSight()(waitingArea, screenCoordinate)
-    return if (adjacentSeatsInLineOfSight.all {
-            val occupancyOfSeat = waitingArea.grid.getValue(it)
-            occupancyOfSeat == EmptySeat || occupancyOfSeat == Floor }) {
+    val adjacentOccupancyInLineOfSight = adjacentSeatsInLineOfSight.map { waitingArea.grid.getOption(it) }.filterMap { it }
+    return if (adjacentOccupancyInLineOfSight.all { it == EmptySeat || it == Floor }) {
         OccupiedSeat
     } else {
         EmptySeat
@@ -107,8 +107,10 @@ fun nextStateForEmptySeatInPartTwo(waitingArea: WaitingArea, screenCoordinate: S
 
 fun nextStateForOccupiedSeatInPartTwo(waitingArea: WaitingArea, screenCoordinate: ScreenCoordinate): Position {
     val adjacentSeatsInLineOfSight = findAdjacentSeatsInLineOfSight()(waitingArea, screenCoordinate)
-    val numberOfOccupiedSeatsInLineOfSight = waitingArea.grid.filter { adjacentSeatsInLineOfSight.contains(it.key) }
-        .filter { it.value == OccupiedSeat }
+    val adjacentOccupancyInLineOfSight = adjacentSeatsInLineOfSight.map { waitingArea.grid.getOption(it) }.filterMap { it }
+
+    val numberOfOccupiedSeatsInLineOfSight = adjacentOccupancyInLineOfSight
+        .filter { it == OccupiedSeat }
         .count()
 
     return if (numberOfOccupiedSeatsInLineOfSight >= 5) {
@@ -138,13 +140,12 @@ data class WaitingArea(val grid: Grid<Position>) {
     }
 
     override fun hashCode(): Int {
-        return grid.filter { it.value == OccupiedSeat }.count()
+        return grid.getValue(at(5, 5)).hashCode() * grid.getValue(at(6, 6)).hashCode()
     }
 
     fun getAdjacentSeats(sc: ScreenCoordinate): List<Position> {
         val adjacentCoordinates = sc.allAdjacentCoordinates()
-        return this.grid.filter { adjacentCoordinates.contains(it.key) }
-            .map { it.value }
+        return adjacentCoordinates.map { this.grid.getOption(it) }.filterMap { it }
     }
 
     fun findSeatsInLineOfSight(screenCoordinate: ScreenCoordinate): List<ScreenCoordinate> {
