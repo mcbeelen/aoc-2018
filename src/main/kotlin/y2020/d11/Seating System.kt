@@ -159,7 +159,7 @@ data class WaitingArea(val grid: Grid<Position>) {
         if (!grid.containsKey(nextCoordinate)) {
             return empty()
         }
-        if (grid.getValue(nextCoordinate) != Position.Floor) {
+        if (grid.getValue(nextCoordinate) != Floor) {
             return just(nextCoordinate)
         }
         return findFirstSeat(nextCoordinate, vector)
@@ -178,12 +178,4 @@ enum class Position(val c: Char) {
     Floor('.'),
     EmptySeat('L'),
     OccupiedSeat('#')
-}
-
-
-fun main() {
-    val ms = measureTimeMillis {
-        println(evolveUntilStableAndCountOccupiedSeats(y2020d11waitingAreaInput))
-    }
-    println("Solved in ${ms}ms")
 }
