@@ -29,6 +29,17 @@ data class Vector(val left: Int = 0, val top: Int = 0) {
     private fun neg(value: Double) = value * -1
 
     private fun angleInRad() = atan2(-1.0 * top, 1.0 * left)
+    operator fun plus(delta: Vector): Vector {
+        return Vector(left = left + delta.left, top = top + delta.top)
+    }
+
+    operator fun times(factor: Int): Vector {
+        return Vector(left * factor, top * factor)
+
+    }
+
+    fun rotateClockwise(): Vector = Vector(top.unaryMinus(), left)
+    fun rotateCounterClockwise() = Vector(top, left.unaryMinus())
 }
 
 tailrec fun simplify(vector: Vector): Vector {

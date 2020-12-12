@@ -61,6 +61,14 @@ data class ScreenCoordinate(val left: Int = 0, val top: Int = 0) : Comparable<Sc
     )
 
     fun next(vector: Vector) = copy(this.left + vector.left, this.top + vector.top)
+    fun next(direction: Direction, distance: Int): ScreenCoordinate {
+        return when (direction) {
+            UP -> copy(top = top - distance)
+            RIGHT -> copy(left = left + distance)
+            DOWN -> copy(top = top + distance)
+            LEFT -> copy(left = left - distance)
+        }
+    }
 }
 
 fun findMaxX(locations: Set<ScreenCoordinate>) = locations.map { it.left }.max() ?: Int.MIN_VALUE
