@@ -51,11 +51,14 @@ fun applyMask(mask: String, value: Long): Long {
 }
 
 fun applyMaskToAddress(mask: String, inputAddress: Long) : List<Long> {
-    val bitAddress = inputAddress.toString(2)
-    val allBits = bitAddress.padStart(36, padChar = '0')
-    val maskedValue = allBits.mapIndexed {
-            index, c -> if (mask[index] == '0') c else mask[index] }.joinToString(separator = "")
-    val generatedAddresses : Queue<String> = Queue()
+    val allBits = inputAddress.toString(2).padStart(36, padChar = '0')
+    val maskedValue =
+        allBits.mapIndexed { index, c -> if (mask[index] == '0') c else mask[index] }.joinToString(separator = "")
+    return generateAddressWithZeroAndOneForeachX(maskedValue)
+}
+
+private fun generateAddressWithZeroAndOneForeachX(maskedValue: String): List<Long> {
+    val generatedAddresses: Queue<String> = Queue()
     generatedAddresses.enqueue(maskedValue)
 
     while (generatedAddresses.peek()!!.contains('X')) {
