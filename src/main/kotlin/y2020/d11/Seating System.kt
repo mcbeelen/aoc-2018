@@ -8,7 +8,6 @@ import arrow.core.getOption
 import arrow.syntax.function.memoize
 import util.grid.*
 import y2020.d11.Position.*
-import kotlin.system.measureTimeMillis
 
 fun evolveUntilStableAndCountOccupiedSeats(input: String): Int {
     return evolveUntilStableAndCountOccupiedSeats(input) {

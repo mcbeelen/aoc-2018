@@ -1,5 +1,7 @@
 package util.space
 
+import arrow.core.Option
+import arrow.core.extensions.list.monadFilter.filterMap
 import util.space.Sector.*
 import kotlin.math.abs
 
@@ -14,11 +16,23 @@ data class Point(val x: Int, val y: Int, val z: Int) {
     }
 
     fun isAt(x: Int, y: Int, z: Int): Boolean = this.x == x && this.y == y && this.z == z
+    fun neighbors(): List<Point> {
+        return (-1..1).map { x ->
+            (-1..1).map { y ->
+                (-1..1).map { z ->
+                    if ((x == y) && (x == z) && (x == 0)) {
+                        Option.empty()
+                    } else
+                        Option.just(Point(this.x + x, this.y + y, this.z + z))
+                }
+            }.flatten()
+        }.flatten().filterMap { it }
+    }
 }
 
 
 data class Cube(val from: Point, val to: Point) {
-    fun size() : Long {
+    fun size(): Long {
         val dimX = to.x - from.x + 1L
         val dimY = to.y - from.y + 1L
         val dimZ = to.z - from.z + 1L
@@ -32,13 +46,13 @@ data class Cube(val from: Point, val to: Point) {
     }
 
     val xRange: IntRange by lazy {
-        from.x .. to.x
+        from.x..to.x
     }
     val yRange: IntRange by lazy {
-        from.y .. to.y
+        from.y..to.y
     }
     val zRange: IntRange by lazy {
-        from.z .. to.z
+        from.z..to.z
     }
 
 
@@ -80,7 +94,6 @@ data class Cube(val from: Point, val to: Point) {
     }
 
 }
-
 
 
 enum class Sector {
