@@ -1,9 +1,5 @@
 package y2020.d15
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.HashMultimap
-import com.google.common.collect.ListMultimap
-import com.google.common.collect.Multimap
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.Test
