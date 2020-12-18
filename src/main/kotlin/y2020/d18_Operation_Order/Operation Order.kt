@@ -40,10 +40,17 @@ class ExpressionParser(val considerPrecedence : Boolean = false) {
 
     fun appendOperator(operator: Operator) {
         buildValue()
-        if (!operators.empty()) {
-            performOperation()
+        if (considerPrecedence) {
+            if (! operators.isEmpty() && operators.peek() == PLUS) {
+                performOperation()
+            }
+        } else {
+            if (!operators.empty()) {
+                performOperation()
+            }
         }
         operators.push(operator)
+
     }
 
     private fun performOperation() {
@@ -62,7 +69,9 @@ class ExpressionParser(val considerPrecedence : Boolean = false) {
 
     fun appendEnd() {
         buildValue()
-        performOperation()
+        while (operators.isNotEmpty()) {
+            performOperation()
+        }
     }
 
     fun output() = values.pop()
@@ -71,7 +80,16 @@ class ExpressionParser(val considerPrecedence : Boolean = false) {
     }
 
     fun endNesting() {
-        appendEnd()
+        buildValue()
+        if (considerPrecedence) {
+            while (operators.isNotEmpty() && operators.peek() != NOOP) {
+                performOperation()
+            }
+            operators.pop()
+        } else {
+            performOperation()
+        }
+
     }
 }
 
@@ -90,5 +108,6 @@ enum class Operator(
 
 fun main() {
     println(y2020d18input.lines().map { evaluateWithoutPrecedence(it) }.sum())
+    println(y2020d18input.lines().map { evaluateWithPrecedence(it) }.sum())
 }
 

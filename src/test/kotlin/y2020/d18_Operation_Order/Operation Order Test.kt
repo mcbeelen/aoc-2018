@@ -32,7 +32,7 @@ class `Operation Order Test` {
     }
 
 
-    @Test @Ignore
+    @Test
     fun linearExpressionsWithPrecedence() {
         assertThat(evaluateWithPrecedence("1 + 2"), equalTo(3))
         assertThat(evaluateWithPrecedence("1 + 2 + 3"), equalTo(6))
@@ -41,14 +41,14 @@ class `Operation Order Test` {
         assertThat(evaluateWithPrecedence("2 * 2 + 3"), equalTo(10))
     }
 
-    @Test @Ignore
+    @Test
     fun allExampleWithPrecedence() {
-        assertThat(evaluateWithPrecedence("1 + 2 * 3 + 4 * 5 + 6"), equalTo(71))
+        assertThat(evaluateWithPrecedence("1 + 2 * 3 + 4 * 5 + 6"), equalTo(231))
         assertThat(evaluateWithPrecedence("1 + (2 * 3) + (4 * (5 + 6))"), equalTo(51))
-        assertThat(evaluateWithPrecedence("2 * 3 + (4 * 5)"), equalTo(26))
-        assertThat(evaluateWithPrecedence("5 + (8 * 3 + 9 + 3 * 4 * 3)"), equalTo(437))
-        assertThat(evaluateWithPrecedence("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"), equalTo(12240))
-        assertThat(evaluateWithPrecedence("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"), equalTo(13632))
+        assertThat(evaluateWithPrecedence("2 * 3 + (4 * 5)"), equalTo(46))
+        assertThat(evaluateWithPrecedence("5 + (8 * 3 + 9 + 3 * 4 * 3)"), equalTo(1445))
+        assertThat(evaluateWithPrecedence("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"), equalTo(669060))
+        assertThat(evaluateWithPrecedence("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"), equalTo(23340))
     }
 
 }
