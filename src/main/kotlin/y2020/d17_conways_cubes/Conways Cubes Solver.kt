@@ -88,6 +88,6 @@ private fun parseInitialConfigurationToPointsIn4D(initialCubeConfiguration: Stri
 }
 
 fun main() {
-    println(conwaysGameOfLiveIn3D(y2020d17input))
+    // println(conwaysGameOfLiveIn3D(y2020d17input))
     println(conwaysGameOfLiveIn4D(y2020d17input))
 }

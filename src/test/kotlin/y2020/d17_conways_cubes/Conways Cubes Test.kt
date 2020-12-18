@@ -11,6 +11,11 @@ class `Conways Cubes Test` {
         assertThat(conwaysGameOfLiveIn3D(testInput), equalTo(112))
     }
 
+    @Test
+    fun partTwo() {
+        assertThat(conwaysGameOfLiveIn4D(y2020d17input), equalTo(2276))
+
+    }
 }
 
 
